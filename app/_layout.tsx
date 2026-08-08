@@ -9,9 +9,9 @@ import { ThemeProvider } from '@/src/theme/ThemeContext';
 export default function RootLayout() {
   // بارگذاری دقیق فایل‌های فونت به صورت آدرس‌دهی نسبی استاندارد مترو
   const [fontsLoaded, fontError] = useFonts({
-    'IRANYekanXFaNum-Bold': require('../src/assets/fonts/IranYekan/IRANYekanXFaNum-Bold.woff2'),
-    'IRANYekanXFaNum-Regular': require('../src/assets/fonts/IranYekan/IRANYekanXFaNum-Regular.woff2'),
-    'IRANYekanWebFn-Medium': require('../src/assets/fonts/IranYekan/IRANYekanWebFn-Medium.woff2'),
+    'IRANYekanXFaNum-Bold': require('../src/assets/fonts/IranYekan/woff2/IRANYekanXFaNum-Bold.woff2'),
+    'IRANYekanXFaNum-Regular': require('../src/assets/fonts/IranYekan/woff2/IRANYekanXFaNum-Regular.woff2'),
+    'IRANYekanWebFn-Medium': require('../src/assets/fonts/IranYekan/woff2/IRANYekanWebFn-Medium.woff2'),
   });
 
   // لاگ کردن خطای احتمالی برای عیب‌یابی سریع‌تر در وب‌باندلر

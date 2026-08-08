@@ -17,17 +17,33 @@ import { AppText } from '@/src/theme/AppText';
 import { AppButton } from '@/src/components/common/AppButton';
 import { ThemeToggleButton } from '@/src/components/common/ThemeToggleButton';
 
+// مبدل هوشمند اعداد فارسی و عربی به انگلیسی جهت پردازش صحیح فرمت شماره همراه
+const convertToEnglishDigits = (str: string) => {
+  const persianDigits = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
+  const arabicDigits = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
+  let clean = str;
+  for (let i = 0; i < 10; i++) {
+    clean = clean.replace(persianDigits[i], i.toString()).replace(arabicDigits[i], i.toString());
+  }
+  return clean;
+};
+
 export const LoginMobileScreen = () => {
   const { colors, spacing, borderRadius } = useTheme();
   const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  // معتبرسازی شماره تلفن ایران (مثال: شروع با ۰۹ و دارای ۱۱ رقم)
+  // معتبرسازی شماره تلفن همراه ایران (شروع با ۰۹ و دارای ۱۱ رقم)
   const isPhoneNumberValid = /^09[0-9]{9}$/.test(phoneNumber);
+
+  const handleTextChange = (text: string) => {
+    // تبدیل ورودی به اعداد انگلیسی و حذف کاراکترهای مزاحم غیر عددی
+    const cleanNumber = convertToEnglishDigits(text).replace(/[^0-9]/g, '');
+    setPhoneNumber(cleanNumber);
+  };
 
   const handleContinue = () => {
     if (isPhoneNumberValid) {
-      // هدایت به صفحه تایید کد پیامکی (OTP)
       router.push('/verify');
     }
   };
@@ -40,23 +56,21 @@ export const LoginMobileScreen = () => {
       >
         <View style={[styles.mainWrapper, { paddingHorizontal: spacing.lg }]}>
           
-          {/* هدر بالایی با چیدمان راست‌به‌چپ فارسی */}
-          <header style={styles.header}>
+          {/* هدر بالایی با چیدمان ثابت */}
+          <View style={styles.header}>
+            {/* بستن در چپ */}
             <TouchableOpacity
               activeOpacity={0.7}
-              style={[
-                styles.closeButton,
-                { backgroundColor: colors.surfaceDim, borderRadius: borderRadius.full },
-              ]}
+              style={styles.closeButton}
             >
               <Ionicons name="close" size={24} color={colors.textPrimary} />
             </TouchableOpacity>
-            
-            {/* دکمه تغییر تم تعبیه شده در هدر */}
-            <ThemeToggleButton />
-          </header>
 
-          {/* محتوای اصلی */}
+            {/* تغییر تم در راست */}
+            <ThemeToggleButton />
+          </View>
+
+          {/* محتوای اصلی فرم */}
           <View style={[styles.content, { marginTop: spacing.xl }]}>
             <View style={styles.textContainer}>
               <AppText variant="h1" style={[styles.title, { color: colors.textPrimary }]}>
@@ -67,7 +81,7 @@ export const LoginMobileScreen = () => {
               </AppText>
             </View>
 
-            {/* فیلد ورودی شماره همراه به صورت RTL */}
+            {/* فیلد ورودی شماره همراه به صورت LTR استاندارد بین‌المللی شماره‌ها */}
             <View
               style={[
                 styles.inputWrapper,
@@ -78,23 +92,29 @@ export const LoginMobileScreen = () => {
                 },
               ]}
             >
-              {/* بخش ثابت کد کشور در سمت راست به عنوان استاندارد فارسی */}
-              <View style={[styles.countryCode, { borderLeftColor: colors.border }]}>
+              {/* بخش ثابت کد کشور در سمت چپ */}
+              <View style={[styles.countryCode, { borderRightColor: colors.border }]}>
                 <AppText variant="body" style={styles.countryText}>
                   +۹۸
                 </AppText>
-                <Ionicons name="arrow-down" size={12} color={colors.textSecondary} />
+                <Ionicons name="arrow-down" size={12} color={colors.textSecondary} style={{ marginRight: 4 }} />
               </View>
 
-              {/* کادر ورود متن شماره همراه در سمت چپ */}
+              {/* کادر ورود متن شماره همراه در سمت راست با فونت اعداد فارسی */}
               <TextInput
                 value={phoneNumber}
-                onChangeText={setPhoneNumber}
+                onChangeText={handleTextChange}
                 keyboardType="phone-pad"
                 placeholder="۰۹۱۲XXXXXXX"
                 placeholderTextColor={colors.textSecondary}
                 maxLength={11}
-                style={[styles.textInput, { color: colors.textPrimary }]}
+                style={[
+                  styles.textInput,
+                  {
+                    color: colors.textPrimary,
+                    fontFamily: 'IRANYekanXFaNum-Regular', // اعمال فونت جهت نمایش زیبای اعداد به فارسی
+                  },
+                ]}
               />
             </View>
           </View>
@@ -125,7 +145,7 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     height: 56,
-    flexDirection: 'row-reverse', // کاملاً راست به چپ
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 8,
@@ -143,36 +163,37 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   title: {
-    textAlign: 'right', // راست‌چین متون فارسی
+    textAlign: 'right',
     marginBottom: 8,
   },
   subtitle: {
-    textAlign: 'right', // راست‌چین متون فارسی
+    textAlign: 'right',
     lineHeight: 22,
   },
   inputWrapper: {
     height: 56,
     borderWidth: 1,
-    flexDirection: 'row-reverse', // فیلد کشور راست، اینپوت چپ
+    flexDirection: 'row', // تغییر جهت به LTR برای قرار گرفتن کشور در چپ
     alignItems: 'center',
     overflow: 'hidden',
   },
   countryCode: {
-    flexDirection: 'row-reverse',
+    flexDirection: 'row',
     alignItems: 'center',
     height: '100%',
     paddingHorizontal: 16,
-    borderLeftWidth: 1,
+    borderRightWidth: 1, // خط مرزی در سمت راست کد کشور
   },
   countryText: {
-    marginLeft: 4,
+    marginRight: 4,
     fontWeight: '600',
+    fontFamily: 'IRANYekanXFaNum-Bold',
   },
   textInput: {
     flex: 1,
     height: '100%',
     paddingHorizontal: 16,
-    textAlign: 'left', // شماره به انگلیسی تایپ شود ولی به کمک فونت فارسی نمایش یابد
+    textAlign: 'left', // شماره تماس چپ‌چین وارد می‌شود
     fontSize: 16,
   },
   footer: {

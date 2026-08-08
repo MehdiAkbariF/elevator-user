@@ -6,23 +6,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/src/theme/ThemeContext';
 
 export const ThemeToggleButton = () => {
-  const { colors, isDark, toggleTheme, borderRadius } = useTheme();
+  const { colors, isDark, toggleTheme } = useTheme();
 
   return (
     <TouchableOpacity
       activeOpacity={0.7}
       onPress={toggleTheme}
-      style={[
-        styles.button,
-        {
-          backgroundColor: colors.surfaceDim,
-          borderRadius: borderRadius.full,
-        },
-      ]}
+      style={styles.button}
     >
       <Ionicons
         name={isDark ? 'sunny' : 'moon'}
-        size={20}
+        size={24} // سایز کمی بزرگ‌تر برای خوانایی بهتر بدون بک‌گراند
         color={colors.textPrimary}
       />
     </TouchableOpacity>

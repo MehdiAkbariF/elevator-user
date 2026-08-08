@@ -19,11 +19,20 @@ import { AppText } from '@/src/theme/AppText';
 import { AppButton } from '@/src/components/common/AppButton';
 import { ThemeToggleButton } from '@/src/components/common/ThemeToggleButton';
 
+const convertToEnglishDigits = (str: string) => {
+  const persianDigits = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
+  const arabicDigits = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
+  let clean = str;
+  for (let i = 0; i < 10; i++) {
+    clean = clean.replace(persianDigits[i], i.toString()).replace(arabicDigits[i], i.toString());
+  }
+  return clean;
+};
+
 export const LoginVerifyOtpScreen = () => {
   const { colors, spacing, borderRadius } = useTheme();
   const router = useRouter();
 
-  // در چیدمان فارسی خانه‌های کد از راست به چپ لود می‌شوند (اندکس ۰ دورترین سمت راست است)
   const [code, setCode] = useState<string[]>(['', '', '', '']);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
@@ -35,19 +44,19 @@ export const LoginVerifyOtpScreen = () => {
   ];
 
   const handleTextChange = (text: string, index: number) => {
+    const englishText = convertToEnglishDigits(text);
+    const cleanText = englishText.replace(/[^0-9]/g, '');
+    
     const newCode = [...code];
-    const cleanText = text.replace(/[^0-9]/g, '');
     newCode[index] = cleanText.substring(cleanText.length - 1);
     setCode(newCode);
 
-    // حرکت فوکوس به کادر سمت چپ (در RTL هدایت به خانه با اندکس بالاتر است)
     if (cleanText && index < 3) {
       inputRefs[index + 1].current?.focus();
     }
   };
 
   const handleKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>, index: number) => {
-    // برگشت فوکوس به خانه سمت راست در زمان پاک کردن فیلدها
     if (e.nativeEvent.key === 'Backspace' && !code[index] && index > 0) {
       inputRefs[index - 1].current?.focus();
     }
@@ -56,7 +65,8 @@ export const LoginVerifyOtpScreen = () => {
   const handleVerify = () => {
     const otpValue = code.join('');
     if (otpValue.length === 4) {
-      // عملیات تایید نهایی
+      // بعد از تایید کد، کاربر مستقیماً به داشبورد روت می‌شود
+      router.replace('/dashboard');
     }
   };
 
@@ -68,23 +78,18 @@ export const LoginVerifyOtpScreen = () => {
       >
         <View style={[styles.mainContainer, { paddingHorizontal: spacing.lg }]}>
           
-          {/* هدر راست‌به‌چپ */}
-          <header style={styles.header}>
+          <View style={styles.header}>
             <TouchableOpacity
               onPress={() => router.back()}
               activeOpacity={0.7}
-              style={[
-                styles.closeButton,
-                { backgroundColor: colors.surfaceDim, borderRadius: borderRadius.full },
-              ]}
+              style={styles.closeButton}
             >
               <Ionicons name="arrow-forward" size={24} color={colors.textPrimary} />
             </TouchableOpacity>
-            
-            <ThemeToggleButton />
-          </header>
 
-          {/* فرم اصلی */}
+            <ThemeToggleButton />
+          </View>
+
           <View style={[styles.contentArea, { marginTop: spacing.xl }]}>
             <View style={{ marginBottom: spacing.xl }}>
               <AppText variant="h1" style={[styles.title, { color: colors.textPrimary }]}>
@@ -106,7 +111,6 @@ export const LoginVerifyOtpScreen = () => {
               </TouchableOpacity>
             </View>
 
-            {/* فیلدهای تایید کد به صورت ردیف معکوس برای هماهنگی با RTL */}
             <View style={[styles.otpContainer, { gap: spacing.md }]}>
               {code.map((digit, index) => {
                 const isFocused = focusedIndex === index;
@@ -131,14 +135,17 @@ export const LoginVerifyOtpScreen = () => {
                     keyboardType="number-pad"
                     maxLength={1}
                     selectTextOnFocus
-                    style={[styles.otpInput, borderStyle]}
+                    style={[
+                      styles.otpInput, 
+                      borderStyle,
+                      { fontFamily: 'IRANYekanXFaNum-Bold' }
+                    ]}
                     placeholderTextColor={colors.textSecondary}
                   />
                 );
               })}
             </View>
 
-            {/* بخش پیام تایمر */}
             <View style={[styles.timerContainer, { marginTop: spacing.xl }]}>
               <AppText variant="body" color="muted">
                 ارسال مجدد کد تا ۰۱:۵۹
@@ -146,7 +153,6 @@ export const LoginVerifyOtpScreen = () => {
             </View>
           </View>
 
-          {/* دکمه نهایی ادامه */}
           <View style={[styles.bottomButtonContainer, { paddingBottom: spacing.lg }]}>
             <AppButton
               title="ادامه"
@@ -172,7 +178,7 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     height: 56,
-    flexDirection: 'row-reverse',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 8,
@@ -199,7 +205,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   otpContainer: {
-    flexDirection: 'row-reverse', // چیدمان خانه‌ها از راست به چپ
+    flexDirection: 'row-reverse',
     justifyContent: 'space-between',
     width: '100%',
   },
