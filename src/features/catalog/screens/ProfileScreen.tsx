@@ -22,28 +22,25 @@ const { width } = Dimensions.get("window");
 export const ProfileScreen = () => {
   const { colors, spacing, borderRadius } = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets(); // دریافت پویای فاصله دکمه‌های پایینی موبایل
+  const insets = useSafeAreaInsets();
 
   const [activeTab, setActiveTab] = useState<"services" | "orders">("services");
 
-  // شبیه‌سازی خروج از حساب کاربری
   const handleSignOut = () => {
     router.replace("/");
   };
 
-  // محاسبه ریاضی عرض کارت‌های میانبر مدیریتی
   const cardWidth = (width - spacing.lg * 2 - spacing.md) / 2;
 
   return (
     <ScreenWrapper>
-      {/* هدر بالایی با چیدمان استاندارد */}
+      {/* هدر بالایی */}
       <View
         style={[
           styles.header,
           { backgroundColor: colors.surface, borderBottomColor: colors.border },
         ]}
       >
-        {/* دکمه تغییر تم در سمت چپ */}
         <ThemeToggleButton />
 
         <View style={styles.brandContainer}>
@@ -52,7 +49,6 @@ export const ProfileScreen = () => {
           </AppText>
         </View>
 
-        {/* دکمه خروج سریع در راست */}
         <TouchableOpacity
           onPress={handleSignOut}
           activeOpacity={0.7}
@@ -64,7 +60,6 @@ export const ProfileScreen = () => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        // پدینگ پایینی بزرگ‌تر برای عدم تداخل با نوار پایینی و دکمه‌های لمسی موبایل
         contentContainerStyle={[
           styles.scrollContainer,
           {
@@ -73,7 +68,7 @@ export const ProfileScreen = () => {
           },
         ]}
       >
-        {/* ۱. کارت اطلاعات پروفایل کاربر به صورت RTL فارسی */}
+        {/* ۱. کارت اطلاعات پروفایل */}
         <View
           style={[
             styles.profileCard,
@@ -85,8 +80,11 @@ export const ProfileScreen = () => {
           ]}
         >
           <View style={styles.profileRow}>
-            {/* دکمه ویرایش در چپ کارت */}
-            <TouchableOpacity activeOpacity={0.7} style={styles.editBtn}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={styles.editBtn}
+              onPress={() => router.push("/profile/edit")}
+            >
               <Ionicons
                 name="create-outline"
                 size={20}
@@ -94,7 +92,6 @@ export const ProfileScreen = () => {
               />
             </TouchableOpacity>
 
-            {/* نام و مشخصات در وسط */}
             <View style={styles.profileInfo}>
               <AppText
                 variant="h2"
@@ -107,7 +104,6 @@ export const ProfileScreen = () => {
               </AppText>
             </View>
 
-            {/* آواتار اول نام کاربر در راست */}
             <View
               style={[
                 styles.avatarCircle,
@@ -121,7 +117,7 @@ export const ProfileScreen = () => {
           </View>
         </View>
 
-        {/* ۲. گام مدیریت تجهیزات و آدرس‌ها (۲ ستونه ریسپانسیو) */}
+        {/* ۲. گام مدیریت تجهیزات و آدرس‌ها */}
         <View style={[styles.gridContainer, { gap: spacing.md }]}>
           {/* کارت آسانسورهای من */}
           <TouchableOpacity
@@ -135,6 +131,7 @@ export const ProfileScreen = () => {
                 borderRadius: borderRadius.lg,
               },
             ]}
+            onPress={() => router.push("/my-elevators")}
           >
             <View
               style={[styles.iconBox, { backgroundColor: colors.surfaceDim }]}
@@ -171,6 +168,7 @@ export const ProfileScreen = () => {
                 borderRadius: borderRadius.lg,
               },
             ]}
+            onPress={() => router.push("/addresses")}
           >
             <View
               style={[styles.iconBox, { backgroundColor: colors.surfaceDim }]}
@@ -198,7 +196,6 @@ export const ProfileScreen = () => {
 
         {/* ۳. بخش تاریخچه و سوابق خدمات */}
         <View style={[styles.historySection, { marginTop: spacing.xl }]}>
-          {/* سوئیچر تب بومی برای سوابق */}
           <View
             style={[
               styles.tabContainer,
@@ -257,11 +254,11 @@ export const ProfileScreen = () => {
             </TouchableOpacity>
           </View>
 
-          {/* لیست سوابق متناظر با زبانه فعال */}
           {activeTab === "services" ? (
             <View style={[styles.historyList, { gap: spacing.md }]}>
               {/* رکورد ۱ سرویس */}
-              <View
+              <TouchableOpacity
+                activeOpacity={0.8}
                 style={[
                   styles.historyCard,
                   {
@@ -270,6 +267,7 @@ export const ProfileScreen = () => {
                     borderRadius: borderRadius.lg,
                   },
                 ]}
+                onPress={() => router.push("/service-history/1")}
               >
                 <View
                   style={[
@@ -321,10 +319,11 @@ export const ProfileScreen = () => {
                     />
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
 
               {/* رکورد ۲ سرویس */}
-              <View
+              <TouchableOpacity
+                activeOpacity={0.8}
                 style={[
                   styles.historyCard,
                   {
@@ -333,6 +332,7 @@ export const ProfileScreen = () => {
                     borderRadius: borderRadius.lg,
                   },
                 ]}
+                onPress={() => router.push("/service-history/2")}
               >
                 <View
                   style={[
@@ -384,10 +384,9 @@ export const ProfileScreen = () => {
                     />
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             </View>
           ) : (
-            // شبیه‌سازی خالی بودن لیست سفارشات قطعات
             <View
               style={[
                 styles.emptyContainer,
@@ -407,6 +406,24 @@ export const ProfileScreen = () => {
               <AppText variant="body" color="muted">
                 هنوز هیچ سفارش قطعه‌ای ثبت نشده است.
               </AppText>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={[
+                  styles.shopNowBtn,
+                  {
+                    backgroundColor: colors.secondary,
+                    borderRadius: borderRadius.md,
+                    paddingHorizontal: spacing.xl,
+                    paddingVertical: spacing.sm,
+                    marginTop: spacing.md,
+                  },
+                ]}
+                onPress={() => router.push("/catalog")}
+              >
+                <AppText variant="button" style={{ color: "#FFFFFF" }}>
+                  شروع خرید
+                </AppText>
+              </TouchableOpacity>
             </View>
           )}
         </View>
@@ -423,10 +440,131 @@ export const ProfileScreen = () => {
             },
           ]}
         >
-          {/* گزینه پشتیبانی */}
+          {/* سفارشات من */}
           <TouchableOpacity
             activeOpacity={0.8}
             style={[styles.settingRow, { borderBottomColor: colors.border }]}
+            onPress={() => router.push("/orders")}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={18}
+              color={colors.textSecondary}
+            />
+            <View style={styles.settingTextRow}>
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                سفارشات من
+              </AppText>
+              <Ionicons
+                name="receipt-outline"
+                size={20}
+                color={colors.textPrimary}
+                style={{ marginLeft: 12 }}
+              />
+            </View>
+          </TouchableOpacity>
+
+          {/* سوابق خدمات */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[styles.settingRow, { borderBottomColor: colors.border }]}
+            onPress={() => router.push("/service-history")}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={18}
+              color={colors.textSecondary}
+            />
+            <View style={styles.settingTextRow}>
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                سوابق خدمات
+              </AppText>
+              <Ionicons
+                name="time-outline"
+                size={20}
+                color={colors.textPrimary}
+                style={{ marginLeft: 12 }}
+              />
+            </View>
+          </TouchableOpacity>
+
+          {/* کیف پول من */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[styles.settingRow, { borderBottomColor: colors.border }]}
+            onPress={() => router.push("/wallet")}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={18}
+              color={colors.textSecondary}
+            />
+            <View style={styles.settingTextRow}>
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                کیف پول من
+              </AppText>
+              <Ionicons
+                name="wallet-outline"
+                size={20}
+                color={colors.textPrimary}
+                style={{ marginLeft: 12 }}
+              />
+            </View>
+          </TouchableOpacity>
+
+          {/* علاقه‌مندی‌ها */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[styles.settingRow, { borderBottomColor: colors.border }]}
+            onPress={() => router.push("/favorites")}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={18}
+              color={colors.textSecondary}
+            />
+            <View style={styles.settingTextRow}>
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                علاقه‌مندی‌ها
+              </AppText>
+              <Ionicons
+                name="heart-outline"
+                size={20}
+                color={colors.textPrimary}
+                style={{ marginLeft: 12 }}
+              />
+            </View>
+          </TouchableOpacity>
+
+          {/* اعلان‌ها */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[styles.settingRow, { borderBottomColor: colors.border }]}
+            onPress={() => router.push("/notifications")}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={18}
+              color={colors.textSecondary}
+            />
+            <View style={styles.settingTextRow}>
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                اعلان‌ها
+              </AppText>
+              <Ionicons
+                name="notifications-outline"
+                size={20}
+                color={colors.textPrimary}
+                style={{ marginLeft: 12 }}
+              />
+            </View>
+          </TouchableOpacity>
+
+          {/* راهنما و پشتیبانی فنی */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[styles.settingRow, { borderBottomColor: colors.border }]}
+            onPress={() => router.push("/support/tickets")}
           >
             <Ionicons
               name="chevron-back"
@@ -446,7 +584,31 @@ export const ProfileScreen = () => {
             </View>
           </TouchableOpacity>
 
-          {/* گزینه حریم خصوصی */}
+          {/* تنظیمات حساب */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[styles.settingRow, { borderBottomColor: colors.border }]}
+            onPress={() => router.push("/settings")}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={18}
+              color={colors.textSecondary}
+            />
+            <View style={styles.settingTextRow}>
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                تنظیمات حساب
+              </AppText>
+              <Ionicons
+                name="settings-outline"
+                size={20}
+                color={colors.textPrimary}
+                style={{ marginLeft: 12 }}
+              />
+            </View>
+          </TouchableOpacity>
+
+          {/* حریم خصوصی و قوانین */}
           <TouchableOpacity
             activeOpacity={0.8}
             style={[styles.settingRow, { borderBottomColor: colors.border }]}
@@ -469,7 +631,7 @@ export const ProfileScreen = () => {
             </View>
           </TouchableOpacity>
 
-          {/* دکمه خروج قرمز رنگ */}
+          {/* دکمه خروج */}
           <TouchableOpacity
             onPress={handleSignOut}
             activeOpacity={0.8}
@@ -495,7 +657,6 @@ export const ProfileScreen = () => {
         </View>
       </ScrollView>
 
-      {/* ناوبری پایینی سراسری با زبانه فعال پروفایل */}
       <AppBottomNav activeTab="profile" />
     </ScreenWrapper>
   );
@@ -646,6 +807,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+  },
+  shopNowBtn: {
+    paddingHorizontal: 24,
+    paddingVertical: 8,
   },
   settingsCard: {
     borderWidth: 1,

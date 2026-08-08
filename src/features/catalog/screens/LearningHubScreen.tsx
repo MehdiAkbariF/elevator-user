@@ -89,6 +89,10 @@ export const LearningHubScreen = () => {
     }
   };
 
+  const handleArticlePress = (articleId: string) => {
+    router.push(`/blog-detail?id=${articleId}`);
+  };
+
   const filteredArticles = ARTICLES.filter((article) => {
     const matchesCategory = selectedCategory === 'all' || article.categoryType === selectedCategory;
     const matchesSearch = article.title.includes(searchQuery) || article.category.includes(searchQuery);
@@ -230,6 +234,7 @@ export const LearningHubScreen = () => {
                 overflow: 'hidden',
               },
             ]}
+            onPress={() => handleArticlePress(featuredArticle.id)}
           >
             <View
               style={[
@@ -350,6 +355,7 @@ export const LearningHubScreen = () => {
                   alignItems: 'center',
                 },
               ]}
+              onPress={() => handleArticlePress(article.id)}
             >
               <View style={styles.articleContent}>
                 <AppText
