@@ -12,24 +12,30 @@ interface AppHeaderProps {
   title?: string;
   showBackButton?: boolean;
   showThemeToggle?: boolean;
+  showWhyUs?: boolean;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
-  title = 'xElevator',
+  title = 'ایکس‌الوتور',
   showBackButton = false,
   showThemeToggle = true,
+  showWhyUs = true,
 }) => {
   const { colors } = useTheme();
   const router = useRouter();
 
+  const handleWhyUsPress = () => {
+    router.push('/why-choose-us');
+  };
+
   return (
     <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-      {/* دکمه‌های سمت چپ (تغییر تم) */}
+      {/* سمت چپ: دکمه تغییر تم */}
       <View style={styles.leftContainer}>
         {showThemeToggle && <ThemeToggleButton />}
       </View>
 
-      {/* عنوان وسط یا راست هدر */}
+      {/* عنوان وسط */}
       <View style={styles.centerContainer}>
         <AppText variant="h2" style={styles.titleText}>
           {title}
@@ -39,8 +45,19 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         )}
       </View>
 
-      {/* دکمه بازگشت یا بستن در سمت راست (مخصوص صفحات داخلی) */}
+      {/* سمت راست: دکمه "چرا ما؟" + دکمه بازگشت */}
       <View style={styles.rightContainer}>
+        {showWhyUs && (
+          <TouchableOpacity
+            onPress={handleWhyUsPress}
+            activeOpacity={0.7}
+            style={styles.whyUsButton}
+          >
+            <AppText variant="labelSm" style={{ color: colors.secondary }}>
+              چرا ما؟
+            </AppText>
+          </TouchableOpacity>
+        )}
         {showBackButton && (
           <TouchableOpacity
             onPress={() => router.back()}
@@ -80,12 +97,20 @@ const styles = StyleSheet.create({
   },
   rightContainer: {
     flex: 1,
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 4,
   },
   backButton: {
     width: 40,
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  whyUsButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
   },
 });

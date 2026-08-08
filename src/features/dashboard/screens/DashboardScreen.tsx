@@ -6,7 +6,7 @@ import { ScreenWrapper } from "@/src/components/layout/ScreenWrapper";
 import { AppText } from "@/src/theme/AppText";
 import { useTheme } from "@/src/theme/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router"; // ایمپورت ابزار ناوبری بومی اکسپو روتر
+import { useRouter } from "expo-router";
 import React from "react";
 import {
   Image,
@@ -14,84 +14,49 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  Dimensions,
 } from "react-native";
+
+const { width } = Dimensions.get("window");
 
 export const DashboardScreen = () => {
   const { colors, spacing, borderRadius } = useTheme();
-  const router = useRouter(); // راه‌اندازی ثابت ابزار ناوبری
+  const router = useRouter();
 
   const handleEmergencyPress = () => {
-    // هدایت کاربر به صفحه ثبت درخواست خدمات فنی
     router.push("/request-service");
   };
-  const servicePress = () => {
-    // هدایت کاربر به صفحه ثبت درخواست خدمات فنی
-    router.push("/maintenance");
-  };
   const handleCatalogPress = () => {
-    // هدایت کاربر به کاتالوگ قطعات ایکس الواتور
     router.push("/catalog");
   };
+  const handleLearningPress = () => {
+    router.push("/learning-hub");
+  };
+  const handleMaintenancePress = () => {
+    router.push("/maintenance");
+  };
+  const handleModernizationPress = () => {
+    router.push("/modernization");
+  };
+  const handleInstallationPress = () => {
+    router.push("/installation");
+  };
+  const handleRepairPress = () => {
+    router.push("/request-service");
+  };
+
+  // محاسبه عرض کارت‌های خدمات (۲ ستون)
+  const cardWidth = (width - spacing.lg * 2 - spacing.md) / 2;
 
   return (
     <ScreenWrapper>
-      {/* هدر سراسری مستقل */}
       <AppHeader />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 110 }} // حاشیه پایینی برای اسکرول کامل و عدم تداخل با فوتر و نوار پایینی
+        contentContainerStyle={{ paddingBottom: 110 }}
       >
-        {/* ۱. ابزارک خلاصه وضعیت آسانسورهای کاربر */}
-        <View
-          style={[
-            styles.fleetStatusCard,
-            {
-              backgroundColor: colors.surface,
-              borderColor: colors.border,
-              borderRadius: borderRadius.lg,
-              marginHorizontal: spacing.lg,
-              marginTop: spacing.lg,
-            },
-          ]}
-        >
-          <View style={styles.statusRow}>
-            <View
-              style={[
-                styles.badge,
-                {
-                  backgroundColor: "rgba(34, 197, 94, 0.1)",
-                  borderRadius: borderRadius.sm,
-                },
-              ]}
-            >
-              <View style={[styles.dot, { backgroundColor: "#22C55E" }]} />
-              <AppText variant="labelSm" style={{ color: "#22C55E" }}>
-                همه فعال و ایمن
-              </AppText>
-            </View>
-            <AppText variant="h2" style={styles.statusTitle}>
-              وضعیت آسانسورهای شما
-            </AppText>
-          </View>
-          <AppText variant="body" color="muted" style={styles.statusSubtitle}>
-            ساختمان نگین: ۳ آسانسور تحت پوشش بیمه و سرویس دوره‌ای منظم فعال
-            هستند.
-          </AppText>
-          <View style={[styles.divider, { backgroundColor: colors.border }]} />
-          <View style={styles.statusFooter}>
-            <AppText variant="labelSm" color="muted">
-              سرویس دوره‌ای بعدی: ۲۴ اسفند (۹ روز دیگر)
-            </AppText>
-            <Ionicons
-              name="time-outline"
-              size={16}
-              color={colors.textSecondary}
-            />
-          </View>
-        </View>
-
-        {/* ۲. بخش هیرو (Hero Section) */}
+        {/* ۱. بخش هیرو (Hero Section) */}
         <View
           style={[
             styles.heroSection,
@@ -107,7 +72,6 @@ export const DashboardScreen = () => {
           </AppText>
 
           <View style={styles.heroActionContainer}>
-            {/* دکمه امداد اضطراری - اکنون با لمس آن کاربر به فرم ثبت خدمات فنی منتقل می‌شود */}
             <TouchableOpacity
               onPress={handleEmergencyPress}
               activeOpacity={0.8}
@@ -130,7 +94,6 @@ export const DashboardScreen = () => {
               </AppText>
             </TouchableOpacity>
 
-            {/* دکمه کاتالوگ قطعات - اکنون با لمس آن کاربر به کاتالوگ منتقل می‌شود */}
             <TouchableOpacity
               onPress={handleCatalogPress}
               activeOpacity={0.8}
@@ -156,7 +119,7 @@ export const DashboardScreen = () => {
           </View>
         </View>
 
-        {/* ۳. بخش خدمات ما با کادربندی‌های لوکس و ملایم */}
+        {/* ۲. بخش خدمات - ۲ ستونه */}
         <View
           style={[
             styles.section,
@@ -172,136 +135,422 @@ export const DashboardScreen = () => {
             خدمات نگهداری و اورهال ایکس الوتور
           </AppText>
 
-          <View style={[styles.servicesStack, { gap: spacing.md }]}>
+          <View style={styles.servicesGrid}>
+            {/* سرویس و نگهداری سالانه */}
             <TouchableOpacity
-              onPress={servicePress}
               activeOpacity={0.9}
               style={[
                 styles.serviceCard,
                 {
+                  width: cardWidth,
                   backgroundColor: colors.surface,
                   borderColor: colors.border,
                   borderRadius: borderRadius.lg,
+                  padding: spacing.md,
+                  alignItems: "flex-end",
                 },
               ]}
+              onPress={handleMaintenancePress}
             >
               <View
                 style={[
-                  styles.iconContainer,
+                  styles.iconContainerSmall,
                   {
                     backgroundColor: colors.background,
                     borderColor: colors.border,
+                    width: 40,
+                    height: 40,
+                    borderRadius: borderRadius.full,
+                    borderWidth: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: spacing.sm,
                   },
                 ]}
               >
                 <Ionicons
-                  name="calendar"
-                  size={24}
+                  name="calendar-outline"
+                  size={20}
                   color={colors.textPrimary}
                 />
               </View>
-              <AppText variant="h2" style={styles.serviceTitle}>
-                سرویس و نگهداری سالانه
-              </AppText>
               <AppText
-                variant="body"
-                color="muted"
-                style={styles.serviceDescription}
-              >
-                بازدیدهای دوره‌ای منظم و مراقبت‌های پیشگیرانه جهت حفظ
-                استانداردها و افزایش طول عمر قطعات.
-              </AppText>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={handleEmergencyPress}
-              activeOpacity={0.9}
-              style={[
-                styles.serviceCard,
-                {
-                  backgroundColor: colors.surface,
-                  borderColor: colors.border,
-                  borderRadius: borderRadius.lg,
-                },
-              ]}
-            >
-              <View
+                variant="button"
                 style={[
-                  styles.iconContainer,
+                  styles.serviceTitleSmall,
                   {
-                    backgroundColor: colors.background,
-                    borderColor: colors.border,
+                    color: colors.textPrimary,
+                    textAlign: "right",
+                    fontWeight: "600",
                   },
                 ]}
               >
-                <Ionicons name="construct" size={24} color={colors.secondary} />
-              </View>
-              <AppText variant="h2" style={styles.serviceTitle}>
-                تعمیرات فوق‌سریع شبانه‌روزی
+                نگهداری سالانه
               </AppText>
               <AppText
                 variant="body"
                 color="muted"
-                style={styles.serviceDescription}
+                style={[
+                  styles.serviceDescSmall,
+                  {
+                    textAlign: "right",
+                    fontSize: 12,
+                    lineHeight: 18,
+                  },
+                ]}
               >
-                اعزام فوری تکنسین‌های تاییدشده در زمان وقوع خرابی‌های بحرانی و
-                توقف آسانسور در هر ساعت از شبانه‌روز.
+                بازدید دوره‌ای منظم
               </AppText>
             </TouchableOpacity>
 
+            {/* تعمیرات فوق‌سریع */}
             <TouchableOpacity
-              onPress={handleEmergencyPress}
               activeOpacity={0.9}
               style={[
                 styles.serviceCard,
                 {
+                  width: cardWidth,
                   backgroundColor: colors.surface,
                   borderColor: colors.border,
                   borderRadius: borderRadius.lg,
+                  padding: spacing.md,
+                  alignItems: "flex-end",
                 },
               ]}
+              onPress={handleEmergencyPress}
             >
               <View
                 style={[
-                  styles.iconContainer,
+                  styles.iconContainerSmall,
                   {
                     backgroundColor: colors.background,
                     borderColor: colors.border,
+                    width: 40,
+                    height: 40,
+                    borderRadius: borderRadius.full,
+                    borderWidth: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: spacing.sm,
                   },
                 ]}
               >
                 <Ionicons
-                  name="trending-up"
-                  size={24}
-                  color={colors.textPrimary}
+                  name="construct-outline"
+                  size={20}
+                  color={colors.secondary}
                 />
               </View>
-              <AppText variant="h2" style={styles.serviceTitle}>
-                بازسازی و نوسازی (مدرن‌سازی)
+              <AppText
+                variant="button"
+                style={[
+                  styles.serviceTitleSmall,
+                  {
+                    color: colors.textPrimary,
+                    textAlign: "right",
+                    fontWeight: "600",
+                  },
+                ]}
+              >
+                تعمیرات شبانه‌روزی
               </AppText>
               <AppText
                 variant="body"
                 color="muted"
-                style={styles.serviceDescription}
+                style={[
+                  styles.serviceDescSmall,
+                  {
+                    textAlign: "right",
+                    fontSize: 12,
+                    lineHeight: 18,
+                  },
+                ]}
               >
-                ارتقای کامل سیستم‌های قدیمی جهت بهبود کارایی، ارتقای ایمنی و
-                نوسازی دکوراسیون داخلی کابین.
+                اعزام فوری تکنسین
+              </AppText>
+            </TouchableOpacity>
+
+            {/* نوسازی و مدرن‌سازی */}
+            <TouchableOpacity
+              activeOpacity={0.9}
+              style={[
+                styles.serviceCard,
+                {
+                  width: cardWidth,
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                  padding: spacing.md,
+                  alignItems: "flex-end",
+                },
+              ]}
+              onPress={handleModernizationPress}
+            >
+              <View
+                style={[
+                  styles.iconContainerSmall,
+                  {
+                    backgroundColor: colors.background,
+                    borderColor: colors.border,
+                    width: 40,
+                    height: 40,
+                    borderRadius: borderRadius.full,
+                    borderWidth: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: spacing.sm,
+                  },
+                ]}
+              >
+                <Ionicons
+                  name="trending-up-outline"
+                  size={20}
+                  color={colors.textPrimary}
+                />
+              </View>
+              <AppText
+                variant="button"
+                style={[
+                  styles.serviceTitleSmall,
+                  {
+                    color: colors.textPrimary,
+                    textAlign: "right",
+                    fontWeight: "600",
+                  },
+                ]}
+              >
+                نوسازی و مدرن‌سازی
+              </AppText>
+              <AppText
+                variant="body"
+                color="muted"
+                style={[
+                  styles.serviceDescSmall,
+                  {
+                    textAlign: "right",
+                    fontSize: 12,
+                    lineHeight: 18,
+                  },
+                ]}
+              >
+                ارتقای سیستم‌های قدیمی
+              </AppText>
+            </TouchableOpacity>
+
+            {/* قطعات اورجینال */}
+            <TouchableOpacity
+              activeOpacity={0.9}
+              style={[
+                styles.serviceCard,
+                {
+                  width: cardWidth,
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                  padding: spacing.md,
+                  alignItems: "flex-end",
+                },
+              ]}
+              onPress={handleCatalogPress}
+            >
+              <View
+                style={[
+                  styles.iconContainerSmall,
+                  {
+                    backgroundColor: colors.background,
+                    borderColor: colors.border,
+                    width: 40,
+                    height: 40,
+                    borderRadius: borderRadius.full,
+                    borderWidth: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: spacing.sm,
+                  },
+                ]}
+              >
+                <Ionicons
+                  name="cube-outline"
+                  size={20}
+                  color={colors.secondary}
+                />
+              </View>
+              <AppText
+                variant="button"
+                style={[
+                  styles.serviceTitleSmall,
+                  {
+                    color: colors.textPrimary,
+                    textAlign: "right",
+                    fontWeight: "600",
+                  },
+                ]}
+              >
+                قطعات اورجینال
+              </AppText>
+              <AppText
+                variant="body"
+                color="muted"
+                style={[
+                  styles.serviceDescSmall,
+                  {
+                    textAlign: "right",
+                    fontSize: 12,
+                    lineHeight: 18,
+                  },
+                ]}
+              >
+                تأمین مستقیم از تولیدکننده
+              </AppText>
+            </TouchableOpacity>
+
+            {/* نصب و راه‌اندازی - کارت جدید */}
+            <TouchableOpacity
+              activeOpacity={0.9}
+              style={[
+                styles.serviceCard,
+                {
+                  width: cardWidth,
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                  padding: spacing.md,
+                  alignItems: "flex-end",
+                },
+              ]}
+              onPress={handleInstallationPress}
+            >
+              <View
+                style={[
+                  styles.iconContainerSmall,
+                  {
+                    backgroundColor: colors.background,
+                    borderColor: colors.border,
+                    width: 40,
+                    height: 40,
+                    borderRadius: borderRadius.full,
+                    borderWidth: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: spacing.sm,
+                  },
+                ]}
+              >
+                <Ionicons
+                  name="build-outline"
+                  size={20}
+                  color={colors.textPrimary}
+                />
+              </View>
+              <AppText
+                variant="button"
+                style={[
+                  styles.serviceTitleSmall,
+                  {
+                    color: colors.textPrimary,
+                    textAlign: "right",
+                    fontWeight: "600",
+                  },
+                ]}
+              >
+                نصب و راه‌اندازی
+              </AppText>
+              <AppText
+                variant="body"
+                color="muted"
+                style={[
+                  styles.serviceDescSmall,
+                  {
+                    textAlign: "right",
+                    fontSize: 12,
+                    lineHeight: 18,
+                  },
+                ]}
+              >
+                نصب تاییدشده مهندسی
+              </AppText>
+            </TouchableOpacity>
+
+            {/* تعمیر و عیب‌یابی - کارت جدید */}
+            <TouchableOpacity
+              activeOpacity={0.9}
+              style={[
+                styles.serviceCard,
+                {
+                  width: cardWidth,
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                  padding: spacing.md,
+                  alignItems: "flex-end",
+                },
+              ]}
+              onPress={handleRepairPress}
+            >
+              <View
+                style={[
+                  styles.iconContainerSmall,
+                  {
+                    backgroundColor: colors.background,
+                    borderColor: colors.border,
+                    width: 40,
+                    height: 40,
+                    borderRadius: borderRadius.full,
+                    borderWidth: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: spacing.sm,
+                  },
+                ]}
+              >
+                <Ionicons
+                  name="hammer-outline"
+                  size={20}
+                  color={colors.secondary}
+                />
+              </View>
+              <AppText
+                variant="button"
+                style={[
+                  styles.serviceTitleSmall,
+                  {
+                    color: colors.textPrimary,
+                    textAlign: "right",
+                    fontWeight: "600",
+                  },
+                ]}
+              >
+                تعمیر و عیب‌یابی
+              </AppText>
+              <AppText
+                variant="body"
+                color="muted"
+                style={[
+                  styles.serviceDescSmall,
+                  {
+                    textAlign: "right",
+                    fontSize: 12,
+                    lineHeight: 18,
+                  },
+                ]}
+              >
+                تشخیص سریع و تعمیر دائمی
               </AppText>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* ۴. کاتالوگ چرخشی قطعات برجسته */}
+        {/* ۳. بخش قطعات ویژه */}
         <View style={{ paddingVertical: spacing.xl }}>
           <View
             style={[styles.carouselHeader, { paddingHorizontal: spacing.lg }]}
           >
             <AppText variant="h2" style={styles.carouselTitle}>
-              قطعات برجسته و پرتقاضا
+              قطعات ویژه و پیشنهادی
             </AppText>
             <TouchableOpacity onPress={handleCatalogPress}>
               <AppText variant="labelSm" color="secondary">
-                مشاهده کاتالوگ
+                مشاهده همه
               </AppText>
             </TouchableOpacity>
           </View>
@@ -315,120 +564,272 @@ export const DashboardScreen = () => {
             ]}
           >
             {/* قطعه ۱ */}
-            <View
+            <TouchableOpacity
+              activeOpacity={0.9}
               style={[
-                styles.partCard,
+                styles.partCardNew,
                 {
                   backgroundColor: colors.surface,
                   borderColor: colors.border,
                   borderRadius: borderRadius.lg,
+                  borderWidth: 1,
+                  width: 200,
+                  overflow: "hidden",
                 },
               ]}
+              onPress={handleCatalogPress}
             >
               <View
                 style={[
-                  styles.partImageContainer,
-                  { borderBottomColor: colors.border },
+                  styles.partImageContainerNew,
+                  {
+                    height: 140,
+                    backgroundColor: colors.surfaceDim,
+                    position: "relative",
+                  },
                 ]}
               >
                 <Image
                   source={{
                     uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuCLyPwVcCRRkqBx1sKo_5rvZKEbjyHucB_jlw-WtkCdhV_33MHNtukk0E7dtc8x-PDaVp4CGM93D1D0edg5mBcRAG3dosAn6K1vd2QpBgmmJzjwkierlt1XkpYxfMLzXh440p8lVdW29msBW4A7YdbktyuDlIBq2lfIFA1eiO2FQB0VZFKHGnEeRx_vtzd8ZSHvBKB9EHRm_Zb2D20rYUu_CqNnBB_iNqSDHpwutOjemExBBZn501kLNQ",
                   }}
-                  style={styles.partImage}
+                  style={styles.partImageNew}
+                  resizeMode="cover"
                 />
-                <View style={styles.tagContainer}>
-                  <AppText variant="labelSm" style={styles.tagText}>
-                    Orona OEM
-                  </AppText>
-                </View>
-              </View>
-              <View style={styles.partInfo}>
-                <AppText variant="h2" style={styles.partName}>
-                  قفل درب آسانسور
-                </AppText>
-                <AppText variant="body" color="muted" style={styles.partDesc}>
-                  مکانیزم تاییدشده قفل ایمنی درب کابین.
-                </AppText>
-                <TouchableOpacity
-                  onPress={handleCatalogPress}
+                <View
                   style={[
-                    styles.priceButton,
+                    styles.tagContainerNew,
                     {
-                      borderColor: colors.border,
-                      borderRadius: borderRadius.md,
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      backgroundColor: colors.primary,
+                      paddingHorizontal: 8,
+                      paddingVertical: 4,
+                      borderRadius: 4,
                     },
                   ]}
                 >
                   <AppText
-                    variant="button"
-                    style={{ color: colors.textPrimary }}
+                    variant="labelSm"
+                    style={{ color: colors.onPrimary, fontSize: 8 }}
                   >
-                    استعلام قیمت
+                    OEM
                   </AppText>
-                </TouchableOpacity>
+                </View>
               </View>
-            </View>
+              <View style={{ padding: spacing.md }}>
+                <AppText
+                  variant="labelSm"
+                  style={{ color: colors.secondary, fontSize: 10 }}
+                >
+                  قفل درب
+                </AppText>
+                <AppText
+                  variant="body"
+                  style={[
+                    styles.partNameNew,
+                    {
+                      color: colors.textPrimary,
+                      fontSize: 13,
+                      fontWeight: "600",
+                      marginTop: 2,
+                      marginBottom: 4,
+                    },
+                  ]}
+                  numberOfLines={1}
+                >
+                  مکانیزم قفل ایمنی
+                </AppText>
+                <AppText
+                  variant="body"
+                  color="muted"
+                  style={{ fontSize: 11 }}
+                >
+                  استعلام قیمت
+                </AppText>
+              </View>
+            </TouchableOpacity>
 
             {/* قطعه ۲ */}
-            <View
+            <TouchableOpacity
+              activeOpacity={0.9}
               style={[
-                styles.partCard,
+                styles.partCardNew,
                 {
                   backgroundColor: colors.surface,
                   borderColor: colors.border,
                   borderRadius: borderRadius.lg,
+                  borderWidth: 1,
+                  width: 200,
+                  overflow: "hidden",
                 },
               ]}
+              onPress={handleCatalogPress}
             >
               <View
                 style={[
-                  styles.partImageContainer,
-                  { borderBottomColor: colors.border },
+                  styles.partImageContainerNew,
+                  {
+                    height: 140,
+                    backgroundColor: colors.surfaceDim,
+                    position: "relative",
+                  },
                 ]}
               >
                 <Image
                   source={{
                     uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuDPqlTIVIYkBFuSel_rgxQ41WAUlTSkTyxA6joneyzT89nf0J6vcoIdNHRwfFAUYP8go1zP8TVEH2BTYEU-Ttt5zVECDDaXsn4degBLelXw8ZoIQHV-8YrD-r-tkKDHmUgBZVnXzwHieHAIlm4kMsqDEoPPFj23Cs2kjhtzJPK51kDjwz69e2pCFIj9G-wlxjLmeMXEfvsGW37maAxbNa1xq2Z3Di0gUU0h08_WG7ftOhwwnToAUynVTQ",
                   }}
-                  style={styles.partImage}
+                  style={styles.partImageNew}
+                  resizeMode="cover"
                 />
-                <View style={styles.tagContainer}>
-                  <AppText variant="labelSm" style={styles.tagText}>
-                    Universal
-                  </AppText>
-                </View>
-              </View>
-              <View style={styles.partInfo}>
-                <AppText variant="h2" style={styles.partName}>
-                  سیم بکسل کششی فولادی
-                </AppText>
-                <AppText variant="body" color="muted" style={styles.partDesc}>
-                  کابل‌های بافته‌شده با هسته فولادی مستحکم.
-                </AppText>
-                <TouchableOpacity
-                  onPress={handleCatalogPress}
+                <View
                   style={[
-                    styles.priceButton,
+                    styles.tagContainerNew,
                     {
-                      borderColor: colors.border,
-                      borderRadius: borderRadius.md,
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      backgroundColor: colors.primary,
+                      paddingHorizontal: 8,
+                      paddingVertical: 4,
+                      borderRadius: 4,
                     },
                   ]}
                 >
                   <AppText
-                    variant="button"
-                    style={{ color: colors.textPrimary }}
+                    variant="labelSm"
+                    style={{ color: colors.onPrimary, fontSize: 8 }}
                   >
-                    استعلام قیمت
+                    Universal
                   </AppText>
-                </TouchableOpacity>
+                </View>
               </View>
-            </View>
+              <View style={{ padding: spacing.md }}>
+                <AppText
+                  variant="labelSm"
+                  style={{ color: colors.secondary, fontSize: 10 }}
+                >
+                  سیم بکسل
+                </AppText>
+                <AppText
+                  variant="body"
+                  style={[
+                    styles.partNameNew,
+                    {
+                      color: colors.textPrimary,
+                      fontSize: 13,
+                      fontWeight: "600",
+                      marginTop: 2,
+                      marginBottom: 4,
+                    },
+                  ]}
+                  numberOfLines={1}
+                >
+                  کابل کششی فولادی
+                </AppText>
+                <AppText
+                  variant="body"
+                  color="muted"
+                  style={{ fontSize: 11 }}
+                >
+                  استعلام قیمت
+                </AppText>
+              </View>
+            </TouchableOpacity>
+
+            {/* قطعه ۳ */}
+            <TouchableOpacity
+              activeOpacity={0.9}
+              style={[
+                styles.partCardNew,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                  borderWidth: 1,
+                  width: 200,
+                  overflow: "hidden",
+                },
+              ]}
+              onPress={handleCatalogPress}
+            >
+              <View
+                style={[
+                  styles.partImageContainerNew,
+                  {
+                    height: 140,
+                    backgroundColor: colors.surfaceDim,
+                    position: "relative",
+                  },
+                ]}
+              >
+                <Image
+                  source={{
+                    uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuBJOuId653dDeMv-3lWDnrlAJakMDkyo9OCfUW7b1GCngnjNX7AK5r0F8wL5w8X6Q-c0dkAOO2E5YIB7y_VOOXp39lM3csFJDPQ_HbWGXCgRaKekcyABv3vJW-pSxeN-D5PJNp7cg_ft24kMwUsLAdRz_OzAl3gO2RTsLmFKHdkAJyz8JuQRcoj2-PkcAfdu_w467DOorzW5hyu6E4BbGRo2IFgb6HBZseGsejS_o74imNc_aQIzcSFRA",
+                  }}
+                  style={styles.partImageNew}
+                  resizeMode="cover"
+                />
+                <View
+                  style={[
+                    styles.tagContainerNew,
+                    {
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      backgroundColor: colors.primary,
+                      paddingHorizontal: 8,
+                      paddingVertical: 4,
+                      borderRadius: 4,
+                    },
+                  ]}
+                >
+                  <AppText
+                    variant="labelSm"
+                    style={{ color: colors.onPrimary, fontSize: 8 }}
+                  >
+                    Orona
+                  </AppText>
+                </View>
+              </View>
+              <View style={{ padding: spacing.md }}>
+                <AppText
+                  variant="labelSm"
+                  style={{ color: colors.secondary, fontSize: 10 }}
+                >
+                  میکروسوئیچ
+                </AppText>
+                <AppText
+                  variant="body"
+                  style={[
+                    styles.partNameNew,
+                    {
+                      color: colors.textPrimary,
+                      fontSize: 13,
+                      fontWeight: "600",
+                      marginTop: 2,
+                      marginBottom: 4,
+                    },
+                  ]}
+                  numberOfLines={1}
+                >
+                  شالتر صنعتی
+                </AppText>
+                <AppText
+                  variant="body"
+                  color="muted"
+                  style={{ fontSize: 11 }}
+                >
+                  استعلام قیمت
+                </AppText>
+              </View>
+            </TouchableOpacity>
           </ScrollView>
         </View>
 
-        {/* ۵. بنر تخمین هوشمند هزینه بازسازی آسانسور */}
+        {/* ۴. بنر تخمین هوشمند هزینه بازسازی آسانسور */}
         <View
           style={[
             styles.modernizationBanner,
@@ -483,7 +884,7 @@ export const DashboardScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* ۶. مقالات آموزشی و هاب ایمنی آسانسور */}
+        {/* ۵. بخش آموزش و نکات ایمنی */}
         <View style={{ paddingVertical: spacing.xl }}>
           <View
             style={[styles.carouselHeader, { paddingHorizontal: spacing.lg }]}
@@ -491,282 +892,297 @@ export const DashboardScreen = () => {
             <AppText variant="h2" style={styles.carouselTitle}>
               آموزش و نکات ایمنی آسانسور
             </AppText>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleLearningPress}>
               <AppText variant="labelSm" color="secondary">
-                همه مقالات
+                مشاهده همه
               </AppText>
             </TouchableOpacity>
           </View>
 
-          <View
-            style={[
-              styles.articlesContainer,
-              { paddingHorizontal: spacing.lg, gap: spacing.md },
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={[
+              styles.carouselScroll,
+              { paddingHorizontal: spacing.lg },
             ]}
           >
             {/* مقاله ۱ */}
             <TouchableOpacity
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               style={[
-                styles.articleRow,
+                styles.articleCardNew,
                 {
-                  borderColor: colors.border,
-                  borderRadius: borderRadius.md,
                   backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                  borderWidth: 1,
+                  width: 200,
+                  overflow: "hidden",
                 },
               ]}
+              onPress={handleLearningPress}
             >
-              <View style={styles.articleTextContainer}>
-                <AppText variant="labelSm" color="secondary">
-                  مراقبت و نگهداری
-                </AppText>
-                <AppText
-                  variant="h2"
+              <View
+                style={[
+                  styles.articleImageContainerNew,
+                  {
+                    height: 120,
+                    backgroundColor: colors.surfaceDim,
+                    position: "relative",
+                  },
+                ]}
+              >
+                <Image
+                  source={{
+                    uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuAtPT0b4h_7FXwXJryZNimbx6gRFH0YkBSDmXtvhz-ANqoGRxRXsdFHdrhmt8O4xtFo_ny8AzN-Xswj6NgvwPzX0dX1Wry56khPBY-IKP5L_7WmPVvVFb4HJ3GhDXbTbRXvKTEQM8kZ-B7Zf9Ok66B1Wcjf_QA_zxBPIvNbpiQu7kU9xCqh19g4QJRZhTCNTKUG60b66BI6aqx1sZ7XYdr2cKldbuY2P0UN8YoMo-UNMcVl6xNisO2K1g",
+                  }}
+                  style={styles.articleImageNew}
+                  resizeMode="cover"
+                />
+                <View
                   style={[
-                    styles.articleTitle,
-                    { color: colors.textPrimary, fontSize: 14 },
+                    styles.articleTagNew,
+                    {
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      backgroundColor: colors.secondary,
+                      paddingHorizontal: 8,
+                      paddingVertical: 4,
+                      borderRadius: 4,
+                    },
                   ]}
                 >
-                  ۵ نشانه کلیدی که زنگ خطری برای تعویض سیم‌بکسل آسانسور است
+                  <AppText
+                    variant="labelSm"
+                    style={{ color: colors.onPrimary, fontSize: 8 }}
+                  >
+                    ایمنی
+                  </AppText>
+                </View>
+              </View>
+              <View style={{ padding: spacing.md }}>
+                <AppText
+                  variant="labelSm"
+                  style={{ color: colors.secondary, fontSize: 10 }}
+                >
+                  ۵ دقیقه مطالعه
+                </AppText>
+                <AppText
+                  variant="body"
+                  style={[
+                    styles.articleTitleNew,
+                    {
+                      color: colors.textPrimary,
+                      fontSize: 13,
+                      fontWeight: "600",
+                      marginTop: 2,
+                      marginBottom: 4,
+                      lineHeight: 18,
+                    },
+                  ]}
+                  numberOfLines={2}
+                >
+                  ۵ نشانه برای تعویض سیم‌بکسل
                 </AppText>
                 <AppText
                   variant="body"
                   color="muted"
-                  numberOfLines={1}
-                  style={{ fontSize: 12, textAlign: "right" }}
+                  style={{ fontSize: 11 }}
                 >
-                  بررسی فنی علائم سایش و خوردگی کابل‌های کششی آسانسور...
+                  ۱۵ مهر ۱۴۰۳
                 </AppText>
-              </View>
-              <View style={styles.articleIconCircle}>
-                <Ionicons
-                  name="book-outline"
-                  size={20}
-                  color={colors.textPrimary}
-                />
               </View>
             </TouchableOpacity>
 
             {/* مقاله ۲ */}
             <TouchableOpacity
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               style={[
-                styles.articleRow,
+                styles.articleCardNew,
                 {
-                  borderColor: colors.border,
-                  borderRadius: borderRadius.md,
                   backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                  borderWidth: 1,
+                  width: 200,
+                  overflow: "hidden",
                 },
               ]}
+              onPress={handleLearningPress}
             >
-              <View style={styles.articleTextContainer}>
-                <AppText variant="labelSm" color="secondary">
-                  استانداردها
-                </AppText>
-                <AppText
-                  variant="h2"
+              <View
+                style={[
+                  styles.articleImageContainerNew,
+                  {
+                    height: 120,
+                    backgroundColor: colors.surfaceDim,
+                    position: "relative",
+                  },
+                ]}
+              >
+                <Image
+                  source={{
+                    uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuCe9te2QrxafYck5nANLQZu74vkb4x6t-0iBBbo7nUZuYgTBDSjVm_fyA-SNa_5JT6_yl1eJOsvFXSNom1Vt0Jhde7kYYvvcCKmRzlzasD2xi6UavBvxKDBVWZs1fo9bn9mQKlMsX-nafRcFj15k8bbJpL5QcFDDL6sUC3gu5gqe6YdyfkHL7fve-mjaAE0GWzGnwnvqlH6IkyFVd9uaqEbm_ovvZgcjdkDOlsjqKaQVYg-w76Nn_UcRQ",
+                  }}
+                  style={styles.articleImageNew}
+                  resizeMode="cover"
+                />
+                <View
                   style={[
-                    styles.articleTitle,
-                    { color: colors.textPrimary, fontSize: 14 },
+                    styles.articleTagNew,
+                    {
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      backgroundColor: colors.secondary,
+                      paddingHorizontal: 8,
+                      paddingVertical: 4,
+                      borderRadius: 4,
+                    },
                   ]}
                 >
-                  مقررات جدید آتش‌نشانی برای دریافت پایان‌کار آسانسور سال ۱۴۰۵
+                  <AppText
+                    variant="labelSm"
+                    style={{ color: colors.onPrimary, fontSize: 8 }}
+                  >
+                    استاندارد
+                  </AppText>
+                </View>
+              </View>
+              <View style={{ padding: spacing.md }}>
+                <AppText
+                  variant="labelSm"
+                  style={{ color: colors.secondary, fontSize: 10 }}
+                >
+                  ۴ دقیقه مطالعه
+                </AppText>
+                <AppText
+                  variant="body"
+                  style={[
+                    styles.articleTitleNew,
+                    {
+                      color: colors.textPrimary,
+                      fontSize: 13,
+                      fontWeight: "600",
+                      marginTop: 2,
+                      marginBottom: 4,
+                      lineHeight: 18,
+                    },
+                  ]}
+                  numberOfLines={2}
+                >
+                  گواهینامه‌های استاندارد ۱۴۰۳
                 </AppText>
                 <AppText
                   variant="body"
                   color="muted"
-                  numberOfLines={1}
-                  style={{ fontSize: 12, textAlign: "right" }}
+                  style={{ fontSize: 11 }}
                 >
-                  جدین‌ترین تغییرات در قوانین درب‌های لولایی و اتوماتیک
-                  اضطراری...
+                  ۱۰ مهر ۱۴۰۳
                 </AppText>
               </View>
-              <View style={styles.articleIconCircle}>
-                <Ionicons
-                  name="shield-outline"
-                  size={20}
-                  color={colors.textPrimary}
+            </TouchableOpacity>
+
+            {/* مقاله ۳ */}
+            <TouchableOpacity
+              activeOpacity={0.9}
+              style={[
+                styles.articleCardNew,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                  borderWidth: 1,
+                  width: 200,
+                  overflow: "hidden",
+                },
+              ]}
+              onPress={handleLearningPress}
+            >
+              <View
+                style={[
+                  styles.articleImageContainerNew,
+                  {
+                    height: 120,
+                    backgroundColor: colors.surfaceDim,
+                    position: "relative",
+                  },
+                ]}
+              >
+                <Image
+                  source={{
+                    uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuBAQJfvOIMiKOxUFGA8yhZM6QxNh1c0RZal85RmghBF9wreN317v89ln2L9O0uZfvIqZYexV0elFdrk-KB5BWWoG8DiPipF89JJGKbICI2HeC_wgwN_voueC6Ji3BkPMdxy5jcnpbHPDbTLNqmmbUx7uqfOaQ6EY22OQwbV7GL0Azg1ai9HEeZrVpRH0ZEFhUTKI2RKhEMrmg4uy_270tkWy51USQr2Nwa0WLxdWoF_1LGoh6x0fyVzbA",
+                  }}
+                  style={styles.articleImageNew}
+                  resizeMode="cover"
                 />
+                <View
+                  style={[
+                    styles.articleTagNew,
+                    {
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      backgroundColor: colors.secondary,
+                      paddingHorizontal: 8,
+                      paddingVertical: 4,
+                      borderRadius: 4,
+                    },
+                  ]}
+                >
+                  <AppText
+                    variant="labelSm"
+                    style={{ color: colors.onPrimary, fontSize: 8 }}
+                  >
+                    قطعات
+                  </AppText>
+                </View>
+              </View>
+              <View style={{ padding: spacing.md }}>
+                <AppText
+                  variant="labelSm"
+                  style={{ color: colors.secondary, fontSize: 10 }}
+                >
+                  ۶ دقیقه مطالعه
+                </AppText>
+                <AppText
+                  variant="body"
+                  style={[
+                    styles.articleTitleNew,
+                    {
+                      color: colors.textPrimary,
+                      fontSize: 13,
+                      fontWeight: "600",
+                      marginTop: 2,
+                      marginBottom: 4,
+                      lineHeight: 18,
+                    },
+                  ]}
+                  numberOfLines={2}
+                >
+                  عمر مفید کابل‌های کششی
+                </AppText>
+                <AppText
+                  variant="body"
+                  color="muted"
+                  style={{ fontSize: 11 }}
+                >
+                  ۸ مهر ۱۴۰۳
+                </AppText>
               </View>
             </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* ۷. نشان‌های اعتماد و اصالت */}
-        <View
-          style={[
-            styles.trustSection,
-            {
-              backgroundColor: colors.surface,
-              borderColor: colors.border,
-              paddingHorizontal: spacing.lg,
-            },
-          ]}
-        >
-          <View style={styles.trustBadge}>
-            <Ionicons
-              name="checkmark-seal-outline"
-              size={28}
-              color={colors.textPrimary}
-              style={{ marginLeft: spacing.sm }}
-            />
-            <AppText variant="button" style={{ color: colors.textPrimary }}>
-              تکنسین‌های مجرب و تایید‌شده
-            </AppText>
-          </View>
-          <View
-            style={[
-              styles.trustBadge,
-              {
-                borderTopWidth: 1,
-                borderBottomWidth: 1,
-                borderColor: colors.border,
-              },
-            ]}
-          >
-            <Ionicons
-              name="shield-checkmark-outline"
-              size={28}
-              color={colors.textPrimary}
-              style={{ marginLeft: spacing.sm }}
-            />
-            <AppText variant="button" style={{ color: colors.textPrimary }}>
-              تضمین ۱۰۰٪ اصالت قطعات یدکی
-            </AppText>
-          </View>
-          <View style={styles.trustBadge}>
-            <Ionicons
-              name="receipt-outline"
-              size={28}
-              color={colors.textPrimary}
-              style={{ marginLeft: spacing.sm }}
-            />
-            <AppText variant="button" style={{ color: colors.textPrimary }}>
-              قیمت‌گذاری شفاف و تعرفه مصوب
-            </AppText>
-          </View>
-        </View>
-
-        {/* ۸. طراحی فوتر لوکس و پرستیژ برند */}
-        <View
-          style={[
-            styles.footerContainer,
-            {
-              backgroundColor: colors.surfaceDim,
-              borderTopColor: colors.border,
-            },
-          ]}
-        >
-          <View style={styles.footerBrandRow}>
-            <AppText
-              variant="h1"
-              style={[styles.footerBrandText, { color: colors.textPrimary }]}
-            >
-              ایکس الوتور
-            </AppText>
-            <Ionicons
-              name="construct-outline"
-              size={24}
-              color={colors.secondary}
-            />
-          </View>
-
-          <AppText
-            variant="body"
-            color="muted"
-            style={styles.footerDescription}
-          >
-            پلتفرم تخصصی پایش، سرویس نگهداری و تأمین بدون واسطه قطعات یدکی انواع
-            آسانسورهای کششی و هیدرولیک در سراسر کشور.
-          </AppText>
-
-          <View style={styles.footerLinksGrid}>
-            <TouchableOpacity>
-              <AppText variant="labelSm" color="muted">
-                قوانین و مقررات
-              </AppText>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <AppText variant="labelSm" color="muted">
-                سوالات متداول
-              </AppText>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <AppText variant="labelSm" color="muted">
-                درخواست پشتیبانی
-              </AppText>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <AppText variant="labelSm" color="muted">
-                کاتالوگ برندها
-              </AppText>
-            </TouchableOpacity>
-          </View>
-
-          <View
-            style={[styles.footerDivider, { backgroundColor: colors.border }]}
-          />
-
-          <AppText variant="labelSm" color="muted" style={styles.copyrightText}>
-            © ۱۴۰۵ تمامی حقوق مادی و معنوی متعلق به ایکس الوتور می‌باشد.
-          </AppText>
+          </ScrollView>
         </View>
       </ScrollView>
 
-      {/* ناوبری پایینی موبایل */}
       <AppBottomNav activeTab="home" />
     </ScreenWrapper>
   );
 };
 
 const styles = StyleSheet.create({
-  fleetStatusCard: {
-    borderWidth: 1,
-    padding: 16,
-    elevation: 2,
-    shadowColor: "#0F172A",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-  },
-  statusRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  statusTitle: {
-    // بومی‌سازی شده فاقد تداخل وزنی
-  },
-  badge: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    marginLeft: 6,
-  },
-  statusSubtitle: {
-    textAlign: "right",
-    lineHeight: 20,
-    fontSize: 13,
-    marginBottom: 12,
-  },
-  divider: {
-    height: 1,
-    width: "100%",
-    marginBottom: 12,
-  },
-  statusFooter: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
   heroSection: {
     width: "100%",
   },
@@ -809,93 +1225,46 @@ const styles = StyleSheet.create({
     textAlign: "right",
     marginBottom: 16,
   },
-  servicesStack: {
-    width: "100%",
+  servicesGrid: {
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
+    gap: 12,
+    justifyContent: "space-between",
   },
   serviceCard: {
-    padding: 20,
     borderWidth: 1,
+    alignItems: "flex-end",
   },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 12,
-    alignSelf: "flex-end",
-  },
-  serviceTitle: {
-    textAlign: "right",
-    marginBottom: 8,
-  },
-  serviceDescription: {
-    textAlign: "right",
-    lineHeight: 22,
-  },
+  iconContainerSmall: {},
+  serviceTitleSmall: {},
+  serviceDescSmall: {},
   carouselHeader: {
     flexDirection: "row-reverse",
     justifyContent: "space-between",
     alignItems: "flex-end",
     marginBottom: 16,
   },
-  carouselTitle: {
-    // بومی‌سازی شده فاقد تداخل وزنی
-  },
+  carouselTitle: {},
   carouselScroll: {
     flexDirection: "row-reverse",
-    gap: 16,
+    gap: 12,
   },
-  partCard: {
-    width: 280,
-    borderWidth: 1,
-    overflow: "hidden",
-  },
-  partImageContainer: {
-    height: 180,
-    width: "100%",
-    position: "relative",
-    borderBottomWidth: 1,
-  },
-  partImage: {
+  partCardNew: {},
+  partImageContainerNew: {},
+  partImageNew: {
     width: "100%",
     height: "100%",
-    resizeMode: "cover",
   },
-  tagContainer: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    backgroundColor: "rgba(15, 23, 42, 0.8)",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
+  tagContainerNew: {},
+  partNameNew: {},
+  articleCardNew: {},
+  articleImageContainerNew: {},
+  articleImageNew: {
+    width: "100%",
+    height: "100%",
   },
-  tagText: {
-    color: "#FFFFFF",
-    fontSize: 10,
-    // تصحیح شد: حذف پارامتر تداخل‌برانگیز fontWeight برای حل کامل رندرینگ در اندروید
-  },
-  partInfo: {
-    padding: 16,
-  },
-  partName: {
-    textAlign: "right",
-    marginBottom: 4,
-  },
-  partDesc: {
-    textAlign: "right",
-    fontSize: 12,
-    lineHeight: 18,
-    marginBottom: 16,
-  },
-  priceButton: {
-    height: 40,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  articleTagNew: {},
+  articleTitleNew: {},
   modernizationBanner: {
     paddingVertical: 24,
     alignItems: "flex-end",
@@ -909,85 +1278,5 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-  },
-  articlesContainer: {
-    width: "100%",
-  },
-  articleRow: {
-    borderWidth: 1,
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  articleTextContainer: {
-    flex: 1,
-    paddingRight: 16,
-  },
-  articleTitle: {
-    textAlign: "right",
-    lineHeight: 20,
-    marginTop: 4,
-    marginBottom: 6,
-  },
-  articleIconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "rgba(15, 23, 42, 0.04)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  trustSection: {
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    marginVertical: 24,
-  },
-  trustBadge: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingVertical: 16,
-  },
-  footerContainer: {
-    borderTopWidth: 1,
-    paddingVertical: 32,
-    paddingHorizontal: 24,
-    alignItems: "flex-end",
-  },
-  footerBrandRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  footerBrandText: {
-    marginRight: 8,
-  },
-  footerDescription: {
-    textAlign: "right",
-    fontSize: 12,
-    lineHeight: 20,
-    marginBottom: 24,
-  },
-  footerLinksGrid: {
-    width: "100%",
-    flexDirection: "row-reverse",
-    flexWrap: "wrap",
-    gap: 16,
-    justifyContent: "flex-start",
-    marginBottom: 24,
-  },
-  footerDivider: {
-    height: 1,
-    width: "100%",
-    marginBottom: 16,
-  },
-  copyrightText: {
-    textAlign: "right",
-    fontSize: 10,
-    width: "100%",
-  },
-  brandText: {
-    marginRight: 6,
   },
 });

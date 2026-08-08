@@ -1,6 +1,6 @@
-// src/features/catalog/screens/RequestServiceScreen.tsx
+// src/features/catalog/screens/InstallationScreen.tsx
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   ScrollView,
@@ -21,12 +21,10 @@ import { useTheme } from '@/src/theme/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
-export const RequestServiceScreen = () => {
+export const InstallationScreen = () => {
   const { colors, spacing, borderRadius, isDark } = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-
-  const [selectedSpecialty, setSelectedSpecialty] = useState<string | null>(null);
 
   const handleBack = () => {
     if (router.canGoBack()) {
@@ -36,43 +34,43 @@ export const RequestServiceScreen = () => {
     }
   };
 
- 
-const handleCallEmergency = () => {
-  // هدایت به صفحه درخواست تکنسین
-  router.push('/request-technician');
-};
-  const specialties = [
+  const handleRequestInspection = () => {
+    router.push('/project-inquiry');
+  };
+
+  const architectures = [
     {
-      id: 'motor',
-      icon: 'flash-outline',
-      title: 'تعمیر موتور و کشش',
-      desc: 'حل مشکل لرزش، صدای سنگین یا گرم شدن سیم‌پیچ‌ها',
+      id: 'traction',
+      icon: 'settings-outline',
+      title: 'سیستم‌های کششی',
+      desc: 'راه‌حل‌های سرعت بالا برای ساختمان‌های میان‌مرتبه و بلند',
     },
     {
-      id: 'panel',
-      icon: 'hardware-chip-outline',
-      title: 'الکترونیک پنل کنترل',
-      desc: 'رفع خطاهای مادربرد، مشکلات تراز و نوسانات برق',
+      id: 'hydraulic',
+      icon: 'water-outline',
+      title: 'آسانسورهای هیدرولیک',
+      desc: 'ظرفیت بار سنگین برای استفاده تجاری کم‌ارتفاع',
     },
     {
-      id: 'door',
-      icon: 'door-open-outline',
-      title: 'تنظیم درب اتوماتیک',
-      desc: 'رفع گیر کردن درب، قفل‌های خراب و موتور اپراتور درب',
+      id: 'mrl',
+      icon: 'grid-outline',
+      title: 'راه‌حل‌های بدون موتورخانه',
+      desc: 'طراحی بدون موتورخانه برای بهینه‌سازی فضای ساختمان',
     },
     {
-      id: 'rope',
-      icon: 'barbell-outline',
-      title: 'تعویض طناب و قرقره',
-      desc: 'تعویض ایمن طناب‌های فولادی، قرقره‌ها و کفشک‌های راهنما',
+      id: 'home',
+      icon: 'home-outline',
+      title: 'آسانسورهای ویلایی',
+      desc: 'راه‌حل‌های جمع‌وجور و زیبا برای تحرک مسکونی',
     },
   ];
 
   const steps = [
-    { step: '۱', title: 'اعزام سریع', desc: 'نزدیک‌ترین کارشناس مجرب را اعزام می‌کنیم' },
-    { step: '۲', title: 'تشخیص دقیق', desc: 'با استفاده از ابزارهای مدرن، ریشه مشکل را پیدا می‌کنیم' },
-    { step: '۳', title: 'تایید هزینه', desc: 'قبل از شروع کار، صورتحساب شفافی ارائه می‌دهیم' },
-    { step: '۴', title: 'تست و تحویل', desc: 'پس از تعمیر، تست ایمنی با بار کامل انجام می‌دهیم' },
+    { step: '۱', title: 'بررسی سایت', desc: 'ارزیابی سازه و نقشه‌برداری فضایی' },
+    { step: '۲', title: 'محاسبات مهندسی', desc: 'مدل‌سازی توزیع بار و فاکتورهای ایمنی' },
+    { step: '۳', title: 'مونتاژ شفت', desc: 'نصب ریل‌های راهنما و تقویت سازه' },
+    { step: '۴', title: 'راه‌اندازی مکانیکی', desc: 'سیستم محرک، قرارگیری کابین و سیم‌کشی برق' },
+    { step: '۵', title: 'تحویل پروژه', desc: 'تست‌های ایمنی سخت‌گیرانه و تحویل گواهینامه', isLast: true },
   ];
 
   return (
@@ -103,7 +101,7 @@ const handleCallEmergency = () => {
             style={{ marginLeft: spacing.sm }}
           />
           <AppText variant="h2" style={{ color: colors.textPrimary }}>
-            تعمیر و عیب‌یابی
+            خدمات نصب
           </AppText>
         </View>
 
@@ -117,17 +115,17 @@ const handleCallEmergency = () => {
         contentContainerStyle={[
           styles.scrollContainer,
           {
-            paddingBottom: 160 + insets.bottom,
+            paddingBottom: 120 + insets.bottom,
           },
         ]}
       >
-        {/* بخش Hero با تصویر - چسبیده به هدر */}
+        {/* بخش Hero با تصویر */}
         <View style={styles.heroContainer}>
           <View
             style={[
               styles.heroImageContainer,
               {
-                height: 180,
+                height: 200,
                 backgroundColor: colors.surfaceDim,
                 position: 'relative',
               },
@@ -135,7 +133,7 @@ const handleCallEmergency = () => {
           >
             <Image
               source={{
-                uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAu282NgHScyjEZH4cxAgm5xpNG8lLCcgzR9-zxoFy83Cq3tPSKAzPFcaI_Vm1n12aXJSPK412wqK-Z02pugpgo9gJWoVCA_OOmXNJVq55tZvlNystG-klAC_-SQe30ji-M-FjZ8PZ_1cYq-W0Oa5hg3bjR9wQOeMLGkP4mM3Z4f-KPhmE7c3K0EZoLdMcKDDGYnw4BnVsxeB3zCId5Lm27AYUVej_xwF3f5GNEDRiv3wpl1qNqTZrHYQ',
+                uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDOVvPuusJQLnoVXuhozsyXHFVxvja3JfATC6PI0NwExqiqcq604oWT_zAhCAOV1158A4QIZR3pHKhk4COt1-T4TdJJHqAiBep_QPdfkmq7_uW3pUnmPs_CN5u5hrfeqNt_u7yY6Gp_acv5eRD6H638fgyDM2n-QBi_9tvWHqT_gEmq1ytDBQfMScY0KlpbzHksaDRCXjUcZ_W7IeWyKQsI9g-qHiHMyGcsA3u0GNJyFP3PHxJUU-wETQ',
               }}
               style={styles.heroImage}
               resizeMode="cover"
@@ -150,7 +148,7 @@ const handleCallEmergency = () => {
                   right: 0,
                   padding: spacing.lg,
                   paddingBottom: spacing.md,
-                  backgroundColor: 'rgba(0,0,0,0.5)',
+                  backgroundColor: 'rgba(15,23,42,0.85)',
                 },
               ]}
             >
@@ -159,48 +157,26 @@ const handleCallEmergency = () => {
                 style={{
                   color: '#FFFFFF',
                   marginBottom: spacing.xs,
+                  fontSize: 22,
+                  lineHeight: 30,
                 }}
               >
-                تعمیر و عیب‌یابی
+                نصب تاییدشده مهندسی برای هر معماری
               </AppText>
               <AppText
                 variant="body"
                 style={{
-                  color: 'rgba(255,255,255,0.9)',
+                  color: 'rgba(255,255,255,0.85)',
                   fontSize: 13,
                 }}
               >
-                تشخیص سریع. راه‌حل‌های دائمی.
+                طراحی دقیق، محاسبه بار و انطباق کامل با استانداردهای ایمنی
               </AppText>
             </View>
           </View>
-
-          <View
-            style={[
-              styles.heroDescriptionContainer,
-              {
-                padding: spacing.lg,
-              },
-            ]}
-          >
-            <AppText
-              variant="body"
-              style={[
-                styles.heroDescription,
-                {
-                  color: colors.textSecondary,
-                  lineHeight: 22,
-                },
-              ]}
-            >
-              آیا آسانسور شما دائماً خراب می‌شود یا کاملاً متوقف شده است؟ تکنسین‌های
-              معتبر ما با پاسخگویی سریع، مجهز به تشخیص و تعمیر هر گونه خرابی مکانیکی
-              یا الکتریکی هستند.
-            </AppText>
-          </View>
         </View>
 
-        {/* تخصص‌های عیب‌یابی */}
+        {/* سیستم‌های معماری */}
         <View
           style={[
             styles.section,
@@ -220,16 +196,15 @@ const handleCallEmergency = () => {
               },
             ]}
           >
-            تخصص‌های عیب‌یابی ما
+            معماری‌های اصلی
           </AppText>
 
-          <View style={styles.specialtiesGrid}>
-            {specialties.map((item) => (
-              <TouchableOpacity
+          <View style={styles.architecturesGrid}>
+            {architectures.map((item) => (
+              <View
                 key={item.id}
-                activeOpacity={0.8}
                 style={[
-                  styles.specialtyCard,
+                  styles.architectureCard,
                   {
                     backgroundColor: colors.surface,
                     borderColor: colors.border,
@@ -238,25 +213,23 @@ const handleCallEmergency = () => {
                     padding: spacing.md,
                     width: (width - spacing.lg * 2 - spacing.md) / 2,
                     alignItems: 'flex-end',
+                    gap: spacing.xs,
                   },
                 ]}
-                onPress={() => setSelectedSpecialty(item.id)}
               >
                 <Ionicons
                   name={item.icon as any}
                   size={28}
-                  color={colors.secondary}
-                  style={{ marginBottom: spacing.xs }}
+                  color={colors.textPrimary}
                 />
                 <AppText
                   variant="button"
                   style={[
-                    styles.specialtyTitle,
+                    styles.architectureTitle,
                     {
                       color: colors.textPrimary,
                       fontWeight: '600',
                       textAlign: 'right',
-                      marginBottom: spacing.xxs,
                     },
                   ]}
                 >
@@ -265,94 +238,23 @@ const handleCallEmergency = () => {
                 <AppText
                   variant="body"
                   style={[
-                    styles.specialtyDesc,
+                    styles.architectureDesc,
                     {
                       color: colors.textSecondary,
                       textAlign: 'right',
-                      fontSize: 12,
+                      fontSize: 11,
                       lineHeight: 16,
                     },
                   ]}
                 >
                   {item.desc}
                 </AppText>
-              </TouchableOpacity>
+              </View>
             ))}
           </View>
         </View>
 
-        {/* تعهدات اعزام اضطراری */}
-        <View
-          style={[
-            styles.commitmentSection,
-            {
-              paddingHorizontal: spacing.lg,
-              paddingVertical: spacing.md,
-            },
-          ]}
-        >
-          <View
-            style={[
-              styles.commitmentCard,
-              {
-                backgroundColor: isDark ? '#3D2A00' : '#FEF3C7',
-                borderColor: isDark ? '#5C3D00' : '#FDE68A',
-                borderRadius: borderRadius.lg,
-                borderWidth: 1,
-                padding: spacing.lg,
-                gap: spacing.sm,
-              },
-            ]}
-          >
-            <View style={styles.commitmentRow}>
-              <Ionicons
-                name="timer-outline"
-                size={20}
-                color={colors.secondary}
-                style={{ marginLeft: spacing.sm }}
-              />
-              <AppText
-                variant="body"
-                style={[
-                  styles.commitmentText,
-                  {
-                    color: isDark ? '#FFDCC3' : colors.textPrimary,
-                    fontWeight: '500',
-                    flex: 1,
-                    textAlign: 'right',
-                  },
-                ]}
-              >
-                میانگین زمان اعزام کمتر از ۳۰ دقیقه برای خرابی‌های فعال آسانسور
-              </AppText>
-            </View>
-            <View style={styles.commitmentRow}>
-              <Ionicons
-                name="checkmark-circle-outline"
-                size={20}
-                color={colors.secondary}
-                style={{ marginLeft: spacing.sm }}
-              />
-              <AppText
-                variant="body"
-                style={[
-                  styles.commitmentText,
-                  {
-                    color: isDark ? '#FFDCC3' : colors.textPrimary,
-                    fontWeight: '500',
-                    flex: 1,
-                    textAlign: 'right',
-                  },
-                ]}
-              >
-                تعمیر در اولین بازدید: ون‌های خدماتی ما مجهز به ۵۰+ قطعه یدکی رایج
-                هستند.
-              </AppText>
-            </View>
-          </View>
-        </View>
-
-        {/* فرآیند تعمیر */}
+        {/* فرآیند نصب */}
         <View
           style={[
             styles.processSection,
@@ -376,7 +278,7 @@ const handleCallEmergency = () => {
               },
             ]}
           >
-            فرآیند تعمیر صادقانه ما
+            چرخه نصب
           </AppText>
 
           <View style={styles.processContainer}>
@@ -390,6 +292,7 @@ const handleCallEmergency = () => {
                     alignItems: 'flex-start',
                     marginBottom: index < steps.length - 1 ? spacing.lg : 0,
                     position: 'relative',
+                    paddingRight: spacing.md,
                   },
                 ]}
               >
@@ -399,7 +302,7 @@ const handleCallEmergency = () => {
                       styles.processLine,
                       {
                         position: 'absolute',
-                        right: 16,
+                        right: 14,
                         top: 28,
                         width: 2,
                         height: 30,
@@ -412,25 +315,30 @@ const handleCallEmergency = () => {
                   style={[
                     styles.processDot,
                     {
-                      width: 32,
-                      height: 32,
+                      width: 28,
+                      height: 28,
                       borderRadius: borderRadius.full,
-                      backgroundColor: colors.surface,
+                      backgroundColor: item.isLast ? colors.secondary : colors.surface,
                       borderWidth: 2,
-                      borderColor: colors.secondary,
+                      borderColor: item.isLast ? colors.secondary : colors.textPrimary,
                       alignItems: 'center',
                       justifyContent: 'center',
                       marginLeft: spacing.md,
                       marginTop: 2,
+                      shadowColor: item.isLast ? colors.secondary : 'transparent',
+                      shadowOffset: { width: 0, height: 0 },
+                      shadowOpacity: item.isLast ? 0.4 : 0,
+                      shadowRadius: 8,
+                      elevation: item.isLast ? 4 : 0,
                     },
                   ]}
                 >
                   <AppText
                     variant="labelSm"
                     style={{
-                      color: colors.secondary,
+                      color: item.isLast ? '#FFFFFF' : colors.textPrimary,
                       fontWeight: 'bold',
-                      fontSize: 12,
+                      fontSize: 11,
                     }}
                   >
                     {item.step}
@@ -442,7 +350,7 @@ const handleCallEmergency = () => {
                     style={[
                       styles.processTitle,
                       {
-                        color: colors.textPrimary,
+                        color: item.isLast ? colors.secondary : colors.textPrimary,
                         fontWeight: '600',
                         textAlign: 'right',
                         marginBottom: spacing.xxs,
@@ -469,6 +377,87 @@ const handleCallEmergency = () => {
             ))}
           </View>
         </View>
+
+        {/* کارت گواهینامه */}
+        <View
+          style={[
+            styles.certificationSection,
+            {
+              paddingHorizontal: spacing.lg,
+              paddingVertical: spacing.xl,
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.certificationCard,
+              {
+                backgroundColor: isDark ? '#1A1A2E' : '#F8FAFC',
+                borderColor: colors.border,
+                borderRadius: borderRadius.lg,
+                borderWidth: 1,
+                padding: spacing.lg,
+                flexDirection: 'row-reverse',
+                alignItems: 'flex-start',
+                gap: spacing.md,
+              },
+            ]}
+          >
+            <View
+              style={[
+                styles.certificationIconContainer,
+                {
+                  backgroundColor: colors.surface,
+                  borderRadius: borderRadius.lg,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  padding: spacing.sm,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.05,
+                  shadowRadius: 4,
+                  elevation: 2,
+                },
+              ]}
+            >
+              <Ionicons
+                name="shield-checkmark-outline"
+                size={28}
+                color={colors.textPrimary}
+              />
+            </View>
+            <View style={{ flex: 1, alignItems: 'flex-end' }}>
+              <AppText
+                variant="button"
+                style={[
+                  styles.certificationTitle,
+                  {
+                    color: colors.textPrimary,
+                    fontWeight: '600',
+                    textAlign: 'right',
+                    marginBottom: spacing.xxs,
+                  },
+                ]}
+              >
+                منطبق با ISO و تحت پوشش بیمه
+              </AppText>
+              <AppText
+                variant="body"
+                style={[
+                  styles.certificationDesc,
+                  {
+                    color: colors.textSecondary,
+                    textAlign: 'right',
+                    fontSize: 13,
+                    lineHeight: 20,
+                  },
+                ]}
+              >
+                تمامی نصب‌ها مطابق با استانداردهای ISO 9001 و ISO 8100 هستند. به طور کامل تحت پوشش بیمه مسئولیت جامع برای محافظت از دارایی شما در طول ساخت‌وساز.
+              </AppText>
+            </View>
+          </View>
+        </View>
       </ScrollView>
 
       {/* دکمه ثابت پایین */}
@@ -488,24 +477,19 @@ const handleCallEmergency = () => {
         <TouchableOpacity
           activeOpacity={0.8}
           style={[
-            styles.emergencyButton,
+            styles.requestButton,
             {
-              backgroundColor: colors.secondary,
+              backgroundColor: colors.primary,
               borderRadius: borderRadius.md,
               paddingVertical: spacing.md,
               flexDirection: 'row-reverse',
               alignItems: 'center',
-              justifyContent: 'center',
-              gap: spacing.sm,
+              justifyContent: 'space-between',
+              paddingHorizontal: spacing.lg,
             },
           ]}
-          onPress={handleCallEmergency}
+          onPress={handleRequestInspection}
         >
-          <Ionicons
-            name="call-outline"
-            size={20}
-            color={colors.onPrimary}
-          />
           <AppText
             variant="button"
             style={{
@@ -513,8 +497,13 @@ const handleCallEmergency = () => {
               fontWeight: 'bold',
             }}
           >
-            تماس با امداد اضطراری
+            درخواست بازدید و برآورد رایگان
           </AppText>
+          <Ionicons
+            name="arrow-forward"
+            size={20}
+            color={colors.onPrimary}
+          />
         </TouchableOpacity>
       </View>
 
@@ -524,7 +513,7 @@ const handleCallEmergency = () => {
   );
 };
 
-export default RequestServiceScreen;
+export default InstallationScreen;
 
 const styles = StyleSheet.create({
   header: {
@@ -551,7 +540,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scrollContainer: {
-    paddingBottom: 160,
+    paddingTop: 0,
   },
   heroContainer: {},
   heroImageContainer: {
@@ -562,50 +551,30 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   heroOverlay: {},
-  heroDescriptionContainer: {
-    padding: 16,
-  },
-  heroDescription: {
-    textAlign: 'right',
-    lineHeight: 22,
-  },
   section: {},
   sectionTitle: {
     textAlign: 'right',
     marginBottom: 12,
   },
-  specialtiesGrid: {
+  architecturesGrid: {
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
     gap: 12,
     justifyContent: 'space-between',
   },
-  specialtyCard: {
+  architectureCard: {
     alignItems: 'flex-end',
     padding: 12,
+    gap: 4,
   },
-  specialtyTitle: {
+  architectureTitle: {
     textAlign: 'right',
     fontWeight: '600',
   },
-  specialtyDesc: {
+  architectureDesc: {
     textAlign: 'right',
-    fontSize: 12,
+    fontSize: 11,
     lineHeight: 16,
-  },
-  commitmentSection: {},
-  commitmentCard: {
-    padding: 16,
-    gap: 8,
-  },
-  commitmentRow: {
-    flexDirection: 'row-reverse',
-    alignItems: 'flex-start',
-  },
-  commitmentText: {
-    fontWeight: '500',
-    flex: 1,
-    textAlign: 'right',
   },
   processSection: {
     paddingHorizontal: 16,
@@ -619,17 +588,18 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: 12,
     position: 'relative',
+    paddingRight: 12,
   },
   processLine: {
     position: 'absolute',
-    right: 16,
+    right: 14,
     top: 28,
     width: 2,
     height: 30,
   },
   processDot: {
-    width: 32,
-    height: 32,
+    width: 28,
+    height: 28,
     borderRadius: 9999,
     alignItems: 'center',
     justifyContent: 'center',
@@ -644,6 +614,30 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     fontSize: 13,
   },
+  certificationSection: {},
+  certificationCard: {
+    padding: 16,
+    flexDirection: 'row-reverse',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  certificationIconContainer: {
+    padding: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  certificationTitle: {
+    textAlign: 'right',
+    fontWeight: '600',
+  },
+  certificationDesc: {
+    textAlign: 'right',
+    fontSize: 13,
+    lineHeight: 20,
+  },
   fixedBottom: {
     position: 'absolute',
     bottom: 0,
@@ -654,12 +648,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderTopWidth: 1,
   },
-  emergencyButton: {
+  requestButton: {
     width: '100%',
     paddingVertical: 12,
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
   },
 });

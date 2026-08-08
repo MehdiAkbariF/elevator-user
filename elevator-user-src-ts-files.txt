@@ -1,0 +1,6391 @@
+﻿========== src\components\common\AppButton.tsx ==========
+// src/components/common/AppButton.tsx
+
+import React from 'react';
+import { StyleSheet, TouchableOpacity, ActivityIndicator, ViewStyle } from 'react-native';
+import { useTheme } from '../../theme/ThemeContext';
+import { AppText } from '@/src/theme/AppText';
+
+interface AppButtonProps {
+  title: string;
+  onPress: () => void;
+  variant?: 'primary' | 'secondary' | 'emergency';
+  loading?: boolean;
+  disabled?: boolean;
+  style?: ViewStyle;
+}
+
+export const AppButton: React.FC<AppButtonProps> = ({
+  title,
+  onPress,
+  variant = 'primary',
+  loading = false,
+  disabled = false,
+  style,
+}) => {
+  const { colors, borderRadius } = useTheme();
+
+  let backgroundColor = colors.primary;
+  let textColor = colors.onPrimary;
+  let borderColor = 'transparent';
+  let borderWidth = 0;
+
+  if (variant === 'secondary') {
+    backgroundColor = colors.surface;
+    textColor = colors.textPrimary;
+    borderColor = colors.border;
+    borderWidth = 1;
+  } else if (variant === 'emergency') {
+    backgroundColor = colors.error;
+    textColor = colors.onError;
+  }
+
+  const buttonStyles = [
+    styles.button,
+    {
+      backgroundColor,
+      borderRadius: borderRadius.md,
+      borderColor,
+      borderWidth,
+      opacity: disabled || loading ? 0.6 : 1,
+    },
+    style,
+  ];
+
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={disabled || loading}
+      activeOpacity={0.8}
+      style={buttonStyles}
+    >
+      {loading ? (
+        <ActivityIndicator color={textColor} size="small" />
+      ) : (
+        <AppText variant="button" style={{ color: textColor }}>
+          {title}
+        </AppText>
+      )}
+    </TouchableOpacity>
+  );
+};
+
+const styles = StyleSheet.create({
+  button: {
+    height: 56,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+});
+
+========== src\components\common\AppModal.tsx ==========
+// src/components/common/AppModal.tsx
+
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import {
+  Modal,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
+
+interface AppModalProps {
+  visible: boolean;
+  onClose: () => void;
+  title: string;
+  children: React.ReactNode;
+}
+
+export const AppModal: React.FC<AppModalProps> = ({
+  visible,
+  onClose,
+  title,
+  children,
+}) => {
+  const { colors, borderRadius, spacing } = useTheme();
+
+  return (
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent={true}
+      onRequestClose={onClose}
+    >
+      {/* Ø¨Ú©â€ŒØ¯Ø±Ø§Ù¾ Ù†ÛŒÙ…Ù‡â€ŒØ´ÙØ§Ù Ø¨Ø±Ø§ÛŒ Ø¨Ø³ØªÙ† Ù…ÙˆØ¯Ø§Ù„ Ø¯Ø± ØµÙˆØ±Øª Ú©Ù„ÛŒÚ© Ø±ÙˆÛŒ ÙØ¶Ø§ÛŒ Ø®Ø§Ù„ÛŒ */}
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View
+          style={[
+            styles.backdrop,
+            { backgroundColor: "rgba(15, 23, 42, 0.4)" },
+          ]}
+        >
+          {/* Ø¨Ø¯Ù†Ù‡ Ø§ØµÙ„ÛŒ Ù…ÙˆØ¯Ø§Ù„ Ú©Ø´ÙˆÛŒÛŒ */}
+          <TouchableWithoutFeedback>
+            <View
+              style={[
+                styles.modalContainer,
+                {
+                  backgroundColor: colors.surface,
+                  borderTopLeftRadius: borderRadius.xl,
+                  borderTopRightRadius: borderRadius.xl,
+                  padding: spacing.lg,
+                },
+              ]}
+            >
+              {/* Ù‡Ø¯Ø± Ù…ÙˆØ¯Ø§Ù„ Ø¨Ù‡ ØµÙˆØ±Øª RTL */}
+              <View
+                style={[styles.header, { borderBottomColor: colors.border }]}
+              >
+                {/* Ø¯Ú©Ù…Ù‡ Ø¨Ø³ØªÙ† Ø¯Ø± Ú†Ù¾ */}
+                <TouchableOpacity
+                  onPress={onClose}
+                  activeOpacity={0.7}
+                  style={styles.closeBtn}
+                >
+                  <Ionicons name="close" size={24} color={colors.textPrimary} />
+                </TouchableOpacity>
+
+                {/* Ø¹Ù†ÙˆØ§Ù† ÙˆØ³Ø· */}
+                <AppText variant="h2" style={{ color: colors.textPrimary }}>
+                  {title}
+                </AppText>
+
+                {/* ÛŒÚ© Ø§Ø³Ù¾ÛŒØ³Ø± Ø¨Ø±Ø§ÛŒ Ù…ØªÙ‚Ø§Ø±Ù† Ù…Ø§Ù†Ø¯Ù† Ø¹Ù†ÙˆØ§Ù† Ø¯Ø± ÙˆØ³Ø· */}
+                <View style={{ width: 40 }} />
+              </View>
+
+              {/* Ú©Ø§Ù†ØªÙ†Øª Ø¯Ø§ÛŒÙ†Ø§Ù…ÛŒÚ© Ø¯Ø§Ø®Ù„ÛŒ Ù…ÙˆØ¯Ø§Ù„ */}
+              <View style={styles.content}>{children}</View>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
+};
+
+const styles = StyleSheet.create({
+  backdrop: {
+    flex: 1,
+    justifyContent: "flex-end", // ØªØ¨Ø¯ÛŒÙ„ Ø¨Ù‡ Ø­Ø§Ù„Øª Ú©Ø´ÙˆÛŒÛŒ Ù¾Ø§ÛŒÛŒÙ† ØµÙØ­Ù‡ (BottomSheet)
+  },
+  modalContainer: {
+    width: "100%",
+    alignSelf: "center",
+    maxHeight: "85%",
+    ...Platform.select({
+      web: {
+        maxWidth: 440, // Ø±Ø¹Ø§ÛŒØª Ù…Ú©Ø³â€ŒÙˆÛŒØ¯ Ø±ÙˆÛŒ Ù…Ø±ÙˆØ±Ú¯Ø± ÙˆØ¨
+      },
+    }),
+    elevation: 10,
+    shadowColor: "#0F172A",
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+  },
+  closeBtn: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  content: {
+    paddingTop: 16,
+  },
+});
+
+========== src\components\common\ThemeToggleButton.tsx ==========
+// src/components/common/ThemeToggleButton.tsx
+
+import React from 'react';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/src/theme/ThemeContext';
+
+export const ThemeToggleButton = () => {
+  const { colors, isDark, toggleTheme } = useTheme();
+
+  return (
+    <TouchableOpacity
+      activeOpacity={0.7}
+      onPress={toggleTheme}
+      style={styles.button}
+    >
+      <Ionicons
+        name={isDark ? 'sunny' : 'moon'}
+        size={24} // Ø³Ø§ÛŒØ² Ú©Ù…ÛŒ Ø¨Ø²Ø±Ú¯â€ŒØªØ± Ø¨Ø±Ø§ÛŒ Ø®ÙˆØ§Ù†Ø§ÛŒÛŒ Ø¨Ù‡ØªØ± Ø¨Ø¯ÙˆÙ† Ø¨Ú©â€ŒÚ¯Ø±Ø§Ù†Ø¯
+        color={colors.textPrimary}
+      />
+    </TouchableOpacity>
+  );
+};
+
+const styles = StyleSheet.create({
+  button: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+========== src\components\layout\AppBottomNav.tsx ==========
+// src/components/layout/AppBottomNav.tsx
+
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context"; // Ø§ÛŒÙ…Ù¾ÙˆØ±Øª Ø¯Ø±ÛŒØ§ÙØª Ø­Ø§Ø´ÛŒÙ‡â€ŒÙ‡Ø§ÛŒ Ø§Ù…Ù† Ø³ÛŒØ³ØªÙ…â€ŒØ¹Ø§Ù…Ù„
+
+interface AppBottomNavProps {
+  activeTab: "home" | "shop" | "cart" | "categories" | "profile";
+}
+
+export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
+  const { colors } = useTheme();
+  const router = useRouter();
+  const insets = useSafeAreaInsets(); // Ø¯Ø±ÛŒØ§ÙØª ÙØ§ØµÙ„Ù‡ Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Ù„Ù…Ø³ÛŒ Ú©Ù Ú¯ÙˆØ´ÛŒ Ø§Ø² Ø³ÛŒØ³ØªÙ…â€ŒØ¹Ø§Ù…Ù„
+
+  const tabs = [
+    {
+      id: "profile",
+      title: "Ù¾Ø±ÙˆÙØ§ÛŒÙ„",
+      iconActive: "person",
+      iconInactive: "person-outline",
+    },
+    {
+      id: "categories",
+      title: "Ø¯Ø³ØªÙ‡â€ŒØ¨Ù†Ø¯ÛŒ",
+      iconActive: "apps",
+      iconInactive: "apps-outline",
+    },
+    {
+      id: "cart",
+      title: "Ø³Ø¨Ø¯ Ø®Ø±ÛŒØ¯",
+      iconActive: "cart",
+      iconInactive: "cart-outline",
+    },
+    {
+      id: "shop",
+      title: "ÙØ±ÙˆØ´Ú¯Ø§Ù‡",
+      iconActive: "cube",
+      iconInactive: "cube-outline",
+    },
+    {
+      id: "home",
+      title: "Ø®Ø§Ù†Ù‡",
+      iconActive: "home",
+      iconInactive: "home-outline",
+    },
+  ] as const;
+
+  const handleTabPress = (tabId: typeof activeTab) => {
+    if (tabId === "home") {
+      router.replace("/dashboard");
+    } else if (tabId === "shop") {
+      router.replace("/catalog");
+    } else if (tabId === "cart") {
+      router.replace("/cart");
+    } else if (tabId === "categories") {
+      router.replace("/categories");
+    } else if (tabId === "profile") {
+      router.replace("/profile");
+    }
+  };
+
+  return (
+    <View
+      style={[
+        styles.bottomNav,
+        {
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
+          // Ø§ÙØ²Ø§ÛŒØ´ Ù¾ÙˆÛŒØ§ÛŒ Ø§Ø±ØªÙØ§Ø¹ Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Ù†Ø§ÙˆØ¨Ø±ÛŒ Ø¬Ù‡Øª Ø¬Ù„ÙˆÚ¯ÛŒØ±ÛŒ Ø§Ø² ØªØ¯Ø§Ø®Ù„ ÙÛŒØ²ÛŒÚ©ÛŒ Ø¨Ø§ Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Ù…Ø¬Ø§Ø²ÛŒ Ø®Ø§Ù†Ù‡ Ø¯Ø± Ù…ÙˆØ¨Ø§ÛŒÙ„
+          height: 64 + insets.bottom,
+          paddingBottom: insets.bottom,
+        },
+      ]}
+    >
+      {tabs.map((tab) => {
+        const isActive = activeTab === tab.id;
+        const tintColor = isActive ? colors.secondary : colors.textSecondary;
+
+        return (
+          <TouchableOpacity
+            key={tab.id}
+            activeOpacity={0.7}
+            onPress={() => handleTabPress(tab.id)}
+            style={styles.navItem}
+          >
+            <Ionicons
+              name={isActive ? tab.iconActive : tab.iconInactive}
+              size={24}
+              color={tintColor}
+            />
+            <AppText
+              variant="labelSm"
+              style={[styles.navText, { color: tintColor }]}
+            >
+              {tab.title}
+            </AppText>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  bottomNav: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    borderTopWidth: 1,
+    zIndex: 100,
+  },
+  navItem: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+    height: "100%",
+  },
+  navText: {
+    marginTop: 2,
+    fontSize: 10,
+    fontWeight: "600",
+  },
+});
+
+========== src\components\layout\AppHeader.tsx ==========
+// src/components/layout/AppHeader.tsx
+
+import React from 'react';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useTheme } from '@/src/theme/ThemeContext';
+import { AppText } from '@/src/theme/AppText';
+import { ThemeToggleButton } from '@/src/components/common/ThemeToggleButton';
+
+interface AppHeaderProps {
+  title?: string;
+  showBackButton?: boolean;
+  showThemeToggle?: boolean;
+}
+
+export const AppHeader: React.FC<AppHeaderProps> = ({
+  title = 'xElevator',
+  showBackButton = false,
+  showThemeToggle = true,
+}) => {
+  const { colors } = useTheme();
+  const router = useRouter();
+
+  return (
+    <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+      {/* Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Ø³Ù…Øª Ú†Ù¾ (ØªØºÛŒÛŒØ± ØªÙ…) */}
+      <View style={styles.leftContainer}>
+        {showThemeToggle && <ThemeToggleButton />}
+      </View>
+
+      {/* Ø¹Ù†ÙˆØ§Ù† ÙˆØ³Ø· ÛŒØ§ Ø±Ø§Ø³Øª Ù‡Ø¯Ø± */}
+      <View style={styles.centerContainer}>
+        <AppText variant="h2" style={styles.titleText}>
+          {title}
+        </AppText>
+        {!showBackButton && (
+          <Ionicons name="construct" size={20} color={colors.secondary} style={{ marginLeft: 6 }} />
+        )}
+      </View>
+
+      {/* Ø¯Ú©Ù…Ù‡ Ø¨Ø§Ø²Ú¯Ø´Øª ÛŒØ§ Ø¨Ø³ØªÙ† Ø¯Ø± Ø³Ù…Øª Ø±Ø§Ø³Øª (Ù…Ø®ØµÙˆØµ ØµÙØ­Ø§Øª Ø¯Ø§Ø®Ù„ÛŒ) */}
+      <View style={styles.rightContainer}>
+        {showBackButton && (
+          <TouchableOpacity
+            onPress={() => router.back()}
+            activeOpacity={0.7}
+            style={styles.backButton}
+          >
+            <Ionicons name="arrow-forward" size={24} color={colors.textPrimary} />
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  header: {
+    height: 56,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+  },
+  leftContainer: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  centerContainer: {
+    flex: 2,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleText: {
+    fontWeight: '700',
+  },
+  rightContainer: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+========== src\components\layout\ScreenWrapper.tsx ==========
+// src/components/layout/ScreenWrapper.tsx
+
+import React from 'react';
+import { StyleSheet, View, ViewStyle, Platform, StatusBar } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from '@/src/theme/ThemeContext';
+
+interface ScreenWrapperProps {
+  children: React.ReactNode;
+  style?: ViewStyle;
+}
+
+export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({ children, style }) => {
+  const { colors, isDark } = useTheme();
+  const insets = useSafeAreaInsets(); // Ø¯Ø±ÛŒØ§ÙØª Ù¾ÙˆÛŒØ§ÛŒ ÙØ§ØµÙ„Ù‡ Ù†Ø§Ú† Ø¯ÙˆØ±Ø¨ÛŒÙ† Ø§Ø² Ø³ÛŒØ³ØªÙ…â€ŒØ¹Ø§Ù…Ù„
+
+  return (
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.background,
+          // Ø§Ø¹Ù…Ø§Ù„ Ø®ÙˆØ¯Ú©Ø§Ø± Ù¾Ø¯ÛŒÙ†Ú¯ Ø¨Ø§Ù„Ø§ Ø¨Ø±Ø§ÛŒ Ø¬Ù„ÙˆÚ¯ÛŒØ±ÛŒ Ø§Ø² Ù†ÙÙˆØ° Ù‡Ø¯Ø± Ø¨Ù‡ Ø²ÛŒØ± Ø¯ÙˆØ±Ø¨ÛŒÙ† Ùˆ Ù†Ø§Ú† Ø¯Ø± Ø§Ù†Ø¯Ø±ÙˆÛŒØ¯ Ùˆ iOS
+          paddingTop: insets.top,
+        },
+        style,
+      ]}
+    >
+      {/* Ù‡Ù…Ø§Ù‡Ù†Ú¯â€ŒØ³Ø§Ø²ÛŒ Ø§Ø³ØªØ§ÛŒÙ„ Ù†ÙˆØªÛŒÙÛŒÚ©ÛŒØ´Ù†â€ŒØ¨Ø§Ø± Ú¯ÙˆØ´ÛŒ */}
+      <StatusBar
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+        backgroundColor="transparent"
+        translucent={true}
+      />
+      <View style={styles.innerContainer}>
+        {children}
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  innerContainer: {
+    flex: 1,
+    width: '100%',
+    alignSelf: 'center',
+    ...Platform.select({
+      web: {
+        maxWidth: 440, // Ø±Ø¹Ø§ÛŒØª Ù…Ú©Ø³â€ŒÙˆÛŒØ¯ Ø±ÙˆÛŒ ÙˆØ¨
+      }
+    })
+  },
+});
+
+========== src\features\auth\screens\LoginMobileScreen.tsx ==========
+// src/features/auth/screens/LoginMobileScreen.tsx
+
+import { AppButton } from "@/src/components/common/AppButton";
+import { ThemeToggleButton } from "@/src/components/common/ThemeToggleButton";
+import { ScreenWrapper } from "@/src/components/layout/ScreenWrapper";
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+// Ù…Ø¨Ø¯Ù„ Ù‡ÙˆØ´Ù…Ù†Ø¯ Ø§Ø¹Ø¯Ø§Ø¯ ÙØ§Ø±Ø³ÛŒ Ùˆ Ø¹Ø±Ø¨ÛŒ Ø¨Ù‡ Ø§Ù†Ú¯Ù„ÛŒØ³ÛŒ Ø¬Ù‡Øª Ù¾Ø±Ø¯Ø§Ø²Ø´ ØµØ­ÛŒØ­ ÙØ±Ù…Øª Ø´Ù…Ø§Ø±Ù‡ Ù‡Ù…Ø±Ø§Ù‡
+const convertToEnglishDigits = (str: string) => {
+  const persianDigits = [
+    /Û°/g,
+    /Û±/g,
+    /Û²/g,
+    /Û³/g,
+    /Û´/g,
+    /Ûµ/g,
+    /Û¶/g,
+    /Û·/g,
+    /Û¸/g,
+    /Û¹/g,
+  ];
+  const arabicDigits = [
+    /Ù /g,
+    /Ù¡/g,
+    /Ù¢/g,
+    /Ù£/g,
+    /Ù¤/g,
+    /Ù¥/g,
+    /Ù¦/g,
+    /Ù§/g,
+    /Ù¨/g,
+    /Ù©/g,
+  ];
+  let clean = str;
+  for (let i = 0; i < 10; i++) {
+    clean = clean
+      .replace(persianDigits[i], i.toString())
+      .replace(arabicDigits[i], i.toString());
+  }
+  return clean;
+};
+
+export const LoginMobileScreen = () => {
+  const { colors, spacing, borderRadius } = useTheme();
+  const router = useRouter();
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  // Ù…Ø¹ØªØ¨Ø±Ø³Ø§Ø²ÛŒ Ø´Ù…Ø§Ø±Ù‡ ØªÙ„ÙÙ† Ù‡Ù…Ø±Ø§Ù‡ Ø§ÛŒØ±Ø§Ù† (Ø´Ø±ÙˆØ¹ Ø¨Ø§ Û°Û¹ Ùˆ Ø¯Ø§Ø±Ø§ÛŒ Û±Û± Ø±Ù‚Ù…)
+  const isPhoneNumberValid = /^09[0-9]{9}$/.test(phoneNumber);
+
+  const handleTextChange = (text: string) => {
+    // ØªØ¨Ø¯ÛŒÙ„ ÙˆØ±ÙˆØ¯ÛŒ Ø¨Ù‡ Ø§Ø¹Ø¯Ø§Ø¯ Ø§Ù†Ú¯Ù„ÛŒØ³ÛŒ Ùˆ Ø­Ø°Ù Ú©Ø§Ø±Ø§Ú©ØªØ±Ù‡Ø§ÛŒ Ù…Ø²Ø§Ø­Ù… ØºÛŒØ± Ø¹Ø¯Ø¯ÛŒ
+    const cleanNumber = convertToEnglishDigits(text).replace(/[^0-9]/g, "");
+    setPhoneNumber(cleanNumber);
+  };
+
+  const handleContinue = () => {
+    if (isPhoneNumberValid) {
+      router.push("/verify");
+    }
+  };
+
+  return (
+    <ScreenWrapper>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+      >
+        <View style={[styles.mainWrapper, { paddingHorizontal: spacing.lg }]}>
+          {/* Ù‡Ø¯Ø± Ø¨Ø§Ù„Ø§ÛŒÛŒ Ø¨Ø§ Ú†ÛŒØ¯Ù…Ø§Ù† Ø«Ø§Ø¨Øª */}
+          <View style={styles.header}>
+            {/* Ø¨Ø³ØªÙ† Ø¯Ø± Ú†Ù¾ - Ø§Ú©Ù†ÙˆÙ† Ø¨Ø§ Ù„Ù…Ø³ Ø¢Ù† Ú©Ø§Ø±Ø¨Ø± Ø¨Ù‡ ØµÙˆØ±Øª Ø§ÛŒÙ…Ù† Ø¨Ù‡ Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯ Ù…Ù†ØªÙ‚Ù„ Ù…ÛŒâ€ŒØ´ÙˆØ¯ */}
+            <TouchableOpacity
+              onPress={() => router.replace("/dashboard")}
+              activeOpacity={0.7}
+              style={styles.closeButton}
+            >
+              <Ionicons name="close" size={24} color={colors.textPrimary} />
+            </TouchableOpacity>
+
+            {/* ØªØºÛŒÛŒØ± ØªÙ… Ø¯Ø± Ø±Ø§Ø³Øª */}
+            <ThemeToggleButton />
+          </View>
+
+          {/* Ù…Ø­ØªÙˆØ§ÛŒ Ø§ØµÙ„ÛŒ ÙØ±Ù… */}
+          <View style={[styles.content, { marginTop: spacing.xl }]}>
+            <View style={styles.textContainer}>
+              <AppText
+                variant="h1"
+                style={[styles.title, { color: colors.textPrimary }]}
+              >
+                ÙˆØ±ÙˆØ¯ Ø´Ù…Ø§Ø±Ù‡ Ù…ÙˆØ¨Ø§ÛŒÙ„
+              </AppText>
+              <AppText variant="body" color="muted" style={styles.subtitle}>
+                Ø¨Ø±Ø§ÛŒ ÙˆØ±ÙˆØ¯ ÛŒØ§ Ø«Ø¨Øªâ€ŒÙ†Ø§Ù…ØŒ Ø´Ù…Ø§Ø±Ù‡ Ù…ÙˆØ¨Ø§ÛŒÙ„ Ø®ÙˆØ¯ Ø±Ø§ ÙˆØ§Ø±Ø¯ Ú©Ù†ÛŒØ¯ ØªØ§ Ú©Ø¯ ØªØ£ÛŒÛŒØ¯
+                Ø§Ø±Ø³Ø§Ù„ Ø´ÙˆØ¯.
+              </AppText>
+            </View>
+
+            {/* ÙÛŒÙ„Ø¯ ÙˆØ±ÙˆØ¯ÛŒ Ø´Ù…Ø§Ø±Ù‡ Ù‡Ù…Ø±Ø§Ù‡ Ø¨Ù‡ ØµÙˆØ±Øª LTR Ø§Ø³ØªØ§Ù†Ø¯Ø§Ø±Ø¯ Ø¨ÛŒÙ†â€ŒØ§Ù„Ù…Ù„Ù„ÛŒ Ø´Ù…Ø§Ø±Ù‡â€ŒÙ‡Ø§ */}
+            <View
+              style={[
+                styles.inputWrapper,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.md,
+                },
+              ]}
+            >
+              {/* Ø¨Ø®Ø´ Ø«Ø§Ø¨Øª Ú©Ø¯ Ú©Ø´ÙˆØ± Ø¯Ø± Ø³Ù…Øª Ú†Ù¾ */}
+              <View
+                style={[
+                  styles.countryCode,
+                  { borderRightColor: colors.border },
+                ]}
+              >
+                <AppText variant="body" style={styles.countryText}>
+                  +Û¹Û¸
+                </AppText>
+                <Ionicons
+                  name="arrow-down"
+                  size={12}
+                  color={colors.textSecondary}
+                  style={{ marginRight: 4 }}
+                />
+              </View>
+
+              {/* Ú©Ø§Ø¯Ø± ÙˆØ±ÙˆØ¯ Ù…ØªÙ† Ø´Ù…Ø§Ø±Ù‡ Ù‡Ù…Ø±Ø§Ù‡ Ø¯Ø± Ø³Ù…Øª Ø±Ø§Ø³Øª Ø¨Ø§ ÙÙˆÙ†Øª Ø§Ø¹Ø¯Ø§Ø¯ ÙØ§Ø±Ø³ÛŒ */}
+              <TextInput
+                value={phoneNumber}
+                onChangeText={handleTextChange}
+                keyboardType="phone-pad"
+                placeholder="Û°Û¹Û±Û²XXXXXXX"
+                placeholderTextColor={colors.textSecondary}
+                maxLength={11}
+                style={[
+                  styles.textInput,
+                  {
+                    color: colors.textPrimary,
+                    fontFamily: "IRANYekanXFaNum-Regular", // Ø§Ø¹Ù…Ø§Ù„ ÙÙˆÙ†Øª Ø¬Ù‡Øª Ù†Ù…Ø§ÛŒØ´ Ø²ÛŒØ¨Ø§ÛŒ Ø§Ø¹Ø¯Ø§Ø¯ Ø¨Ù‡ ÙØ§Ø±Ø³ÛŒ
+                  },
+                ]}
+              />
+            </View>
+          </View>
+
+          {/* Ø¯Ú©Ù…Ù‡ Ù¾Ø§ÛŒÛŒÙ† ØµÙØ­Ù‡ */}
+          <View style={[styles.footer, { paddingBottom: spacing.lg }]}>
+            <AppButton
+              title="Ø§Ø¯Ø§Ù…Ù‡"
+              onPress={handleContinue}
+              disabled={!isPhoneNumberValid}
+            />
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </ScreenWrapper>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  mainWrapper: {
+    flex: 1,
+    justifyContent: "space-between",
+  },
+  header: {
+    width: "100%",
+    height: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 8,
+  },
+  closeButton: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  content: {
+    flex: 1,
+  },
+  textContainer: {
+    marginBottom: 24,
+  },
+  title: {
+    textAlign: "right",
+    marginBottom: 8,
+  },
+  subtitle: {
+    textAlign: "right",
+    lineHeight: 22,
+  },
+  inputWrapper: {
+    height: 56,
+    borderWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  countryCode: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: "100%",
+    paddingHorizontal: 16,
+    borderRightWidth: 1,
+  },
+  countryText: {
+    marginRight: 4,
+    fontFamily: "IRANYekanXFaNum-Bold", // ÙˆØ²Ù† Ù‚Ù„Ù… Ú©Ø§Ù…Ù„Ø§Ù‹ Ø¨Ù‡ ØµÙˆØ±Øª Ø¨ÙˆÙ…ÛŒ Ù…Ø¯ÛŒØ±ÛŒØª Ù…ÛŒâ€ŒØ´ÙˆØ¯
+  },
+  textInput: {
+    flex: 1,
+    height: "100%",
+    paddingHorizontal: 16,
+    textAlign: "left",
+    fontSize: 16,
+  },
+  footer: {
+    width: "100%",
+  },
+});
+
+========== src\features\auth\screens\LoginVerifyOtpScreen.tsx ==========
+// src/features/auth/screens/LoginVerifyOtpScreen.tsx
+
+import { AppButton } from "@/src/components/common/AppButton";
+import { ThemeToggleButton } from "@/src/components/common/ThemeToggleButton";
+import { ScreenWrapper } from "@/src/components/layout/ScreenWrapper";
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useRef, useState } from "react";
+import {
+  KeyboardAvoidingView,
+  NativeSyntheticEvent,
+  Platform,
+  StyleSheet,
+  TextInput,
+  TextInputKeyPressEventData,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+const convertToEnglishDigits = (str: string) => {
+  const persianDigits = [
+    /Û°/g,
+    /Û±/g,
+    /Û²/g,
+    /Û³/g,
+    /Û´/g,
+    /Ûµ/g,
+    /Û¶/g,
+    /Û·/g,
+    /Û¸/g,
+    /Û¹/g,
+  ];
+  const arabicDigits = [
+    /Ù /g,
+    /Ù¡/g,
+    /Ù¢/g,
+    /Ù£/g,
+    /Ù¤/g,
+    /Ù¥/g,
+    /Ù¦/g,
+    /Ù§/g,
+    /Ù¨/g,
+    /Ù©/g,
+  ];
+  let clean = str;
+  for (let i = 0; i < 10; i++) {
+    clean = clean
+      .replace(persianDigits[i], i.toString())
+      .replace(arabicDigits[i], i.toString());
+  }
+  return clean;
+};
+
+export const LoginVerifyOtpScreen = () => {
+  const { colors, spacing, borderRadius } = useTheme();
+  const router = useRouter();
+
+  const [code, setCode] = useState<string[]>(["", "", "", ""]);
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+
+  const inputRefs = [
+    useRef<TextInput>(null),
+    useRef<TextInput>(null),
+    useRef<TextInput>(null),
+    useRef<TextInput>(null),
+  ];
+
+  const handleTextChange = (text: string, index: number) => {
+    const englishText = convertToEnglishDigits(text);
+    const cleanText = englishText.replace(/[^0-9]/g, "");
+
+    const newCode = [...code];
+    newCode[index] = cleanText.substring(cleanText.length - 1);
+    setCode(newCode);
+
+    if (cleanText && index < 3) {
+      inputRefs[index + 1].current?.focus();
+    }
+  };
+
+  const handleKeyPress = (
+    e: NativeSyntheticEvent<TextInputKeyPressEventData>,
+    index: number,
+  ) => {
+    if (e.nativeEvent.key === "Backspace" && !code[index] && index > 0) {
+      inputRefs[index - 1].current?.focus();
+    }
+  };
+
+  const handleVerify = () => {
+    const otpValue = code.join("");
+    if (otpValue.length === 4) {
+      router.replace("/dashboard");
+    }
+  };
+
+  return (
+    <ScreenWrapper>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardAvoidingView}
+      >
+        <View style={[styles.mainContainer, { paddingHorizontal: spacing.lg }]}>
+          {/* Ù‡Ø¯Ø± Ø¨Ø§Ù„Ø§ÛŒÛŒ Ø¨Ø§ ÙÙ„Ø´ Ø¨Ú© Ø§ØµÙ„Ø§Ø­â€ŒØ´Ø¯Ù‡ Ø¨Ù‡ Ø³Ù…Øª Ú†Ù¾ */}
+          <View style={styles.header}>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              activeOpacity={0.7}
+              style={styles.closeButton}
+            >
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                color={colors.textPrimary}
+              />
+            </TouchableOpacity>
+
+            <ThemeToggleButton />
+          </View>
+
+          {/* ÙØ±Ù… Ø§ØµÙ„ÛŒ */}
+          <View style={[styles.contentArea, { marginTop: spacing.xl }]}>
+            <View style={{ marginBottom: spacing.xl }}>
+              <AppText
+                variant="h1"
+                style={[styles.title, { color: colors.textPrimary }]}
+              >
+                ØªØ£ÛŒÛŒØ¯ Ø´Ù…Ø§Ø±Ù‡ ØªÙ„ÙÙ†
+              </AppText>
+
+              <AppText variant="body" color="muted" style={styles.subtitle}>
+                Ú©Ø¯ ØªØ£ÛŒÛŒØ¯ Û´ Ø±Ù‚Ù…ÛŒ Ø§Ø±Ø³Ø§Ù„ Ø´Ø¯Ù‡ Ø¨Ù‡ Ø´Ù…Ø§Ø±Ù‡ Û°Û¹Û±Û²***Û³Û´ÛµÛ¶ Ø±Ø§ ÙˆØ§Ø±Ø¯ Ú©Ù†ÛŒØ¯.
+              </AppText>
+
+              <TouchableOpacity
+                onPress={() => router.back()}
+                activeOpacity={0.7}
+                style={styles.editNumberBtn}
+              >
+                <AppText variant="button" color="secondary">
+                  ÙˆÛŒØ±Ø§ÛŒØ´ Ø´Ù…Ø§Ø±Ù‡ Ù‡Ù…Ø±Ø§Ù‡
+                </AppText>
+              </TouchableOpacity>
+            </View>
+
+            <View style={[styles.otpContainer, { gap: spacing.md }]}>
+              {code.map((digit, index) => {
+                const isFocused = focusedIndex === index;
+                const borderStyle = {
+                  borderColor: isFocused
+                    ? colors.primary
+                    : digit
+                      ? colors.primary
+                      : colors.border,
+                  borderWidth: isFocused || digit ? 2 : 1,
+                  borderRadius: borderRadius.md,
+                  color: colors.textPrimary,
+                };
+
+                return (
+                  <TextInput
+                    key={index}
+                    ref={inputRefs[index]}
+                    value={digit}
+                    onChangeText={(text) => handleTextChange(text, index)}
+                    onKeyPress={(e) => handleKeyPress(e, index)}
+                    onFocus={() => setFocusedIndex(index)}
+                    onBlur={() => setFocusedIndex(null)}
+                    keyboardType="number-pad"
+                    maxLength={1}
+                    selectTextOnFocus
+                    style={[
+                      styles.otpInput,
+                      borderStyle,
+                      { fontFamily: "IRANYekanXFaNum-Bold" },
+                    ]}
+                    placeholderTextColor={colors.textSecondary}
+                  />
+                );
+              })}
+            </View>
+
+            <View style={[styles.timerContainer, { marginTop: spacing.xl }]}>
+              <AppText variant="body" color="muted">
+                Ø§Ø±Ø³Ø§Ù„ Ù…Ø¬Ø¯Ø¯ Ú©Ø¯ ØªØ§ Û°Û±:ÛµÛ¹
+              </AppText>
+            </View>
+          </View>
+
+          <View
+            style={[
+              styles.bottomButtonContainer,
+              { paddingBottom: spacing.lg },
+            ]}
+          >
+            <AppButton
+              title="Ø§Ø¯Ø§Ù…Ù‡"
+              onPress={handleVerify}
+              disabled={code.some((val) => val === "")}
+            />
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </ScreenWrapper>
+  );
+};
+
+const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  mainContainer: {
+    flex: 1,
+    justifyContent: "space-between",
+  },
+  header: {
+    width: "100%",
+    height: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 8,
+  },
+  closeButton: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  contentArea: {
+    flex: 1,
+  },
+  title: {
+    textAlign: "right",
+    marginBottom: 4,
+  },
+  subtitle: {
+    textAlign: "right",
+    lineHeight: 22,
+  },
+  editNumberBtn: {
+    marginTop: 8,
+    alignSelf: "flex-start",
+  },
+  otpContainer: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  otpInput: {
+    width: 56,
+    height: 56,
+    textAlign: "center",
+    fontSize: 24,
+
+    backgroundColor: "transparent",
+  },
+  timerContainer: {
+    flexDirection: "row-reverse",
+    justifyContent: "flex-start",
+  },
+  bottomButtonContainer: {
+    width: "100%",
+  },
+});
+
+========== src\features\cart\screens\YourCartScreen.tsx ==========
+// src/features/cart/screens/YourCartScreen.tsx
+
+import { AppBottomNav } from "@/src/components/layout/AppBottomNav";
+import { ScreenWrapper } from "@/src/components/layout/ScreenWrapper";
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+    Dimensions,
+    Image,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const { width } = Dimensions.get("window");
+
+export const YourCartScreen = () => {
+  const { colors, spacing, borderRadius } = useTheme();
+  const router = useRouter();
+  const insets = useSafeAreaInsets(); // Ø¯Ø±ÛŒØ§ÙØª Ù¾ÙˆÛŒØ§ÛŒ ÙØ§ØµÙ„Ù‡ Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ù…ÙˆØ¨Ø§ÛŒÙ„
+
+  const [promoCode, setPromoCode] = useState("");
+  const [quantities, setQuantities] = useState({ item1: 1, item2: 1 });
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/dashboard");
+    }
+  };
+
+  const updateQuantity = (item: "item1" | "item2", type: "inc" | "dec") => {
+    setQuantities((prev) => {
+      const current = prev[item];
+      if (type === "dec" && current > 1) {
+        return { ...prev, [item]: current - 1 };
+      }
+      if (type === "inc") {
+        return { ...prev, [item]: current + 1 };
+      }
+      return prev;
+    });
+  };
+
+  return (
+    <ScreenWrapper>
+      {/* Ù‡Ø¯Ø± Ø¨Ø§Ù„Ø§ÛŒÛŒ Ø¨Ø§ Ú†ÛŒØ¯Ù…Ø§Ù† Ø§Ø³ØªØ§Ù†Ø¯Ø§Ø±Ø¯ Ùˆ Ú†Ù¾â€ŒÚ†ÛŒÙ† Ø´Ø¯Ù‡ Ø¯Ú©Ù…Ù‡ Ø¨Ø§Ø²Ú¯Ø´Øª */}
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
+        ]}
+      >
+        {/* Ø¯Ú©Ù…Ù‡ Ø¨Ø§Ø²Ú¯Ø´Øª Ø¨Ù‡ Ú†Ù¾ Ø§Ø³ØªØ§Ù†Ø¯Ø§Ø±Ø¯ */}
+        <TouchableOpacity
+          onPress={handleBack}
+          activeOpacity={0.7}
+          style={styles.headerButton}
+        >
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+        </TouchableOpacity>
+
+        <View style={styles.brandContainer}>
+          <AppText variant="h2" style={{ color: colors.textPrimary }}>
+            Ø³Ø¨Ø¯ Ø®Ø±ÛŒØ¯ Ø´Ù…Ø§
+          </AppText>
+        </View>
+
+        {/* Ø¯Ú©Ù…Ù‡ Ù¾Ø§Ú© Ú©Ø±Ø¯Ù† Ú©Ù„ Ø³Ø¨Ø¯ Ø¯Ø± Ø³Ù…Øª Ø±Ø§Ø³Øª */}
+        <TouchableOpacity activeOpacity={0.7} style={styles.headerButton}>
+          <AppText variant="button" color="secondary">
+            Ø­Ø°Ù Ù‡Ù…Ù‡
+          </AppText>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        // Ù¾Ø¯ÛŒÙ†Ú¯ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ø¨Ø²Ø±Ú¯â€ŒØªØ± Ø¨Ø±Ø§ÛŒ Ø¹Ø¯Ù… ØªØ¯Ø§Ø®Ù„ Ø¨Ø§ Ø¯Ú©Ù…Ù‡ Ù¾Ø±Ø¯Ø§Ø®Øª Ú†Ø³Ø¨Ù†Ø¯Ù‡ Ùˆ Ù†ÙˆØ§Ø± Ù¾Ø§ÛŒÛŒÙ†ÛŒ
+        contentContainerStyle={[
+          styles.scrollContainer,
+          {
+            paddingHorizontal: spacing.lg,
+            paddingBottom: 120 + (64 + insets.bottom),
+          },
+        ]}
+      >
+        {/* Ø¨Ø®Ø´ Ø§ÙˆÙ„: Ù„ÛŒØ³Øª Ø§Ù‚Ù„Ø§Ù… Ø³Ø¨Ø¯ Ø®Ø±ÛŒØ¯ */}
+        <View style={[styles.itemsSection, { gap: spacing.md }]}>
+          {/* Ú©Ø§Ù„Ø§ Û±: Ø³ÛŒÙ… Ø¨Ú©Ø³Ù„ */}
+          <View
+            style={[
+              styles.cartCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                borderRadius: borderRadius.lg,
+              },
+            ]}
+          >
+            {/* ØªØµÙˆÛŒØ± Ú©Ø§Ù„Ø§ Ø¯Ø± Ø³Ù…Øª Ø±Ø§Ø³Øª */}
+            <View
+              style={[
+                styles.imageWrapper,
+                {
+                  backgroundColor: colors.surfaceDim,
+                  borderColor: colors.border,
+                },
+              ]}
+            >
+              <Image
+                source={{
+                  uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuDr7C15R2E8JR08mci0TD25O81IKoXz9XGx4-m7aBm9zoFwxNhoCeh44av3POCFVF_McNXl0BaBskqznrmIougYmkTYFOeucZ3LeXK8JJF6-57JWdBsVnQu0FDmEBOZbH6W9g_WFwNNdXYjvfBXWIarN3Jnf8WQhxLsytYmLD2XFhF4BEjPDbmJhy41Gp49Qn7MfkNmzWcwvta0_QgBO5_bC3tsD37VJqqrfJ3U4QIrl9hK7Kc6EONQTw",
+                }}
+                style={styles.productImage}
+              />
+            </View>
+
+            {/* Ù…Ø´Ø®ØµØ§Øª Ú©Ø§Ù„Ø§ Ø¯Ø± Ø³Ù…Øª Ú†Ù¾ */}
+            <View style={styles.cardContent}>
+              <View style={styles.cardHeaderRow}>
+                <View style={styles.productMeta}>
+                  <AppText
+                    variant="labelSm"
+                    color="secondary"
+                    style={styles.brandTag}
+                  >
+                    KONE
+                  </AppText>
+                  <AppText
+                    variant="body"
+                    numberOfLines={2}
+                    style={[styles.productName, { color: colors.textPrimary }]}
+                  >
+                    Ø³ÛŒÙ… Ø¨Ú©Ø³Ù„ Ú©Ø´Ø´ÛŒ ÙÙˆÙ„Ø§Ø¯ÛŒ Û¸ Ù…ÛŒÙ„ÛŒâ€ŒÙ…ØªØ±ÛŒ
+                  </AppText>
+                </View>
+                {/* Ø¯Ú©Ù…Ù‡ Ø­Ø°Ù Ø¢ÛŒØªÙ… Ø¯Ø± Ø¨Ø§Ù„Ø§ Ø³Ù…Øª Ú†Ù¾ Ú©Ø§Ø±Øª */}
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  style={styles.deleteButton}
+                >
+                  <Ionicons
+                    name="trash-outline"
+                    size={20}
+                    color={colors.outline}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {/* Ù‚ÛŒÙ…Øª Ùˆ Ú©Ù†ØªØ±Ù„Ø± ØªØ¹Ø¯Ø§Ø¯ */}
+              <View style={styles.cardFooterRow}>
+                <AppText
+                  variant="h2"
+                  style={[styles.priceText, { color: colors.textPrimary }]}
+                >
+                  Û²,Û´ÛµÛ°,Û°Û°Û° ØªÙˆÙ…Ø§Ù†
+                </AppText>
+
+                {/* Ú©Ù†ØªØ±Ù„â€ŒÚ©Ù†Ù†Ø¯Ù‡ Ø¨ÙˆÙ…ÛŒ ØªØ¹Ø¯Ø§Ø¯ */}
+                <View
+                  style={[
+                    styles.quantitySelector,
+                    {
+                      borderColor: colors.border,
+                      borderRadius: borderRadius.sm,
+                    },
+                  ]}
+                >
+                  <TouchableOpacity
+                    onPress={() => updateQuantity("item1", "inc")}
+                    activeOpacity={0.7}
+                    style={[
+                      styles.quantityBtn,
+                      { backgroundColor: colors.surfaceDim },
+                    ]}
+                  >
+                    <Ionicons name="add" size={16} color={colors.textPrimary} />
+                  </TouchableOpacity>
+
+                  <AppText
+                    variant="button"
+                    style={[
+                      styles.quantityValue,
+                      { color: colors.textPrimary },
+                    ]}
+                  >
+                    {quantities.item1}
+                  </AppText>
+
+                  <TouchableOpacity
+                    onPress={() => updateQuantity("item1", "dec")}
+                    activeOpacity={0.7}
+                    style={[
+                      styles.quantityBtn,
+                      { backgroundColor: colors.surfaceDim },
+                    ]}
+                  >
+                    <Ionicons
+                      name="remove"
+                      size={16}
+                      color={colors.textPrimary}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* Ú©Ø§Ù„Ø§ Û²: Ù…ÙˆØªÙˆØ± Ú¯ÛŒØ±Ù„Ø³ */}
+          <View
+            style={[
+              styles.cartCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                borderRadius: borderRadius.lg,
+              },
+            ]}
+          >
+            <View
+              style={[
+                styles.imageWrapper,
+                {
+                  backgroundColor: colors.surfaceDim,
+                  borderColor: colors.border,
+                },
+              ]}
+            >
+              <Image
+                source={{
+                  uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuBciiNHmbwI70GkRaFNTcLQdydKCwSoF4BQSpZURFP8ZQdZgT_icxvtICmLexDU2pTxGM4ss2QOm57ujT2TTNyAF3p_ugXUD5rEzViJliYztHtxcsbFPkQUd-wtBWAFjAczI1vR2dOrbJoWCwXke5Ia-HOdkpHAXI6g3n-6MDr0oeYPb01zbhy-CKIyZX7wR4adbvBPjrlXilzKgHano84DlHD6xDk7gwcEKjaJpwOopQH-jCiFihzODA",
+                }}
+                style={styles.productImage}
+              />
+            </View>
+
+            <View style={styles.cardContent}>
+              <View style={styles.cardHeaderRow}>
+                <View style={styles.productMeta}>
+                  <AppText
+                    variant="labelSm"
+                    color="secondary"
+                    style={styles.brandTag}
+                  >
+                    SICOR
+                  </AppText>
+                  <AppText
+                    variant="body"
+                    numberOfLines={2}
+                    style={[styles.productName, { color: colors.textPrimary }]}
+                  >
+                    Ù…ÙˆØªÙˆØ± Ú¯ÛŒØ±Ù„Ø³ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ù…Ø¯Ù„ SG10 Ø´ÙØª Ú†Ø¯Ù†ÛŒ
+                  </AppText>
+                </View>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  style={styles.deleteButton}
+                >
+                  <Ionicons
+                    name="trash-outline"
+                    size={20}
+                    color={colors.outline}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.cardFooterRow}>
+                <AppText
+                  variant="h2"
+                  style={[styles.priceText, { color: colors.textPrimary }]}
+                >
+                  Û±Û²Û°,Û°Û°Û°,Û°Û°Û° ØªÙˆÙ…Ø§Ù†
+                </AppText>
+
+                <View
+                  style={[
+                    styles.quantitySelector,
+                    {
+                      borderColor: colors.border,
+                      borderRadius: borderRadius.sm,
+                    },
+                  ]}
+                >
+                  <TouchableOpacity
+                    onPress={() => updateQuantity("item2", "inc")}
+                    activeOpacity={0.7}
+                    style={[
+                      styles.quantityBtn,
+                      { backgroundColor: colors.surfaceDim },
+                    ]}
+                  >
+                    <Ionicons name="add" size={16} color={colors.textPrimary} />
+                  </TouchableOpacity>
+
+                  <AppText
+                    variant="button"
+                    style={[
+                      styles.quantityValue,
+                      { color: colors.textPrimary },
+                    ]}
+                  >
+                    {quantities.item2}
+                  </AppText>
+
+                  <TouchableOpacity
+                    onPress={() => updateQuantity("item2", "dec")}
+                    activeOpacity={0.7}
+                    style={[
+                      styles.quantityBtn,
+                      { backgroundColor: colors.surfaceDim },
+                    ]}
+                  >
+                    <Ionicons
+                      name="remove"
+                      size={16}
+                      color={colors.textPrimary}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Ø¨Ø®Ø´ Ø¯ÙˆÙ…: Ú©Ø§Ø¯Ø± ÙˆØ±ÙˆØ¯ Ú©Ø¯ ØªØ®ÙÛŒÙ */}
+        <View style={[styles.promoSection, { marginTop: spacing.lg }]}>
+          <View style={styles.promoRow}>
+            <TextInput
+              value={promoCode}
+              onChangeText={setPromoCode}
+              placeholder="Ú©Ø¯ ØªØ®ÙÛŒÙ"
+              placeholderTextColor={colors.outline}
+              style={[
+                styles.promoInput,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.md,
+                  color: colors.textPrimary,
+                },
+              ]}
+            />
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={[
+                styles.promoBtn,
+                {
+                  borderColor: colors.border,
+                  backgroundColor: colors.surfaceDim,
+                  borderRadius: borderRadius.md,
+                },
+              ]}
+            >
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                Ø§Ø¹Ù…Ø§Ù„ Ú©Ø¯
+              </AppText>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Ø¨Ø®Ø´ Ø³ÙˆÙ…: Ú©Ø§Ø±Øª Ø´ÛŒÙˆÙ‡ Ø§Ø±Ø³Ø§Ù„ Ø¨Ù‡ ØµÙˆØ±Øª Ø¨Ø§Ø±Ø¨Ø±ÛŒ ÛŒØ§ Ù¾ÛŒÚ© */}
+        <View
+          style={[
+            styles.deliveryCard,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              borderRadius: borderRadius.lg,
+              marginTop: spacing.lg,
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.deliveryHeader,
+              { borderBottomColor: colors.border },
+            ]}
+          >
+            <View
+              style={[
+                styles.deliveryIconCircle,
+                { backgroundColor: colors.surfaceDim },
+              ]}
+            >
+              <Ionicons
+                name="bus-outline"
+                size={20}
+                color={colors.textPrimary}
+              />
+            </View>
+            <View style={styles.deliveryTextInfo}>
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                Ø§Ø±Ø³Ø§Ù„ Ø§Ø³ØªØ§Ù†Ø¯Ø§Ø±Ø¯ (Ø¨Ø§Ø±Ø¨Ø±ÛŒ Ú©Ø´ÙˆØ±ÛŒ)
+              </AppText>
+              <AppText
+                variant="body"
+                color="muted"
+                style={{ fontSize: 12, marginTop: 2 }}
+              >
+                ØªØ­ÙˆÛŒÙ„ Ø¯Ø± Û± Ø§Ù„ÛŒ Û² Ø±ÙˆØ² Ú©Ø§Ø±ÛŒ
+              </AppText>
+            </View>
+            <TouchableOpacity activeOpacity={0.7}>
+              <Ionicons
+                name="create-outline"
+                size={18}
+                color={colors.textPrimary}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* ÙÛŒÙ„Ø¯ Ø§Ø¬Ø¨Ø§Ø±ÛŒ Ø¢Ø¯Ø±Ø³ */}
+          <TouchableOpacity activeOpacity={0.8} style={styles.addressButton}>
+            <Ionicons
+              name="chevron-back-outline"
+              size={20}
+              color={colors.textSecondary}
+            />
+            <AppText variant="body" color="muted" style={styles.addressText}>
+              Ù„Ø·ÙØ§Ù‹ Ø¨Ø±Ø§ÛŒ Ø«Ø¨Øª Ø¢Ø¯Ø±Ø³ ØªØ­ÙˆÛŒÙ„ØŒ ÙˆØ§Ø±Ø¯ Ø­Ø³Ø§Ø¨ Ú©Ø§Ø±Ø¨Ø±ÛŒ Ø®ÙˆØ¯ Ø´ÙˆÛŒØ¯.
+            </AppText>
+            <Ionicons
+              name="location-outline"
+              size={20}
+              color={colors.textSecondary}
+              style={{ marginLeft: 8 }}
+            />
+          </TouchableOpacity>
+        </View>
+
+        {/* Ø¨Ø®Ø´ Ú†Ù‡Ø§Ø±Ù…: ÙØ§Ú©ØªÙˆØ± Ù…Ø­Ø§Ø³Ø¨Ø§ØªÛŒ Ù…Ø¨Ø§Ù„Øº (Order Summary) */}
+        <View
+          style={[
+            styles.summaryCard,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              borderRadius: borderRadius.lg,
+              marginTop: spacing.lg,
+            },
+          ]}
+        >
+          <View style={styles.summaryRow}>
+            <AppText
+              variant="button"
+              style={{
+                color: colors.textPrimary,
+                fontFamily: "IRANYekanXFaNum-Bold",
+              }}
+            >
+              Û±Û²Û²,Û´ÛµÛ°,Û°Û°Û° ØªÙˆÙ…Ø§Ù†
+            </AppText>
+            <AppText variant="body" color="muted">
+              Ù…Ø¨Ù„Øº Ú©Ù„ Ú©Ø§Ù„Ø§Ù‡Ø§
+            </AppText>
+          </View>
+          <View style={styles.summaryRow}>
+            <AppText
+              variant="button"
+              style={{ color: "#15803D", fontFamily: "IRANYekanXFaNum-Bold" }}
+            >
+              Ø±Ø§ÛŒÚ¯Ø§Ù†
+            </AppText>
+            <AppText variant="body" color="muted">
+              Ù‡Ø²ÛŒÙ†Ù‡ Ø§Ø±Ø³Ø§Ù„ Ø¨Ø§Ø±Ø¨Ø±ÛŒ
+            </AppText>
+          </View>
+          <View style={styles.summaryRow}>
+            <AppText
+              variant="button"
+              style={{
+                color: colors.textPrimary,
+                fontFamily: "IRANYekanXFaNum-Bold",
+              }}
+            >
+              Û´Ûµ,Û°Û°Û° ØªÙˆÙ…Ø§Ù†
+            </AppText>
+            <AppText variant="body" color="muted">
+              Ù…Ø§Ù„ÛŒØ§Øª Ùˆ Ø¹ÙˆØ§Ø±Ø¶ Ø§Ø±Ø²Ø´ Ø§ÙØ²ÙˆØ¯Ù‡
+            </AppText>
+          </View>
+          <View
+            style={[styles.cardDivider, { backgroundColor: colors.border }]}
+          />
+          <View style={styles.totalRow}>
+            <AppText
+              variant="h1"
+              style={{
+                color: colors.textPrimary,
+                fontFamily: "IRANYekanXFaNum-Bold",
+              }}
+            >
+              Û±Û²Û²,Û´Û¹Ûµ,Û°Û°Û° ØªÙˆÙ…Ø§Ù†
+            </AppText>
+            <AppText variant="h2" style={{ color: colors.textPrimary }}>
+              Ù…Ø¨Ù„Øº Ù‚Ø§Ø¨Ù„ Ù¾Ø±Ø¯Ø§Ø®Øª
+            </AppText>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Ûµ. Ù†ÙˆØ§Ø± Ú†Ø³Ø¨Ù†Ø§Ú© Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ø¬Ù‡Øª Ù‡Ø¯Ø§ÛŒØª Ø¨Ù‡ Ø¯Ø±Ú¯Ø§Ù‡ Ù¾Ø±Ø¯Ø§Ø®Øª */}
+      <View
+        style={[
+          styles.bottomActionBar,
+          {
+            backgroundColor: colors.surface,
+            borderTopColor: colors.border,
+            height: 80 + insets.bottom,
+            paddingBottom: insets.bottom,
+          },
+        ]}
+      >
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={[
+            styles.checkoutBtn,
+            { backgroundColor: colors.primary, borderRadius: borderRadius.md },
+          ]}
+        >
+          <Ionicons
+            name="arrow-back-outline"
+            size={20}
+            color={colors.onPrimary}
+            style={{ marginRight: 8 }}
+          />
+          <AppText variant="button" style={{ color: colors.onPrimary }}>
+            Ø§Ø¯Ø§Ù…Ù‡ Ùˆ Ø«Ø¨Øª Ø³ÙØ§Ø±Ø´
+          </AppText>
+        </TouchableOpacity>
+      </View>
+
+      {/* Ù†Ø§ÙˆØ¨Ø±ÛŒ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ø³Ø±Ø§Ø³Ø±ÛŒ Ø¨Ø§ Ø²Ø¨Ø§Ù†Ù‡ ÙØ¹Ø§Ù„ Ø³Ø¨Ø¯ Ø®Ø±ÛŒØ¯ */}
+      <AppBottomNav activeTab="cart" />
+    </ScreenWrapper>
+  );
+};
+
+const styles = StyleSheet.create({
+  scrollContainer: {
+    paddingTop: 8,
+  },
+  header: {
+    height: 56,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+  },
+  headerButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  brandContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  itemsSection: {
+    width: "100%",
+  },
+  cartCard: {
+    borderWidth: 1,
+    padding: 16,
+    flexDirection: "row-reverse", // Ú†ÛŒÙ†Ø´ Ø¹Ú©Ø³ Ø±Ø§Ø³ØªØŒ Ù…ØªÙ† Ú†Ù¾ Ø¨Ø±Ø§ÛŒ RTL ÙØ§Ø±Ø³ÛŒ
+    alignItems: "flex-start", // ØªØµØ­ÛŒØ­ Ø´Ø¯: ØªØºÛŒÛŒØ± Ù…Ù‚Ø¯Ø§Ø± ØºÛŒØ±Ù…Ø¬Ø§Ø² 'start' Ø¨Ù‡ 'flex-start' Ø¨Ø±Ø§ÛŒ Ø¬Ù„ÙˆÚ¯ÛŒØ±ÛŒ Ø§Ø² Ú©Ø±Ø´ Ø¯Ø± Ø§Ù†Ø¯Ø±ÙˆÛŒØ¯
+  },
+  imageWrapper: {
+    width: 80,
+    height: 80,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  productImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  cardContent: {
+    flex: 1,
+    paddingRight: 16,
+  },
+  cardHeaderRow: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    width: "100%",
+  },
+  productMeta: {
+    alignItems: "flex-end",
+    flex: 1,
+  },
+  brandTag: {
+    fontSize: 10,
+    marginBottom: 2,
+    // ØªØµØ­ÛŒØ­ Ø´Ø¯: Ø­Ø°Ù Ú©Ø§Ù…Ù¾ÙˆÙ†Ù†Øª ØªØ¯Ø§Ø®Ù„â€ŒØ¨Ø±Ø§Ù†Ú¯ÛŒØ² fontWeight
+  },
+  productName: {
+    textAlign: "right",
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  deleteButton: {
+    padding: 4,
+  },
+  cardFooterRow: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginTop: 12,
+  },
+  priceText: {
+    fontSize: 15,
+    fontFamily: "IRANYekanXFaNum-Bold",
+  },
+  quantitySelector: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: 32,
+    borderWidth: 1,
+    overflow: "hidden",
+  },
+  quantityBtn: {
+    width: 32,
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  quantityValue: {
+    width: 32,
+    textAlign: "center",
+    fontSize: 14,
+    fontFamily: "IRANYekanXFaNum-Bold",
+  },
+  promoSection: {
+    width: "100%",
+  },
+  promoRow: {
+    flexDirection: "row-reverse",
+    gap: 8,
+    width: "100%",
+  },
+  promoInput: {
+    flex: 1,
+    height: 48,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    textAlign: "right",
+  },
+  promoBtn: {
+    height: 48,
+    paddingHorizontal: 24,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  deliveryCard: {
+    borderWidth: 1,
+    overflow: "hidden",
+  },
+  deliveryHeader: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    padding: 16,
+    borderBottomWidth: 1,
+  },
+  deliveryIconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 12,
+  },
+  deliveryTextInfo: {
+    flex: 1,
+    alignItems: "flex-end",
+  },
+  addressButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    padding: 16,
+    width: "100%",
+  },
+  addressText: {
+    flex: 1,
+    textAlign: "right",
+    fontSize: 13,
+  },
+  summaryCard: {
+    borderWidth: 1,
+    padding: 20,
+  },
+  summaryRow: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  cardDivider: {
+    height: 1,
+    width: "100%",
+    marginVertical: 12,
+  },
+  totalRow: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  bottomActionBar: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 80,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 24,
+    borderTopWidth: 1,
+    elevation: 12,
+    shadowColor: "#0F172A",
+    shadowOffset: { width: 0, height: -6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    zIndex: 110,
+  },
+  checkoutBtn: {
+    height: 48,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    ...Platform.select({
+      web: {
+        maxWidth: 440,
+      },
+    }),
+  },
+});
+
+========== src\features\catalog\screens\CategoriesScreen.tsx ==========
+// src/features/catalog/screens/CategoriesScreen.tsx
+
+import { ThemeToggleButton } from "@/src/components/common/ThemeToggleButton";
+import { AppBottomNav } from "@/src/components/layout/AppBottomNav";
+import { ScreenWrapper } from "@/src/components/layout/ScreenWrapper";
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+    Dimensions,
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context"; // Ø§ÛŒÙ…Ù¾ÙˆØ±Øª Ù…Ø­Ø§Ø³Ø¨Ø§Øª Ø­Ø§Ø´ÛŒÙ‡ Ø§Ù…Ù† Ø¨Ø±Ø§ÛŒ Ø­Ø§Ø´ÛŒÙ‡ Ø§Ø³Ú©Ø±ÙˆÙ„
+
+const { width } = Dimensions.get("window");
+
+export const CategoriesScreen = () => {
+  const { colors, spacing, borderRadius } = useTheme();
+  const router = useRouter();
+  const insets = useSafeAreaInsets(); // Ø±ØµØ¯ Ù¾ÙˆÛŒØ§ÛŒ Ø§Ø±ØªÙØ§Ø¹ Ø­Ø§Ø´ÛŒÙ‡ Ø§Ù…Ù† Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ú¯ÙˆØ´ÛŒ
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Ù…Ø­Ø§Ø³Ø¨Ù‡ Ø±ÛŒØ§Ø¶ÛŒ Ø¹Ø±Ø¶ Ú©Ø§Ø±Øªâ€ŒÙ‡Ø§ÛŒ Ø¯Ø³ØªÙ‡â€ŒØ¨Ù†Ø¯ÛŒ
+  const cardWidth = (width - spacing.lg * 2 - spacing.md) / 2;
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/dashboard");
+    }
+  };
+
+  const handleCategoryPress = (categoryId: string) => {
+    router.push({
+      pathname: "/catalog",
+      params: { categoryId: categoryId },
+    });
+  };
+
+  const categoriesData = [
+    {
+      id: "motors",
+      title: "Ù…ÙˆØªÙˆØ±Ù‡Ø§ÛŒ Ú©Ø´Ø´ÛŒ",
+      count: "Û±Û¸ Ú©Ø§Ù„Ø§",
+      icon: "settings-outline",
+    },
+    {
+      id: "cabin",
+      title: "Ú©Ø§Ø¨ÛŒÙ† Ùˆ ØªØ¬Ù‡ÛŒØ²Ø§Øª Ø¯Ø§Ø®Ù„ÛŒ",
+      count: "Û±Û² Ú©Ø§Ù„Ø§",
+      icon: "business-outline",
+    },
+    {
+      id: "panels",
+      title: "ØªØ§Ø¨Ù„Ùˆ ÙØ±Ù…Ø§Ù† Ùˆ Ù¾Ù†Ù„â€ŒÙ‡Ø§",
+      count: "Û³Ûµ Ú©Ø§Ù„Ø§",
+      icon: "hardware-chip-outline",
+    },
+    {
+      id: "cables",
+      title: "Ø³ÛŒÙ… Ø¨Ú©Ø³Ù„ Ùˆ Ú©Ø§Ø¨Ù„â€ŒÙ‡Ø§",
+      count: "Û¹ Ú©Ø§Ù„Ø§",
+      icon: "git-commit-outline",
+    },
+    {
+      id: "safety",
+      title: "Ù¾Ø§Ø±Ø§Ø´ÙˆØª Ùˆ ØªØ±Ù…Ø² Ø§ÛŒÙ…Ù†ÛŒ",
+      count: "Û±Ûµ Ú©Ø§Ù„Ø§",
+      icon: "shield-checkmark-outline",
+    },
+    {
+      id: "doors",
+      title: "Ø¯Ø±Ø¨ Ø¨Ø§Ø²Ú©Ù† Ùˆ Ø·Ø¨Ù‚Ø§Øª",
+      count: "Û²Û² Ú©Ø§Ù„Ø§",
+      icon: "open-outline",
+    },
+  ];
+
+  return (
+    <ScreenWrapper>
+      {/* Ù‡Ø¯Ø± Ø¨Ø§Ù„Ø§ÛŒÛŒ Ú©Ø§ØªØ§Ù„ÙˆÚ¯ */}
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
+        ]}
+      >
+        <TouchableOpacity
+          onPress={handleBack}
+          activeOpacity={0.7}
+          style={styles.headerButton}
+        >
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+        </TouchableOpacity>
+
+        <View style={styles.brandContainer}>
+          <AppText variant="h2" style={{ color: colors.textPrimary }}>
+            Ø¯Ø³ØªÙ‡â€ŒØ¨Ù†Ø¯ÛŒ Ù‚Ø·Ø¹Ø§Øª
+          </AppText>
+        </View>
+
+        <View style={styles.rightActions}>
+          <ThemeToggleButton />
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={[styles.headerButton, { marginLeft: spacing.xs }]}
+          >
+            <Ionicons
+              name="cart-outline"
+              size={24}
+              color={colors.textPrimary}
+            />
+            <View
+              style={[
+                styles.cartBadge,
+                { backgroundColor: colors.error, borderColor: colors.surface },
+              ]}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        // Ù…Ø­Ø§Ø³Ø¨Ù‡ Ø±ÛŒØ§Ø¶ÛŒ Ø­Ø§Ø´ÛŒÙ‡ Ø§Ù…Ù† Ø§Ù†ØªÙ‡Ø§ÛŒÛŒ: Ø§Ø±ØªÙØ§Ø¹ Ù…Ù†Ùˆ + Û¸Û° Ù¾ÛŒÚ©Ø³Ù„ Ø­Ø§Ø´ÛŒÙ‡ Ø³ÙÛŒØ¯ Ø®Ø§Ù„ÛŒ
+        contentContainerStyle={[
+          styles.scrollContainer,
+          {
+            paddingHorizontal: spacing.lg,
+            paddingBottom: 80 + (64 + insets.bottom),
+          },
+        ]}
+      >
+        {/* Ø¨Ø§Ú©Ø³ Ø³Ø±Ú† */}
+        <View style={[styles.searchSection, { paddingVertical: spacing.md }]}>
+          <View
+            style={[
+              styles.searchBar,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                borderRadius: borderRadius.md,
+              },
+            ]}
+          >
+            <Ionicons
+              name="search-outline"
+              size={20}
+              color={colors.outline}
+              style={{ marginLeft: 12 }}
+            />
+            <TextInput
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Ø¬Ø³ØªØ¬Ùˆ Ø¯Ø± Ø¯Ø³ØªÙ‡â€ŒØ¨Ù†Ø¯ÛŒâ€ŒÙ‡Ø§ÛŒ Ø§ÛŒÚ©Ø³ Ø§Ù„ÙˆØªÙˆØ±..."
+              placeholderTextColor={colors.outline}
+              style={[
+                styles.searchInput,
+                {
+                  color: colors.textPrimary,
+                  fontFamily: "IRANYekanXFaNum-Regular",
+                },
+              ]}
+            />
+          </View>
+        </View>
+
+        {/* Ø¨Ù†Ø± ØªØ±ÙˆÛŒØ¬ÛŒ */}
+        <View
+          style={[
+            styles.promoBanner,
+            {
+              backgroundColor: colors.primary,
+              borderRadius: borderRadius.lg,
+              padding: spacing.lg,
+            },
+          ]}
+        >
+          <View style={styles.bannerTextContent}>
+            <AppText
+              variant="h2"
+              style={{ color: colors.onPrimary, marginBottom: 4 }}
+            >
+              Ø±ÙˆØºÙ† Ùˆ Ù‚Ø·Ø¹Ø§Øª Ù…ØµØ±ÙÛŒ Ø¢Ø³Ø§Ù†Ø³ÙˆØ±
+            </AppText>
+            <AppText
+              variant="body"
+              style={{ color: colors.onPrimary, opacity: 0.8, fontSize: 13 }}
+            >
+              ØªØ£Ù…ÛŒÙ† Ø±ÙˆØºÙ†â€ŒÙ‡Ø§ÛŒ Ø³ÛŒÙ… Ø¨Ú©Ø³Ù„ Ùˆ Ø±ÙˆØ§Ù†â€ŒÚ©Ù†Ù†Ø¯Ù‡â€ŒÙ‡Ø§ÛŒ Ø§Ø³ØªØ§Ù†Ø¯Ø§Ø±Ø¯ Ø¨Ø±Ø§ÛŒ Ø³Ø±ÙˆÛŒØ³â€ŒÙ‡Ø§ÛŒ
+              Ø¯ÙˆØ±Ù‡â€ŒØ§ÛŒ Ù…Ù†Ø¸Ù….
+            </AppText>
+          </View>
+          <View style={styles.bannerIconContainer}>
+            <Ionicons
+              name="color-fill-outline"
+              size={44}
+              color={colors.onPrimary}
+              style={{ opacity: 0.8 }}
+            />
+          </View>
+        </View>
+
+        {/* Ú¯Ø±ÛŒØ¯ Ø¯Ø³ØªÙ‡â€ŒØ¨Ù†Ø¯ÛŒâ€ŒÙ‡Ø§ */}
+        <View style={styles.categoriesSection}>
+          <AppText variant="body" color="primary" style={styles.sectionHeading}>
+            Ù‡Ù…Ù‡ Ø¯Ø³ØªÙ‡â€ŒØ¨Ù†Ø¯ÛŒâ€ŒÙ‡Ø§
+          </AppText>
+
+          <View style={styles.categoriesGrid}>
+            {categoriesData.map((cat) => {
+              return (
+                <TouchableOpacity
+                  key={cat.id}
+                  onPress={() => handleCategoryPress(cat.id)}
+                  activeOpacity={0.9}
+                  style={[
+                    styles.categoryCard,
+                    {
+                      width: cardWidth,
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      borderRadius: borderRadius.lg,
+                    },
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.iconCircle,
+                      { backgroundColor: colors.surfaceDim },
+                    ]}
+                  >
+                    <Ionicons
+                      name={cat.icon as any}
+                      size={22}
+                      color={colors.textPrimary}
+                    />
+                  </View>
+
+                  <View style={styles.cardInfo}>
+                    <AppText
+                      variant="h2"
+                      style={[
+                        styles.categoryTitle,
+                        { color: colors.textPrimary },
+                      ]}
+                    >
+                      {cat.title}
+                    </AppText>
+                    <AppText
+                      variant="body"
+                      color="muted"
+                      style={styles.categoryCount}
+                    >
+                      {cat.count}
+                    </AppText>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Ù†Ø§ÙˆØ¨Ø±ÛŒ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ø³Ø±Ø§Ø³Ø±ÛŒ */}
+      <AppBottomNav activeTab="categories" />
+    </ScreenWrapper>
+  );
+};
+
+const styles = StyleSheet.create({
+  scrollContainer: {
+    paddingTop: 8,
+  },
+  header: {
+    height: 56,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+  },
+  headerButton: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+  rightActions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  cartBadge: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    borderWidth: 1.5,
+  },
+  brandContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  searchSection: {
+    width: "100%",
+  },
+  searchBar: {
+    height: 44,
+    borderWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  searchInput: {
+    flex: 1,
+    height: "100%",
+    paddingHorizontal: 12,
+    textAlign: "right",
+    fontSize: 14,
+  },
+  promoBanner: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    height: 110,
+    overflow: "hidden",
+    marginBottom: 24,
+  },
+  bannerTextContent: {
+    flex: 1,
+    alignItems: "flex-end",
+    paddingLeft: 16,
+  },
+  bannerIconContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  categoriesSection: {
+    width: "100%",
+  },
+  sectionHeading: {
+    textAlign: "right",
+    marginBottom: 16,
+    fontFamily: "IRANYekanXFaNum-Bold",
+  },
+  categoriesGrid: {
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
+    gap: 12,
+    width: "100%",
+  },
+  categoryCard: {
+    padding: 16,
+    borderWidth: 1,
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
+  iconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  cardInfo: {
+    width: "100%",
+    alignItems: "flex-end",
+  },
+  categoryTitle: {
+    textAlign: "right",
+    fontSize: 14,
+    lineHeight: 18,
+    height: 36,
+  },
+  categoryCount: {
+    textAlign: "right",
+    fontSize: 12,
+    marginTop: 4,
+    fontFamily: "IRANYekanXFaNum-Bold",
+  },
+});
+
+========== src\features\catalog\screens\MaintenancePlansScreen.tsx ==========
+// src/features/catalog/screens/MaintenancePlansScreen.tsx
+
+import { AppBottomNav } from "@/src/components/layout/AppBottomNav";
+import { ScreenWrapper } from "@/src/components/layout/ScreenWrapper";
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React from "react";
+import {
+    Dimensions,
+    Image,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const { width } = Dimensions.get("window");
+const IMAGE_HEIGHT = 350;
+
+const MaintenancePlansScreen = () => {
+  const { colors, spacing, borderRadius } = useTheme();
+  const router = useRouter();
+  const insets = useSafeAreaInsets(); // Ù…Ø­Ø§Ø³Ø¨Ù‡ Ù¾ÙˆÛŒØ§ÛŒ Ø­Ø§Ø´ÛŒÙ‡ Ù¾Ø§ÛŒÛŒÙ† Ú¯ÙˆØ´ÛŒ
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/dashboard");
+    }
+  };
+
+  return (
+    <ScreenWrapper>
+      {/* Ù‡Ø¯Ø± Ú†Ø³Ø¨Ù†Ø¯Ù‡ Ø¨Ø§Ù„Ø§ÛŒÛŒ */}
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
+        ]}
+      >
+        <TouchableOpacity
+          onPress={handleBack}
+          activeOpacity={0.7}
+          style={styles.headerButton}
+        >
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+        </TouchableOpacity>
+
+        <View style={styles.brandContainer}>
+          <AppText variant="h2" style={{ color: colors.textPrimary }}>
+            Ù¾Ù„Ø§Ù†â€ŒÙ‡Ø§ÛŒ Ù†Ú¯Ù‡Ø¯Ø§Ø±ÛŒ Ø¢Ø³Ø§Ù†Ø³ÙˆØ±
+          </AppText>
+        </View>
+
+        <View style={{ width: 40 }} />
+      </View>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[
+          styles.scrollContainer,
+          {
+            paddingHorizontal: spacing.lg,
+            paddingBottom: 140 + (64 + insets.bottom),
+          },
+        ]}
+      >
+        {/* Û±. Ø¨Ø®Ø´ ØªØµÙˆÛŒØ± Ù‡ÛŒØ±Ùˆ */}
+        <View style={[styles.heroContainer, { borderRadius: borderRadius.lg }]}>
+          <Image
+            source={{
+              uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuAwHVRuCiZtyVh_qv_UmJ0W4jM1JFdCigyGh-DMuVDhPwzcqAwpNyeipsy4k5-yHgSIZBWqQuao7-p-oYI0Qvbwds46bBWECLkzwSTY-CwgsYl9czQ43v-EunFug_ODUAHzBwUtBn8LB-ma8g84ATClWUmKfli4U0zKcmR7wVwLK4ikAYX4H12JPFMHlhtjPPRbsHK1TvlYWUTk-VAkNmW32m3TRv-4krzgTN7IdpfEAnEpviW00OYOSw",
+            }}
+            style={styles.heroImage}
+          />
+          <View style={styles.overlay} />
+
+          <View style={styles.heroContent}>
+            <AppText variant="h1" style={styles.heroTitle}>
+              Ø³Ø±ÙˆÛŒØ³â€ŒÙ‡Ø§ÛŒ Ù¾ÛŒØ´Ú¯ÛŒØ±Ø§Ù†Ù‡Ø› Ø®Ø¯Ø§Ø­Ø§ÙØ¸ÛŒ Ø¨Ø§ Ø®Ø±Ø§Ø¨ÛŒâ€ŒÙ‡Ø§ÛŒ Ù†Ø§Ú¯Ù‡Ø§Ù†ÛŒ Ø¢Ø³Ø§Ù†Ø³ÙˆØ±
+            </AppText>
+
+            <View style={styles.badgeContainer}>
+              <View
+                style={[
+                  styles.badge,
+                  { backgroundColor: "rgba(255,255,255,0.2)" },
+                ]}
+              >
+                <AppText variant="labelSm" style={{ color: "#FFFFFF" }}>
+                  Û·Û°Ùª Ø®Ø±Ø§Ø¨ÛŒ Ú©Ù…ØªØ± Ø¢Ø³Ø§Ù†Ø³ÙˆØ±
+                </AppText>
+              </View>
+              <View
+                style={[
+                  styles.badge,
+                  { backgroundColor: "rgba(255,255,255,0.2)" },
+                ]}
+              >
+                <AppText variant="labelSm" style={{ color: "#FFFFFF" }}>
+                  Ø§ÙØ²Ø§ÛŒØ´ Ø·ÙˆÙ„ Ø¹Ù…Ø± Ù…ÙˆØªÙˆØ± Ú¯ÛŒØ±Ù„Ø³
+                </AppText>
+              </View>
+              <View
+                style={[
+                  styles.badge,
+                  { backgroundColor: "rgba(255,255,255,0.2)" },
+                ]}
+              >
+                <AppText variant="labelSm" style={{ color: "#FFFFFF" }}>
+                  ØªØ§ÛŒÛŒØ¯ÛŒÙ‡ Ø±Ø³Ù…ÛŒ Ø§Ø³ØªØ§Ù†Ø¯Ø§Ø±Ø¯ Ùˆ Ø¨ÛŒÙ…Ù‡
+                </AppText>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Û². Ø¨Ø®Ø´ Ú†Ú©â€ŒÙ„ÛŒØ³Øª Ø¹Ù…ÙˆÙ…ÛŒ */}
+        <View style={{ marginTop: spacing.xl }}>
+          <AppText
+            variant="h2"
+            style={[styles.sectionHeading, { color: colors.textPrimary }]}
+          >
+            Ø¯Ø± Ù‡Ø± Ø¨Ø§Ø²Ø¯ÛŒØ¯ ÙÙ†ÛŒ Ú†Ù‡ Ù…ÙˆØ§Ø±Ø¯ÛŒ Ø¨Ø±Ø±Ø³ÛŒ Ù…ÛŒâ€ŒØ´ÙˆØ¯ØŸ
+          </AppText>
+
+          <View
+            style={[
+              styles.checklistCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                borderRadius: borderRadius.lg,
+              },
+            ]}
+          >
+            {[
+              "ØªØ³Øª Ùˆ Ú©Ø§Ù„ÛŒØ¨Ø±Ø§Ø³ÛŒÙˆÙ† ØªØ±Ù…Ø²Ù‡Ø§ÛŒ Ø§ÛŒÙ…Ù†ÛŒ (Ù¾Ø§Ø±Ø§Ø´ÙˆØª)",
+              "Ø±ÙˆØºÙ†â€ŒÚ©Ø§Ø±ÛŒ Ùˆ Ø¢Ú†Ø§Ø±Ú©Ø´ÛŒ Ø±ÛŒÙ„â€ŒÙ‡Ø§ÛŒ Ø±Ø§Ù‡Ù†Ù…Ø§ÛŒ Ú©Ø§Ø¨ÛŒÙ†",
+              "Ø³Ù†Ø¬Ø´ Ø³Ø§ÛŒØ´ Ùˆ Ø²Ø§ÙˆÛŒÙ‡ Ø´ÛŒØ§Ø± Ø³ÛŒÙ… Ø¨Ú©Ø³Ù„â€ŒÙ‡Ø§ÛŒ ÙÙˆÙ„Ø§Ø¯ÛŒ",
+              "Ø¨Ø±Ø±Ø³ÛŒ Ú©Ø§Ø±Ú©Ø±Ø¯ ÙØªÙˆØ³Ù„ Ùˆ Ø³Ù†Ø³ÙˆØ±Ù‡Ø§ÛŒ Ø§ÛŒÙ…Ù†ÛŒ Ø¯Ø±Ø¨ Ø·Ø¨Ù‚Ø§Øª",
+              "ØªØ³Øª Ø¨Ø§ØªØ±ÛŒ Ù¾Ø´ØªÛŒØ¨Ø§Ù† Ùˆ Ø¢Ú˜ÛŒØ± Ù†Ø¬Ø§Øª Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ú©Ø§Ø¨ÛŒÙ†",
+            ].map((item, index, arr) => {
+              const isLast = index === arr.length - 1;
+              return (
+                <View
+                  key={index}
+                  style={[
+                    styles.checkRow,
+                    !isLast && {
+                      borderBottomColor: colors.border,
+                      borderBottomWidth: 1,
+                    },
+                  ]}
+                >
+                  <AppText
+                    variant="body"
+                    color="muted"
+                    style={styles.checkText}
+                  >
+                    {item}
+                  </AppText>
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={18}
+                    color={colors.secondary}
+                    style={{ marginLeft: 12 }}
+                  />
+                </View>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* Û³. Ø¨Ø®Ø´ Ù¾Ù„Ø§Ù†â€ŒÙ‡Ø§ÛŒ Ù†Ú¯Ù‡Ø¯Ø§Ø±ÛŒ */}
+        <View style={{ marginTop: spacing.xl }}>
+          <AppText
+            variant="h2"
+            style={[styles.sectionHeading, { color: colors.textPrimary }]}
+          >
+            Ù¾Ù„Ø§Ù†â€ŒÙ‡Ø§ÛŒ Ø³Ø±ÙˆÛŒØ³ Ùˆ Ù†Ú¯Ù‡Ø¯Ø§Ø±ÛŒ Ø¯ÙˆØ±Ù‡â€ŒØ§ÛŒ
+          </AppText>
+
+          <View style={[styles.plansContainer, { gap: spacing.md }]}>
+            {/* Ù¾Ù„Ø§Ù† Ø¨Ø±Ù†Ø²ÛŒ */}
+            <View
+              style={[
+                styles.planCard,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                },
+              ]}
+            >
+              <AppText
+                variant="h2"
+                style={[styles.planTitle, { color: colors.textPrimary }]}
+              >
+                Ù¾Ù„Ø§Ù† Ø¨Ø±Ù†Ø²ÛŒ (Ù¾Ø§ÛŒÙ‡)
+              </AppText>
+              <AppText variant="body" color="muted" style={styles.planDesc}>
+                Ø¨Ø§Ø²Ø¯ÛŒØ¯ Ùˆ Ø³Ø±ÙˆÛŒØ³ Ù…Ù†Ø¸Ù… Ù…Ø§Ù‡ÛŒØ§Ù†Ù‡ + Ø§Ø±Ø§Ø¦Ù‡ ÙØ§Ú©ØªÙˆØ± Ø³Ù„Ø§Ù…Øª Ùˆ Ú¯Ø²Ø§Ø±Ø´ ÙÙ†ÛŒ
+                Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ø±ÙˆÛŒ Ù¾Ù†Ù„ Ú©Ø§Ø±Ø¨Ø±ÛŒ Ø§Ù¾Ù„ÛŒÚ©ÛŒØ´Ù†.
+              </AppText>
+            </View>
+
+            {/* Ù¾Ù„Ø§Ù† Ù†Ù‚Ø±Ù‡â€ŒØ§ÛŒ (ÙˆÛŒÚ˜Ù‡ Ùˆ Ø¨Ø±Ø¬Ø³ØªÙ‡) */}
+            <View
+              style={[
+                styles.planCard,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.secondary,
+                  borderWidth: 2,
+                  borderRadius: borderRadius.lg,
+                  position: "relative",
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.bestValueTag,
+                  {
+                    backgroundColor: colors.secondary,
+                    borderRadius: borderRadius.sm,
+                  },
+                ]}
+              >
+                <AppText variant="labelSm" style={{ color: "#FFFFFF" }}>
+                  Ù…Ø­Ø¨ÙˆØ¨â€ŒØªØ±ÛŒÙ† Ù¾Ù„Ø§Ù†
+                </AppText>
+              </View>
+
+              <AppText
+                variant="h2"
+                style={[
+                  styles.planTitle,
+                  { color: colors.textPrimary, marginTop: 8 },
+                ]}
+              >
+                Ù¾Ù„Ø§Ù† Ù†Ù‚Ø±Ù‡â€ŒØ§ÛŒ (Ø§Ø³ØªØ§Ù†Ø¯Ø§Ø±Ø¯)
+              </AppText>
+              <AppText variant="body" color="muted" style={styles.planDesc}>
+                ØªÙ…Ø§Ù… Ø®Ø¯Ù…Ø§Øª Ù¾Ù„Ø§Ù† Ø¨Ø±Ù†Ø²ÛŒ + Ø§Ø¹Ø²Ø§Ù… Ú©Ø§Ù…Ù„Ø§Ù‹ Ø±Ø§ÛŒÚ¯Ø§Ù† ØªÚ©Ù†Ø³ÛŒÙ† Ø¯Ø± Ø²Ù…Ø§Ù† ÙˆÙ‚ÙˆØ¹
+                Ø®Ø±Ø§Ø¨ÛŒâ€ŒÙ‡Ø§ÛŒ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ø³Ø§Ø®ØªÙ…Ø§Ù† Ø´Ù…Ø§.
+              </AppText>
+            </View>
+
+            {/* Ù¾Ù„Ø§Ù† Ø·Ù„Ø§ÛŒÛŒ */}
+            <View
+              style={[
+                styles.planCard,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                },
+              ]}
+            >
+              <AppText
+                variant="h2"
+                style={[styles.planTitle, { color: colors.textPrimary }]}
+              >
+                Ù¾Ù„Ø§Ù† Ø·Ù„Ø§ÛŒÛŒ (Ù¾ÛŒØ´Ø±ÙØªÙ‡)
+              </AppText>
+              <AppText variant="body" color="muted" style={styles.planDesc}>
+                ØªÙ…Ø§Ù… Ø®Ø¯Ù…Ø§Øª Ù¾Ù„Ø§Ù† Ù†Ù‚Ø±Ù‡â€ŒØ§ÛŒ + ØªØ£Ù…ÛŒÙ† Ù‚Ø·Ø¹Ø§Øª Ù…ØµØ±ÙÛŒ Ú©ÙˆÚ†Ú© Ø¨Ù‡ ØµÙˆØ±Øª Ø±Ø§ÛŒÚ¯Ø§Ù†
+                + Ø§Ø¹Ø²Ø§Ù… ØªÚ©Ù†Ø³ÛŒÙ† Ø¨Ø§ Ø§ÙˆÙ„ÙˆÛŒØª Ø§ÙˆÙ„ (Ø²ÛŒØ± Û³Û° Ø¯Ù‚ÛŒÙ‚Ù‡).
+              </AppText>
+            </View>
+          </View>
+        </View>
+
+        {/* Û´. Ø¨Ù†Ø± ØªØ¹Ù‡Ø¯ */}
+        <View
+          style={[
+            styles.trustBanner,
+            {
+              backgroundColor: "rgba(217, 119, 6, 0.1)",
+              borderColor: "rgba(217, 119, 6, 0.3)",
+              borderRadius: borderRadius.lg,
+              marginTop: spacing.xl,
+            },
+          ]}
+        >
+          <AppText variant="body" color="muted" style={styles.trustText}>
+            ØªÙ…Ø§Ù…ÛŒ Ù…Ø´ØªØ±Ú©ÛŒÙ† Ù¾Ù„Ø§Ù†â€ŒÙ‡Ø§ÛŒ Ø·Ù„Ø§ÛŒÛŒ Ùˆ Ù†Ù‚Ø±Ù‡â€ŒØ§ÛŒ Ø§ÛŒÚ©Ø³ Ø§Ù„ÙˆØªÙˆØ± Ø¯Ø± Ø²Ù…Ø§Ù† Ø¨Ø±ÙˆØ²
+            Ù‡Ø±Ú¯ÙˆÙ†Ù‡ Ø´Ø±Ø§ÛŒØ· Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ø¯Ø± Ø¢Ø³Ø§Ù†Ø³ÙˆØ±ØŒ Ø¯Ø± Ø§ÙˆÙ„ÙˆÛŒØª Ø§ÙˆÙ„ ØµÙ Ø§Ø¹Ø²Ø§Ù… ØªÚ©Ù†ÛŒØ³ÛŒÙ†â€ŒÙ‡Ø§ÛŒ
+            ÙÙ†ÛŒ Ù‚Ø±Ø§Ø± Ù…ÛŒâ€ŒÚ¯ÛŒØ±Ù†Ø¯.
+          </AppText>
+          <Ionicons
+            name="shield-checkmark"
+            size={24}
+            color="#D97706"
+            style={{ marginLeft: 12, marginTop: 2 }}
+          />
+        </View>
+      </ScrollView>
+
+      {/* Ûµ. Ø¯Ú©Ù…Ù‡ Ú†Ø³Ø¨Ù†Ø¯Ù‡ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ø¯Ø±Ø®ÙˆØ§Ø³Øª Ù…Ø´Ø§ÙˆØ±Ù‡ */}
+      <View
+        style={[
+          styles.bottomActionBar,
+          {
+            backgroundColor: colors.surface,
+            borderTopColor: colors.border,
+            bottom: 64 + insets.bottom,
+          },
+        ]}
+      >
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={[
+            styles.submitBtn,
+            { backgroundColor: colors.primary, borderRadius: borderRadius.md },
+          ]}
+        >
+          <AppText variant="button" style={{ color: colors.onPrimary }}>
+            Ø¯Ø±Ø®ÙˆØ§Ø³Øª Ù…Ø´Ø§ÙˆØ±Ù‡ Ø±Ø§ÛŒÚ¯Ø§Ù† Ùˆ Ø§Ø³ØªØ¹Ù„Ø§Ù… Ù‚ÛŒÙ…Øª Ù‚Ø±Ø§Ø±Ø¯Ø§Ø¯
+          </AppText>
+        </TouchableOpacity>
+      </View>
+
+      {/* Ù†Ø§ÙˆØ¨Ø±ÛŒ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ø³Ø±Ø§Ø³Ø±ÛŒ */}
+      <AppBottomNav activeTab="home" />
+    </ScreenWrapper>
+  );
+};
+
+// ØªØ¨Ø¯ÛŒÙ„ Ø¨Ù‡ ØµØ§Ø¯Ø±Ú©Ù†Ù†Ø¯Ù‡ Ù¾ÛŒØ´â€ŒÙØ±Ø¶ Ø¬Ù‡Øª Ø­Ù„ Ù‚Ø·Ø¹ÛŒ Ù…Ø´Ú©Ù„ ØªØ§ÛŒÙ¾â€ŒØ§Ø³Ú©Ø±ÛŒÙ¾Øª
+export default MaintenancePlansScreen;
+
+const styles = StyleSheet.create({
+  scrollContainer: {
+    paddingTop: 16,
+  },
+  header: {
+    height: 56,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+  },
+  headerButton: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  brandContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  heroContainer: {
+    width: "100%",
+    height: 240,
+    overflow: "hidden",
+    position: "relative",
+  },
+  heroImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(15, 23, 42, 0.65)",
+  },
+  heroContent: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
+  },
+  heroTitle: {
+    color: "#FFFFFF",
+    fontSize: 20,
+    lineHeight: 28,
+    textAlign: "right",
+    marginBottom: 8,
+  },
+  badgeContainer: {
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
+    gap: 6,
+    width: "100%",
+  },
+  badge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  sectionHeading: {
+    textAlign: "right",
+    marginBottom: 16,
+    fontFamily: "IRANYekanXFaNum-Bold",
+  },
+  checklistCard: {
+    borderWidth: 1,
+    padding: 16,
+  },
+  checkRow: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingVertical: 12,
+  },
+  checkText: {
+    textAlign: "right",
+    flex: 1,
+  },
+  plansContainer: {
+    width: "100%",
+  },
+  planCard: {
+    borderWidth: 1,
+    padding: 16,
+  },
+  bestValueTag: {
+    position: "absolute",
+    top: -12,
+    right: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  planTitle: {
+    textAlign: "right",
+    marginBottom: 6,
+  },
+  planDesc: {
+    textAlign: "right",
+    lineHeight: 20,
+    fontSize: 13,
+  },
+  trustBanner: {
+    borderWidth: 1,
+    padding: 16,
+    flexDirection: "row-reverse",
+    alignItems: "flex-start",
+  },
+  trustText: {
+    textAlign: "right",
+    flex: 1,
+    fontSize: 13,
+    lineHeight: 20,
+    color: "#D97706",
+  },
+  bottomActionBar: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    height: 64,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 24,
+    borderTopWidth: 1,
+    zIndex: 100,
+  },
+  submitBtn: {
+    height: 48,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
+
+========== src\features\catalog\screens\PartsCatalogScreen.tsx ==========
+// src/features/catalog/screens/PartsCatalogScreen.tsx
+
+import { AppButton } from "@/src/components/common/AppButton";
+import { AppModal } from "@/src/components/common/AppModal";
+import { ThemeToggleButton } from "@/src/components/common/ThemeToggleButton";
+import { AppBottomNav } from "@/src/components/layout/AppBottomNav";
+import { ScreenWrapper } from "@/src/components/layout/ScreenWrapper";
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context"; // Ø§ÛŒÙ…Ù¾ÙˆØ±Øª Ù…Ø­Ø§Ø³Ø¨Ø§Øª Ø­Ø§Ø´ÛŒÙ‡ Ø§Ù…Ù† Ø¨Ø±Ø§ÛŒ Ø¯Ú©Ù…Ù‡ ÙÛŒÙ„ØªØ±
+
+const { width } = Dimensions.get("window");
+
+const INITIAL_PRODUCTS = [
+  {
+    id: "1",
+    brand: "KONE",
+    name: "Ø³ÛŒÙ… Ø¨Ú©Ø³Ù„ Ú©Ø´Ø´ÛŒ ÙÙˆÙ„Ø§Ø¯ÛŒ Û¸ Ù…ÛŒÙ„ÛŒâ€ŒÙ…ØªØ±ÛŒ",
+    price: "Û²,Û´ÛµÛ°,Û°Û°Û° ØªÙˆÙ…Ø§Ù†",
+    isAvailable: true,
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuDr7C15R2E8JR08mci0TD25O81IKoXz9XGx4-m7aBm9zoFwxNhoCeh44av3POCFVF_McNXl0BaBskqznrmIougYmkTYFOeucZ3LeXK8JJF6-57JWdBsVnQu0FDmEBOZbH6W9g_WFwNNdXYjvfBXWIarN3Jnf8WQhxLsytYmLD2XFhF4BEjPDbmJhy41Gp49Qn7MfkNmzWcwvta0_QgBO5_bC3tsD37VJqqrfJ3U4QIrl9hK7Kc6EONQTw",
+  },
+  {
+    id: "2",
+    brand: "SCHINDLER",
+    name: "Ù‚ÙÙ„ Ú©Ø§Ù…Ù„ Ø¯Ø±Ø¨ Ø·Ø¨Ù‚Ø§Øª Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ø´ÛŒÙ†Ø¯Ù„Ø±",
+    price: "Û¸,Û¹Û°Û°,Û°Û°Û° ØªÙˆÙ…Ø§Ù†",
+    isAvailable: true,
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuAk8F71OyFkQkMPoDoWFb7vPC287xKMPf8tdpgK0MOixbw7V5q4uHHUraiS2FN22zLEnEvlMAG0ZtdHRAS5fuVMTwlKDECcZF02yQ4XlqWL9KhK9vJv1TDnRwRnfvLqFC_AdKU_x5MtxSvBCCSen7o4y78WtSgR8xyWwKm_aZV2e64uyqC5Wn8xasu6N4knHIZNeiN8aQnpbnZqRcvMmSuZkG5xrWqJm0K5iN_MYF79yOvy2w1O6Izn4w",
+  },
+  {
+    id: "3",
+    brand: "ORONA",
+    name: "Ù…ÛŒÚ©Ø±ÙˆØ³ÙˆØ¦ÛŒÚ† Ø­Ø¯ ØµÙ†Ø¹ØªÛŒ (Ø´Ø§Ù„ØªØ± Ø¢Ø³Ø§Ù†Ø³ÙˆØ±)",
+    price: "Û±,Û²ÛµÛ°,Û°Û°Û° ØªÙˆÙ…Ø§Ù†",
+    isAvailable: true,
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuBJOuId653dDeMv-3lWDnrlAJakMDkyo9OCfUW7b1GCngnjNX7AK5r0F8wL5w8X6Q-c0dkAOO2E5YIB7y_VOOXp39lM3csFJDPQ_HbWGXCgRaKekcyABv3vJW-pSxeN-D5PJNp7cg_ft24kMwUsLAdRz_OzAl3gO2RTsLmFKHdkAJyz8JuQRcoj2-PkcAfdu_w467DOorzW5hyu6E4BbGRo2IFgb6HBZseGsejS_o74imNc_aQIzcSFRA",
+  },
+  {
+    id: "4",
+    brand: "GENERIC",
+    name: "Ù„Ù†Øª Ú©ÙØ´Ú© Ø±ÛŒÙ„ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Û±Û¶ Ù…ÛŒÙ„ÛŒâ€ŒÙ…ØªØ±ÛŒ",
+    price: "Ø§Ø³ØªØ¹Ù„Ø§Ù… Ù‚ÛŒÙ…Øª",
+    isAvailable: false,
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuD4vAK9ArcMrUX6fKRpFrkv_tC1y6EPlXazYt1NWyFo-PS1fULY2qhD_4i4aSz26jcfp_Ft9Tr035oOhvySU6EpQvv7ksjz6Gf4cHdDsAtXlrB4V0qCOHh6vMLxvDbzL5JAVNSg1HkBtwbpZkVXNEveZnoCWwYybB5kdPR3zTKEgd6IU1FzDxxda5JFHvNccIdGZvX5r4bt1u9QlsKpSPMv45YXqZNoyjYMccqHskJ7d2_-NL7TGUOelw",
+  },
+];
+
+export const PartsCatalogScreen = () => {
+  const { colors, spacing, borderRadius } = useTheme();
+  const router = useRouter();
+  const insets = useSafeAreaInsets(); // Ø±ØµØ¯ Ù¾ÙˆÛŒØ§ÛŒ ÙØ§ØµÙ„Ù‡ Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ù…ÙˆØ¨Ø§ÛŒÙ„
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("all");
+
+  const [filterVisible, setFilterVisible] = useState(false);
+  const [sortBy, setSortBy] = useState("popular");
+  const [selectedBrand, setSelectedBrand] = useState("all");
+
+  const categories = [
+    { id: "all", title: "Ù‡Ù…Ù‡ Ù‚Ø·Ø¹Ø§Øª" },
+    { id: "doors", title: "Ù…Ú©Ø§Ù†ÛŒØ²Ù… Ø¯Ø±Ø¨â€ŒÙ‡Ø§" },
+    { id: "safety", title: "ØªØ±Ù…Ø² Ø§ÛŒÙ…Ù†ÛŒ" },
+    { id: "cables", title: "Ø³ÛŒÙ… Ø¨Ú©Ø³Ù„" },
+  ];
+
+  const cardWidth = (width - spacing.lg * 2 - spacing.md) / 2;
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/dashboard");
+    }
+  };
+
+  const handleProductPress = (productId: string) => {
+    router.push({
+      pathname: "/product",
+      params: { id: productId },
+    });
+  };
+
+  return (
+    <ScreenWrapper>
+      {/* Ù‡Ø¯Ø± Ø¨Ø§Ù„Ø§ÛŒÛŒ Ú©Ø§ØªØ§Ù„ÙˆÚ¯ Ø¨Ø§ Ø¨Ø§Ø²Ú¯Ø´Øª Ù‡ÙˆØ´Ù…Ù†Ø¯ Ú†Ù¾â€ŒÚ†ÛŒÙ† */}
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
+        ]}
+      >
+        {/* Ú©Ù„ÛŒØ¯ Ø¨Ú© Ø§Ø³ØªØ§Ù†Ø¯Ø§Ø±Ø¯ Ø¨Ù‡ Ø³Ù…Øª Ú†Ù¾ */}
+        <TouchableOpacity
+          onPress={handleBack}
+          activeOpacity={0.7}
+          style={styles.headerButton}
+        >
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+        </TouchableOpacity>
+
+        <View style={styles.brandContainer}>
+          <AppText variant="h2" style={{ color: colors.textPrimary }}>
+            Ù‚Ø·Ø¹Ø§Øª Ùˆ ØªØ¬Ù‡ÛŒØ²Ø§Øª Ø§ÛŒÚ©Ø³ Ø§Ù„ÙˆØ§ØªÙˆØ±
+          </AppText>
+        </View>
+
+        <View style={styles.rightActions}>
+          <ThemeToggleButton />
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={[styles.headerButton, { marginLeft: spacing.xs }]}
+          >
+            <Ionicons
+              name="cart-outline"
+              size={24}
+              color={colors.textPrimary}
+            />
+            <View
+              style={[
+                styles.cartBadge,
+                { backgroundColor: colors.error, borderColor: colors.surface },
+              ]}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Ø¨Ø®Ø´ Ø¬Ø³ØªØ¬Ùˆ */}
+      <View
+        style={[
+          styles.searchSection,
+          { paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
+        ]}
+      >
+        <View
+          style={[
+            styles.searchBar,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              borderRadius: borderRadius.md,
+            },
+          ]}
+        >
+          <Ionicons
+            name="search-outline"
+            size={20}
+            color={colors.outline}
+            style={{ marginLeft: 12 }}
+          />
+          <TextInput
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Ø¬Ø³ØªØ¬ÙˆÛŒ Ù…ÙˆØªÙˆØ±ØŒ Ø¯Ø±Ø¨ØŒ Ú©Ø§Ø¨Ù„ØŒ Ù„Ù†Øª Ø±ÛŒÙ„..."
+            placeholderTextColor={colors.outline}
+            style={[
+              styles.searchInput,
+              {
+                color: colors.textPrimary,
+                fontFamily: "IRANYekanXFaNum-Regular",
+              },
+            ]}
+          />
+        </View>
+      </View>
+
+      {/* ÙÛŒÙ„ØªØ±Ù‡Ø§ÛŒ Ú†Ø±Ø®Ø´ÛŒ Ø§ÙÙ‚ÛŒ */}
+      <View style={styles.categoryContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={[
+            styles.categoryScroll,
+            { paddingHorizontal: spacing.lg },
+          ]}
+        >
+          {categories.map((cat) => {
+            const isActive = activeCategory === cat.id;
+            return (
+              <TouchableOpacity
+                key={cat.id}
+                onPress={() => setActiveCategory(cat.id)}
+                activeOpacity={0.8}
+                style={[
+                  styles.categoryPill,
+                  {
+                    backgroundColor: isActive ? colors.primary : colors.surface,
+                    borderColor: colors.border,
+                    borderRadius: borderRadius.full,
+                  },
+                ]}
+              >
+                <AppText
+                  variant="button"
+                  style={{
+                    color: isActive ? colors.onPrimary : colors.textSecondary,
+                  }}
+                >
+                  {cat.title}
+                </AppText>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+
+      {/* Ú¯Ø±ÛŒØ¯ Û² Ø³ØªÙˆÙ†Ù‡ Ù‚Ø·Ø¹Ø§Øª */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[
+          styles.gridContainer,
+          { paddingHorizontal: spacing.lg, paddingBottom: 160 },
+        ]}
+      >
+        <View style={styles.productGrid}>
+          {INITIAL_PRODUCTS.map((product) => {
+            return (
+              <TouchableOpacity
+                key={product.id}
+                activeOpacity={0.9}
+                onPress={() => handleProductPress(product.id)}
+                style={[
+                  styles.productCard,
+                  {
+                    width: cardWidth,
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    borderRadius: borderRadius.lg,
+                  },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.imageWrapper,
+                    { backgroundColor: colors.surfaceDim },
+                  ]}
+                >
+                  <Image
+                    source={{ uri: product.image }}
+                    style={styles.productImage}
+                  />
+
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    style={styles.favoriteButton}
+                  >
+                    <Ionicons
+                      name="heart-outline"
+                      size={20}
+                      color={colors.outline}
+                    />
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.productInfo}>
+                  <AppText
+                    variant="labelSm"
+                    color="muted"
+                    style={styles.productBrand}
+                  >
+                    {product.brand}
+                  </AppText>
+
+                  <AppText
+                    variant="body"
+                    numberOfLines={2}
+                    style={[styles.productName, { color: colors.textPrimary }]}
+                  >
+                    {product.name}
+                  </AppText>
+
+                  <View style={styles.cardFooter}>
+                    <AppText
+                      variant="button"
+                      style={{
+                        color: product.isAvailable
+                          ? colors.textPrimary
+                          : colors.secondary,
+                        fontFamily: "IRANYekanXFaNum-Bold",
+                      }}
+                    >
+                      {product.price}
+                    </AppText>
+
+                    {product.isAvailable ? (
+                      <TouchableOpacity
+                        activeOpacity={0.8}
+                        style={[
+                          styles.addToCartBtn,
+                          {
+                            borderColor: colors.border,
+                            borderRadius: borderRadius.sm,
+                          },
+                        ]}
+                      >
+                        <Ionicons
+                          name="add"
+                          size={18}
+                          color={colors.textPrimary}
+                        />
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                        activeOpacity={0.8}
+                        style={[
+                          styles.callBtn,
+                          {
+                            borderColor: colors.secondary,
+                            borderRadius: borderRadius.sm,
+                          },
+                        ]}
+                      >
+                        <Ionicons
+                          name="call-outline"
+                          size={14}
+                          color={colors.secondary}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </ScrollView>
+
+      {/* Ø¯Ú©Ù…Ù‡ Ø´Ù†Ø§ÙˆØ± ÙÛŒÙ„ØªØ± Ø¨Ø§ Ø§ØµÙ„Ø§Ø­ Ù¾ÙˆÛŒØ§ÛŒ Ø§Ø±ØªÙØ§Ø¹ Ø¬Ù‡Øª Ø¬Ù„ÙˆÚ¯ÛŒØ±ÛŒ Ø§Ø² ØªØ¯Ø§Ø®Ù„ Ø¨Ø§ Ù…Ù†ÙˆÛŒ Ù¾Ø§ÛŒÛŒÙ†ÛŒ */}
+      <View
+        style={[styles.floatingButtonContainer, { bottom: 80 + insets.bottom }]}
+      >
+        <TouchableOpacity
+          onPress={() => setFilterVisible(true)}
+          activeOpacity={0.9}
+          style={[
+            styles.floatingFilterBtn,
+            {
+              backgroundColor: colors.primary,
+              shadowColor: colors.primary,
+              borderRadius: borderRadius.full,
+            },
+          ]}
+        >
+          <AppText variant="button" style={{ color: colors.onPrimary }}>
+            ÙÛŒÙ„ØªØ± Ùˆ Ù…Ø±ØªØ¨â€ŒØ³Ø§Ø²ÛŒ
+          </AppText>
+          <Ionicons
+            name="tune-outline"
+            size={18}
+            color={colors.onPrimary}
+            style={{ marginRight: 8 }}
+          />
+        </TouchableOpacity>
+      </View>
+
+      {/* Ù¾Ø§Ù¾ Ø¢Ù¾ Ù…ÙˆØ¯Ø§Ù„ Ú©Ø´ÙˆÛŒÛŒ */}
+      <AppModal
+        visible={filterVisible}
+        onClose={() => setFilterVisible(false)}
+        title="ÙÛŒÙ„ØªØ± Ùˆ Ù…Ø±ØªØ¨â€ŒØ³Ø§Ø²ÛŒ"
+      >
+        <View style={styles.modalContent}>
+          <AppText variant="h2" style={styles.modalSubTitle}>
+            Ù…Ø±ØªØ¨â€ŒØ³Ø§Ø²ÛŒ Ø¨Ø± Ø§Ø³Ø§Ø³
+          </AppText>
+          <View style={styles.filterPillsRow}>
+            {[
+              { id: "popular", label: "Ù…Ø­Ø¨ÙˆØ¨â€ŒØªØ±ÛŒÙ†" },
+              { id: "cheapest", label: "Ø§Ø±Ø²Ø§Ù†â€ŒØªØ±ÛŒÙ†" },
+              { id: "expensive", label: "Ú¯Ø±Ø§Ù†â€ŒØªØ±ÛŒÙ†" },
+              { id: "newest", label: "Ø¬Ø¯ÛŒØ¯ØªØ±ÛŒÙ†" },
+            ].map((item) => {
+              const active = sortBy === item.id;
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  onPress={() => setSortBy(item.id)}
+                  style={[
+                    styles.modalPill,
+                    {
+                      backgroundColor: active
+                        ? colors.secondary
+                        : colors.surface,
+                      borderColor: active ? colors.secondary : colors.border,
+                      borderRadius: borderRadius.md,
+                    },
+                  ]}
+                >
+                  <AppText
+                    variant="button"
+                    style={{ color: active ? "#FFFFFF" : colors.textSecondary }}
+                  >
+                    {item.label}
+                  </AppText>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          <AppText
+            variant="h2"
+            style={[styles.modalSubTitle, { marginTop: spacing.lg }]}
+          >
+            Ø¨Ø±Ù†Ø¯ Ø³Ø§Ø²Ù†Ø¯Ù‡
+          </AppText>
+          <View style={styles.filterPillsRow}>
+            {[
+              { id: "all", label: "Ù‡Ù…Ù‡ Ø¨Ø±Ù†Ø¯Ù‡Ø§" },
+              { id: "kone", label: "KONE" },
+              { id: "schindler", label: "Schindler" },
+              { id: "orona", label: "Orona" },
+            ].map((item) => {
+              const active = selectedBrand === item.id;
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  onPress={() => setSelectedBrand(item.id)}
+                  style={[
+                    styles.modalPill,
+                    {
+                      backgroundColor: active
+                        ? colors.secondary
+                        : colors.surface,
+                      borderColor: active ? colors.secondary : colors.border,
+                      borderRadius: borderRadius.md,
+                    },
+                  ]}
+                >
+                  <AppText
+                    variant="button"
+                    style={{ color: active ? "#FFFFFF" : colors.textSecondary }}
+                  >
+                    {item.label}
+                  </AppText>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          <View
+            style={[
+              styles.modalFooterActions,
+              { marginTop: spacing.xl, gap: spacing.md },
+            ]}
+          >
+            <AppButton
+              title="Ø§Ø¹Ù…Ø§Ù„ ÙÛŒÙ„ØªØ±"
+              onPress={() => setFilterVisible(false)}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                setSortBy("popular");
+                setSelectedBrand("all");
+              }}
+              style={[
+                styles.clearBtn,
+                { borderColor: colors.border, borderRadius: borderRadius.md },
+              ]}
+            >
+              <AppText variant="button" color="muted">
+                Ù¾Ø§Ú© Ú©Ø±Ø¯Ù† Ù‡Ù…Ù‡
+              </AppText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </AppModal>
+
+      <AppBottomNav activeTab="shop" />
+    </ScreenWrapper>
+  );
+};
+
+const styles = StyleSheet.create({
+  header: {
+    height: 56,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+  },
+  headerButton: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+  rightActions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  cartBadge: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    borderWidth: 1.5,
+  },
+  brandContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  searchSection: {
+    width: "100%",
+  },
+  searchBar: {
+    height: 44,
+    borderWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  searchInput: {
+    flex: 1,
+    height: "100%",
+    paddingHorizontal: 12,
+    textAlign: "right",
+    fontSize: 14,
+  },
+  categoryContainer: {
+    width: "100%",
+    marginBottom: 12,
+  },
+  categoryScroll: {
+    flexDirection: "row-reverse",
+    gap: 8,
+  },
+  categoryPill: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderWidth: 1,
+  },
+  gridContainer: {
+    paddingTop: 8,
+  },
+  productGrid: {
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
+    gap: 12,
+    width: "100%",
+  },
+  productCard: {
+    borderWidth: 1,
+    overflow: "hidden",
+  },
+  imageWrapper: {
+    aspectRatio: 1,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    padding: 8,
+  },
+  productImage: {
+    width: "90%",
+    height: "90%",
+    resizeMode: "contain",
+  },
+  favoriteButton: {
+    position: "absolute",
+    top: 8,
+    left: 8,
+    padding: 4,
+  },
+  productInfo: {
+    padding: 12,
+    flex: 1,
+    justifyContent: "space-between",
+  },
+  productBrand: {
+    textAlign: "right",
+
+    fontSize: 10,
+    marginBottom: 4,
+  },
+  productName: {
+    textAlign: "right",
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 12,
+    height: 36,
+  },
+  cardFooter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  addToCartBtn: {
+    width: 28,
+    height: 28,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  callBtn: {
+    width: 28,
+    height: 28,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  floatingButtonContainer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    zIndex: 100,
+  },
+  floatingFilterBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    elevation: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+  },
+  modalContent: {
+    width: "100%",
+  },
+  modalSubTitle: {
+    textAlign: "right",
+
+    marginBottom: 12,
+  },
+  filterPillsRow: {
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
+    gap: 8,
+    width: "100%",
+    marginBottom: 8,
+  },
+  modalPill: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderWidth: 1,
+  },
+  modalFooterActions: {
+    width: "100%",
+  },
+  clearBtn: {
+    height: 56,
+    width: "100%",
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
+
+========== src\features\catalog\screens\ProductDetailScreen.tsx ==========
+// src/features/catalog/screens/ProductDetailScreen.tsx
+
+import { ThemeToggleButton } from "@/src/components/common/ThemeToggleButton";
+import { ScreenWrapper } from "@/src/components/layout/ScreenWrapper";
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React from "react";
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const { width } = Dimensions.get("window");
+const IMAGE_HEIGHT = 350;
+
+export const ProductDetailScreen = () => {
+  const { colors, spacing, borderRadius } = useTheme();
+  const router = useRouter();
+  const insets = useSafeAreaInsets(); // Ú¯Ø±ÙØªÙ† Ø­Ø§Ø´ÛŒÙ‡â€Œ Ø§Ù…Ù† Ø¨Ø±Ø§ÛŒ Ù¾Ø¯ÛŒÙ†Ú¯ Ø¯Ú©Ù…Ù‡ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ø®Ø±ÛŒØ¯
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/catalog");
+    }
+  };
+
+  return (
+    <ScreenWrapper>
+      {/* Û±. Ù‡Ø¯Ø± Ú†Ø³Ø¨Ù†Ø¯Ù‡ Ø¨Ø§Ù„Ø§ÛŒÛŒ */}
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
+        ]}
+      >
+        <TouchableOpacity
+          onPress={handleBack}
+          activeOpacity={0.7}
+          style={styles.headerButton}
+        >
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+        </TouchableOpacity>
+
+        <View style={styles.rightActions}>
+          <ThemeToggleButton />
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={[styles.headerButton, { marginLeft: spacing.xs }]}
+          >
+            <Ionicons
+              name="share-social-outline"
+              size={22}
+              color={colors.textPrimary}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={[styles.headerButton, { marginLeft: spacing.xs }]}
+          >
+            <Ionicons
+              name="heart-outline"
+              size={22}
+              color={colors.textPrimary}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Û². Ù„Ø§ÛŒÙ‡ Ù¾Ø³â€ŒØ²Ù…ÛŒÙ†Ù‡ ØªØµÙˆÛŒØ± Ú©Ø§Ù„Ø§ (Ù„Ø§ÛŒÙ‡ Ø²ÛŒØ±ÛŒÙ† Ø«Ø§Ø¨Øª) */}
+      <View
+        style={[
+          styles.imageGalleryBackground,
+          { backgroundColor: colors.surfaceDim, height: IMAGE_HEIGHT },
+        ]}
+      >
+        <Image
+          source={{
+            uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuBciiNHmbwI70GkRaFNTcLQdydKCwSoF4BQSpZURFP8ZQdZgT_icxvtICmLexDU2pTxGM4ss2QOm57ujT2TTNyAF3p_ugXUD5rEzViJliYztHtxcsbFPkQUd-wtBWAFjAczI1vR2dOrbJoWCwXke5Ia-HOdkpHAXI6g3n-6MDr0oeYPb01zbhy-CKIyZX7wR4adbvBPjrlXilzKgHano84DlHD6xDk7gwcEKjaJpwOopQH-jCiFihzODA",
+          }}
+          style={styles.productImage}
+        />
+        {/* Ø¯Ø§Øªâ€ŒÙ‡Ø§ÛŒ ÙˆØ¶Ø¹ÛŒØª Ú¯Ø§Ù„Ø±ÛŒ */}
+        <View style={styles.dotContainer}>
+          <View style={[styles.dot, { backgroundColor: colors.primary }]} />
+          <View style={[styles.dot, { backgroundColor: colors.border }]} />
+          <View style={[styles.dot, { backgroundColor: colors.border }]} />
+          <View style={[styles.dot, { backgroundColor: colors.border }]} />
+        </View>
+      </View>
+
+      {/* Û³. Ú©Ø§Ù†ØªÛŒÙ†Ø± Ø§ØµÙ„ÛŒ Ø§Ø³Ú©Ø±ÙˆÙ„ Ø±ÙˆÛŒ ØªØµÙˆÛŒØ± */}
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContainer}
+      >
+        {/* Ù‡Ø¯Ø± Ø§Ø³Ù¾ÛŒØ³Ø± Ø´ÙØ§Ù */}
+        <View style={styles.transparentSpacer} />
+
+        {/* Ø¨Ø¯Ù†Ù‡ Ùˆ Ú©Ø§Ø±Øª Ø³ÙÛŒØ¯ Ù…Ø´Ø®ØµØ§Øª Ú©Ø§Ù„Ø§ */}
+        <View
+          style={[
+            styles.contentCard,
+            {
+              backgroundColor: colors.surface,
+              borderTopLeftRadius: borderRadius.xl,
+              borderTopRightRadius: borderRadius.xl,
+              padding: spacing.lg,
+            },
+          ]}
+        >
+          {/* Ø¨Ø®Ø´ Ø§Ø·Ù„Ø§Ø¹Ø§Øª Ø§ØµÙ„ÛŒ Ù…Ø­ØµÙˆÙ„ */}
+          <View style={styles.sectionInfo}>
+            <AppText
+              variant="labelSm"
+              color="secondary"
+              style={styles.brandTag}
+            >
+              Ø³ÛŒÚ©ÙˆØ± - Ø§ÛŒØªØ§Ù„ÛŒØ§ (SICOR - ITALY)
+            </AppText>
+            <AppText
+              variant="h1"
+              style={[styles.productTitle, { color: colors.textPrimary }]}
+            >
+              Ù…ÙˆØªÙˆØ± Ú¯ÛŒØ±Ù„Ø³ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ù…Ø¯Ù„ SG10
+            </AppText>
+
+            {/* Ø§Ù…ØªÛŒØ§Ø²Ø¯Ù‡ÛŒ Ùˆ ÙˆØ¶Ø¹ÛŒØª Ù…ÙˆØ¬ÙˆØ¯ÛŒ */}
+            <View style={styles.ratingRow}>
+              <View
+                style={[
+                  styles.stockBadge,
+                  {
+                    backgroundColor: "rgba(34, 197, 94, 0.1)",
+                    borderRadius: borderRadius.sm,
+                  },
+                ]}
+              >
+                <AppText variant="labelSm" style={{ color: "#22C55E" }}>
+                  Ù…ÙˆØ¬ÙˆØ¯ Ø¯Ø± Ø§Ù†Ø¨Ø§Ø±
+                </AppText>
+              </View>
+              <View
+                style={[styles.dotSpacer, { backgroundColor: colors.border }]}
+              />
+              <View style={styles.ratingInfo}>
+                <AppText variant="body" color="muted" style={{ fontSize: 12 }}>
+                  (Û²Û´ Ù†Ø¸Ø±)
+                </AppText>
+                <AppText
+                  variant="button"
+                  style={{
+                    color: colors.textPrimary,
+                    marginRight: 4,
+                    fontFamily: "IRANYekanXFaNum-Bold",
+                  }}
+                >
+                  Û´.Û¸
+                </AppText>
+                <Ionicons name="star" size={16} color="#D97706" />
+              </View>
+            </View>
+          </View>
+
+          {/* Ø§Ø¨Ø²Ø§Ø±Ú© ØªØ§ÛŒÛŒØ¯ Ø³Ø§Ø²Ú¯Ø§Ø±ÛŒ */}
+          <View
+            style={[
+              styles.compatibilityCard,
+              {
+                backgroundColor: colors.surfaceDim,
+                borderColor: colors.border,
+                borderRadius: borderRadius.lg,
+              },
+            ]}
+          >
+            <View style={styles.compatibilityHeader}>
+              <Ionicons
+                name="construct-outline"
+                size={20}
+                color={colors.textPrimary}
+                style={{ marginLeft: 8 }}
+              />
+              <AppText
+                variant="body"
+                style={[
+                  styles.compatibilityText,
+                  { color: colors.textPrimary },
+                ]}
+              >
+                Ø³Ø§Ø²Ú¯Ø§Ø±ÛŒ Ù…ÙˆØªÙˆØ± Ø±Ø§ Ø¨Ø§ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ø³Ø§Ø®ØªÙ…Ø§Ù† Ø®ÙˆØ¯ Ø¨Ø±Ø±Ø³ÛŒ Ú©Ù†ÛŒØ¯.
+              </AppText>
+            </View>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={styles.compatibilityLink}
+            >
+              <AppText variant="button" color="secondary">
+                Ø§Ù†ØªØ®Ø§Ø¨ Ù…Ø¯Ù„ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ø³Ø§Ø®ØªÙ…Ø§Ù†
+              </AppText>
+              <Ionicons
+                name="arrow-back-outline"
+                size={16}
+                color={colors.secondary}
+                style={{ marginRight: 4 }}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Ø¬Ø¯ÙˆÙ„ Ù…Ø´Ø®ØµØ§Øª ÙÙ†ÛŒ */}
+          <View style={styles.specsSection}>
+            <AppText
+              variant="h2"
+              style={[styles.sectionHeading, { color: colors.textPrimary }]}
+            >
+              Ù…Ø´Ø®ØµØ§Øª ÙÙ†ÛŒ Ù‚Ø·Ø¹Ù‡
+            </AppText>
+
+            <View style={styles.table}>
+              <View
+                style={[
+                  styles.tableRow,
+                  { borderBottomColor: colors.surfaceDim },
+                ]}
+              >
+                <AppText variant="body" color="muted">
+                  Ø¸Ø±ÙÛŒØª Ø¨Ø§Ø±Ø¨Ø±ÛŒ Ø¢Ø³Ø§Ù†Ø³ÙˆØ±
+                </AppText>
+                <AppText
+                  variant="button"
+                  style={[styles.specVal, { color: colors.textPrimary }]}
+                >
+                  Û³Û²Û° Ø§Ù„ÛŒ Û´ÛµÛ° Ú©ÛŒÙ„ÙˆÚ¯Ø±Ù…
+                </AppText>
+              </View>
+              <View
+                style={[
+                  styles.tableRow,
+                  { borderBottomColor: colors.surfaceDim },
+                ]}
+              >
+                <AppText variant="body" color="muted">
+                  Ø³Ø±Ø¹Øª Ù†Ø§Ù…ÛŒ Ù…ÙˆØªÙˆØ±
+                </AppText>
+                <AppText
+                  variant="button"
+                  style={[styles.specVal, { color: colors.textPrimary }]}
+                >
+                  Û±.Û° Ù…ØªØ± Ø¨Ø± Ø«Ø§Ù†ÛŒÙ‡
+                </AppText>
+              </View>
+              <View
+                style={[
+                  styles.tableRow,
+                  { borderBottomColor: colors.surfaceDim },
+                ]}
+              >
+                <AppText variant="body" color="muted">
+                  ÙˆÙ„ØªØ§Ú˜ ØªØºØ°ÛŒÙ‡ Ú©Ø§Ø±Ú©Ø±Ø¯
+                </AppText>
+                <AppText
+                  variant="button"
+                  style={[styles.specVal, { color: colors.textPrimary }]}
+                >
+                  Û³Û¸Û° ÙˆÙ„Øª (Û³ ÙØ§Ø²)
+                </AppText>
+              </View>
+              <View
+                style={[
+                  styles.tableRow,
+                  { borderBottomColor: colors.surfaceDim },
+                ]}
+              >
+                <AppText variant="body" color="muted">
+                  Ú¯Ø§Ø±Ø§Ù†ØªÛŒ Ø§ØµØ§Ù„Øª
+                </AppText>
+                <AppText
+                  variant="button"
+                  style={[styles.specVal, { color: colors.textPrimary }]}
+                >
+                  Û±Û² Ù…Ø§Ù‡ Ú¯Ø§Ø±Ø§Ù†ØªÛŒ Ø±Ø³Ù…ÛŒ Ø·Ù„Ø§ÛŒÛŒ
+                </AppText>
+              </View>
+            </View>
+          </View>
+
+          {/* Ù…Ø±ÙˆØ± Ú©Ù„ÛŒ Ù…Ø­ØµÙˆÙ„ */}
+          <View style={styles.overviewSection}>
+            <AppText
+              variant="h2"
+              style={[styles.sectionHeading, { color: colors.textPrimary }]}
+            >
+              Ù…Ø±ÙˆØ± Ú©Ù„ÛŒ Ù‚Ø·Ø¹Ù‡
+            </AppText>
+            <AppText variant="body" color="muted" style={styles.overviewText}>
+              Ù…ÙˆØªÙˆØ± Ú¯ÛŒØ±Ù„Ø³ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ù…Ø¯Ù„ SG10 Ø¨Ø§ Ù…Ù‡Ù†Ø¯Ø³ÛŒ Ù¾ÛŒØ´Ø±ÙØªÙ‡ Ø§ÛŒØªØ§Ù„ÛŒØ§ØŒ Ø·Ø±Ø§Ø­ÛŒ Ø´Ø¯Ù‡
+              Ø¨Ø±Ø§ÛŒ Ø³Ø§Ø®ØªÙ…Ø§Ù†â€ŒÙ‡Ø§ÛŒ Ù…Ø³Ú©ÙˆÙ†ÛŒ Ùˆ ØªØ¬Ø§Ø±ÛŒ Ù…Ø±ØªÙØ¹ Ø§Ø³Øª. Ø§ÛŒÙ† Ù…ÙˆØªÙˆØ± Ø¯ÙˆØ§Ù…
+              ÙÙˆÙ‚â€ŒØ§Ù„Ø¹Ø§Ø¯Ù‡ Ø¨Ø§Ù„Ø§ØŒ Ø³Ø·Ø­ Ù†ÙˆÛŒØ² Ù†Ø²Ø¯ÛŒÚ© Ø¨Ù‡ ØµÙØ± Ùˆ ØµØ±ÙÙ‡â€ŒØ¬ÙˆÛŒÛŒ Ú†Ø´Ù…Ú¯ÛŒØ± Ø¯Ø± Ù…ØµØ±Ù
+              Ø¨Ø±Ù‚ Ø±Ø§ Ø§Ø±Ø§Ø¦Ù‡ Ù…ÛŒâ€ŒØ¯Ù‡Ø¯. Ø¨Ù‡ØªØ±ÛŒÙ† Ø§Ù†ØªØ®Ø§Ø¨ Ø¨Ø±Ø§ÛŒ Ù¾Ø±ÙˆÚ˜Ù‡â€ŒÙ‡Ø§ÛŒ Ø¨Ø§Ø²Ø³Ø§Ø²ÛŒ Ùˆ Ù†ÙˆØ³Ø§Ø²ÛŒ
+              Ù†ÛŒØ§Ø²Ù…Ù†Ø¯ Ø³ÛŒØ³ØªÙ… Ø¨Ø¯ÙˆÙ† Ù…ÙˆØªÙˆØ±Ø®Ø§Ù†Ù‡ (MRL).
+            </AppText>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Û´. Ù†ÙˆØ§Ø± Ú†Ø³Ø¨Ù†Ø¯Ù‡ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ø®Ø±ÛŒØ¯ Ø¨Ø§ Ù¾Ø¯ÛŒÙ†Ú¯ Ø§Ù…Ù† Ù¾ÙˆÛŒØ§ */}
+      <View
+        style={[
+          styles.bottomActionBar,
+          {
+            backgroundColor: colors.surface,
+            borderTopColor: colors.border,
+            height: 80 + insets.bottom,
+            paddingBottom: insets.bottom,
+          },
+        ]}
+      >
+        {/* Ù‚ÛŒÙ…Øª Ùˆ Ù…Ù‚Ø¯Ø§Ø± Ú©Ù„ */}
+        <View style={styles.priceContainer}>
+          <AppText
+            variant="labelSm"
+            color="muted"
+            style={styles.totalPriceLabel}
+          >
+            Ù‚ÛŒÙ…Øª Ú©Ù„
+          </AppText>
+          <AppText
+            variant="h1"
+            style={[styles.totalPriceText, { color: colors.textPrimary }]}
+          >
+            Û±Û²Û°,Û°Û°Û°,Û°Û°Û° ØªÙˆÙ…Ø§Ù†
+          </AppText>
+        </View>
+
+        {/* Ø¯Ú©Ù…Ù‡ Ø§ÙØ²ÙˆØ¯Ù† Ø¨Ù‡ Ø³Ø¨Ø¯ Ø®Ø±ÛŒØ¯ */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={[
+            styles.addToCartBtn,
+            { backgroundColor: colors.primary, borderRadius: borderRadius.md },
+          ]}
+        >
+          <Ionicons
+            name="bag-handle"
+            size={20}
+            color={colors.onPrimary}
+            style={{ marginLeft: spacing.sm }}
+          />
+          <AppText variant="button" style={{ color: colors.onPrimary }}>
+            Ø§ÙØ²ÙˆØ¯Ù† Ø¨Ù‡ Ø³Ø¨Ø¯ Ø®Ø±ÛŒØ¯
+          </AppText>
+        </TouchableOpacity>
+      </View>
+    </ScreenWrapper>
+  );
+};
+
+const styles = StyleSheet.create({
+  header: {
+    height: 56,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    zIndex: 100,
+  },
+  headerButton: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rightActions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  imageGalleryBackground: {
+    width: width,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
+  },
+  productImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  dotContainer: {
+    position: "absolute",
+    bottom: 40,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 8,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  scrollView: {
+    flex: 1,
+    zIndex: 10,
+  },
+  scrollContainer: {
+    paddingBottom: 100,
+  },
+  transparentSpacer: {
+    height: IMAGE_HEIGHT - 60,
+    backgroundColor: "transparent",
+  },
+  contentCard: {
+    width: "100%",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    elevation: 4,
+    shadowColor: "#0F172A",
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+  },
+  sectionInfo: {
+    alignItems: "flex-end",
+    marginBottom: 20,
+  },
+  brandTag: {
+    // Ø­Ø°Ù Ø§ÙˆØ±Ø±Ø§ÛŒØ¯ ÙˆØ²Ù† Ù‚Ù„Ù… Ø¨ÙˆÙ…ÛŒ Ø§Ù†Ø¯Ø±ÙˆÛŒØ¯
+    marginBottom: 4,
+  },
+  productTitle: {
+    textAlign: "right",
+    fontSize: 22,
+    // Ø­Ø°Ù Ø§ÙˆØ±Ø±Ø§ÛŒØ¯ ÙˆØ²Ù† Ù‚Ù„Ù… Ø¨ÙˆÙ…ÛŒ Ø§Ù†Ø¯Ø±ÙˆÛŒØ¯
+    lineHeight: 30,
+    marginBottom: 8,
+  },
+  ratingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 4,
+  },
+  stockBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  dotSpacer: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    marginHorizontal: 12,
+  },
+  ratingInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  compatibilityCard: {
+    borderWidth: 1,
+    borderStyle: "dashed",
+    padding: 16,
+    marginBottom: 24,
+  },
+  compatibilityHeader: {
+    flexDirection: "row-reverse",
+    alignItems: "flex-start",
+    marginBottom: 12,
+  },
+  compatibilityText: {
+    textAlign: "right",
+    flex: 1,
+    lineHeight: 20,
+  },
+  compatibilityLink: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    alignSelf: "flex-start",
+  },
+  specsSection: {
+    marginBottom: 24,
+  },
+  sectionHeading: {
+    textAlign: "right",
+    // Ø­Ø°Ù Ø§ÙˆØ±Ø±Ø§ÛŒØ¯ ÙˆØ²Ù† Ù‚Ù„Ù… Ø¨ÙˆÙ…ÛŒ Ø§Ù†Ø¯Ø±ÙˆÛŒØ¯
+    marginBottom: 12,
+  },
+  table: {
+    width: "100%",
+  },
+  tableRow: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+  },
+  specVal: {
+    fontFamily: "IRANYekanXFaNum-Bold",
+  },
+  overviewSection: {
+    marginBottom: 24,
+  },
+  overviewText: {
+    textAlign: "right",
+    lineHeight: 24,
+  },
+  bottomActionBar: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 24,
+    borderTopWidth: 1,
+    elevation: 12,
+    shadowColor: "#0F172A",
+    shadowOffset: { width: 0, height: -6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    zIndex: 110,
+  },
+  priceContainer: {
+    alignItems: "flex-start",
+  },
+  totalPriceLabel: {
+    textAlign: "left",
+  },
+  totalPriceText: {
+    fontFamily: "IRANYekanXFaNum-Bold",
+    fontSize: 18,
+    // Ø­Ø°Ù Ø§ÙˆØ±Ø±Ø§ÛŒØ¯ ÙˆØ²Ù† Ù‚Ù„Ù… Ø¨ÙˆÙ…ÛŒ Ø§Ù†Ø¯Ø±ÙˆÛŒØ¯
+    marginTop: 2,
+    textAlign: "left",
+  },
+  addToCartBtn: {
+    height: 48,
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+});
+
+========== src\features\catalog\screens\ProfileScreen.tsx ==========
+// src/features/catalog/screens/ProfileScreen.tsx
+
+import { ThemeToggleButton } from "@/src/components/common/ThemeToggleButton";
+import { AppBottomNav } from "@/src/components/layout/AppBottomNav";
+import { ScreenWrapper } from "@/src/components/layout/ScreenWrapper";
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+    Dimensions,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const { width } = Dimensions.get("window");
+
+export const ProfileScreen = () => {
+  const { colors, spacing, borderRadius } = useTheme();
+  const router = useRouter();
+  const insets = useSafeAreaInsets(); // Ø¯Ø±ÛŒØ§ÙØª Ù¾ÙˆÛŒØ§ÛŒ ÙØ§ØµÙ„Ù‡ Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ù…ÙˆØ¨Ø§ÛŒÙ„
+
+  const [activeTab, setActiveTab] = useState<"services" | "orders">("services");
+
+  // Ø´Ø¨ÛŒÙ‡â€ŒØ³Ø§Ø²ÛŒ Ø®Ø±ÙˆØ¬ Ø§Ø² Ø­Ø³Ø§Ø¨ Ú©Ø§Ø±Ø¨Ø±ÛŒ
+  const handleSignOut = () => {
+    router.replace("/");
+  };
+
+  // Ù…Ø­Ø§Ø³Ø¨Ù‡ Ø±ÛŒØ§Ø¶ÛŒ Ø¹Ø±Ø¶ Ú©Ø§Ø±Øªâ€ŒÙ‡Ø§ÛŒ Ù…ÛŒØ§Ù†Ø¨Ø± Ù…Ø¯ÛŒØ±ÛŒØªÛŒ
+  const cardWidth = (width - spacing.lg * 2 - spacing.md) / 2;
+
+  return (
+    <ScreenWrapper>
+      {/* Ù‡Ø¯Ø± Ø¨Ø§Ù„Ø§ÛŒÛŒ Ø¨Ø§ Ú†ÛŒØ¯Ù…Ø§Ù† Ø§Ø³ØªØ§Ù†Ø¯Ø§Ø±Ø¯ */}
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
+        ]}
+      >
+        {/* Ø¯Ú©Ù…Ù‡ ØªØºÛŒÛŒØ± ØªÙ… Ø¯Ø± Ø³Ù…Øª Ú†Ù¾ */}
+        <ThemeToggleButton />
+
+        <View style={styles.brandContainer}>
+          <AppText variant="h2" style={{ color: colors.textPrimary }}>
+            Ø­Ø³Ø§Ø¨ Ú©Ø§Ø±Ø¨Ø±ÛŒ
+          </AppText>
+        </View>
+
+        {/* Ø¯Ú©Ù…Ù‡ Ø®Ø±ÙˆØ¬ Ø³Ø±ÛŒØ¹ Ø¯Ø± Ø±Ø§Ø³Øª */}
+        <TouchableOpacity
+          onPress={handleSignOut}
+          activeOpacity={0.7}
+          style={styles.headerButton}
+        >
+          <Ionicons name="log-out-outline" size={24} color={colors.error} />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        // Ù¾Ø¯ÛŒÙ†Ú¯ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ø¨Ø²Ø±Ú¯â€ŒØªØ± Ø¨Ø±Ø§ÛŒ Ø¹Ø¯Ù… ØªØ¯Ø§Ø®Ù„ Ø¨Ø§ Ù†ÙˆØ§Ø± Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ùˆ Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Ù„Ù…Ø³ÛŒ Ù…ÙˆØ¨Ø§ÛŒÙ„
+        contentContainerStyle={[
+          styles.scrollContainer,
+          {
+            paddingHorizontal: spacing.lg,
+            paddingBottom: 80 + (64 + insets.bottom),
+          },
+        ]}
+      >
+        {/* Û±. Ú©Ø§Ø±Øª Ø§Ø·Ù„Ø§Ø¹Ø§Øª Ù¾Ø±ÙˆÙØ§ÛŒÙ„ Ú©Ø§Ø±Ø¨Ø± Ø¨Ù‡ ØµÙˆØ±Øª RTL ÙØ§Ø±Ø³ÛŒ */}
+        <View
+          style={[
+            styles.profileCard,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              borderRadius: borderRadius.lg,
+            },
+          ]}
+        >
+          <View style={styles.profileRow}>
+            {/* Ø¯Ú©Ù…Ù‡ ÙˆÛŒØ±Ø§ÛŒØ´ Ø¯Ø± Ú†Ù¾ Ú©Ø§Ø±Øª */}
+            <TouchableOpacity activeOpacity={0.7} style={styles.editBtn}>
+              <Ionicons
+                name="create-outline"
+                size={20}
+                color={colors.textSecondary}
+              />
+            </TouchableOpacity>
+
+            {/* Ù†Ø§Ù… Ùˆ Ù…Ø´Ø®ØµØ§Øª Ø¯Ø± ÙˆØ³Ø· */}
+            <View style={styles.profileInfo}>
+              <AppText
+                variant="h2"
+                style={[styles.userName, { color: colors.textPrimary }]}
+              >
+                Ø¹Ù„ÛŒ Ø±Ø¶Ø§ÛŒÛŒ
+              </AppText>
+              <AppText variant="body" color="muted" style={styles.userPhone}>
+                Û°Û¹Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹
+              </AppText>
+            </View>
+
+            {/* Ø¢ÙˆØ§ØªØ§Ø± Ø§ÙˆÙ„ Ù†Ø§Ù… Ú©Ø§Ø±Ø¨Ø± Ø¯Ø± Ø±Ø§Ø³Øª */}
+            <View
+              style={[
+                styles.avatarCircle,
+                { backgroundColor: colors.surfaceDim },
+              ]}
+            >
+              <AppText variant="h1" style={{ color: colors.textPrimary }}>
+                Ø¹Ø±
+              </AppText>
+            </View>
+          </View>
+        </View>
+
+        {/* Û². Ú¯Ø§Ù… Ù…Ø¯ÛŒØ±ÛŒØª ØªØ¬Ù‡ÛŒØ²Ø§Øª Ùˆ Ø¢Ø¯Ø±Ø³â€ŒÙ‡Ø§ (Û² Ø³ØªÙˆÙ†Ù‡ Ø±ÛŒØ³Ù¾Ø§Ù†Ø³ÛŒÙˆ) */}
+        <View style={[styles.gridContainer, { gap: spacing.md }]}>
+          {/* Ú©Ø§Ø±Øª Ø¢Ø³Ø§Ù†Ø³ÙˆØ±Ù‡Ø§ÛŒ Ù…Ù† */}
+          <TouchableOpacity
+            activeOpacity={0.9}
+            style={[
+              styles.shortcutCard,
+              {
+                width: cardWidth,
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                borderRadius: borderRadius.lg,
+              },
+            ]}
+          >
+            <View
+              style={[styles.iconBox, { backgroundColor: colors.surfaceDim }]}
+            >
+              <Ionicons
+                name="construct-outline"
+                size={20}
+                color={colors.textPrimary}
+              />
+            </View>
+            <View style={styles.shortcutText}>
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                Ø¢Ø³Ø§Ù†Ø³ÙˆØ±Ù‡Ø§ÛŒ Ù…Ù†
+              </AppText>
+              <AppText
+                variant="labelSm"
+                color="muted"
+                style={styles.shortcutSub}
+              >
+                Û² Ø¯Ø³ØªÚ¯Ø§Ù‡ Ø«Ø¨Øªâ€ŒØ´Ø¯Ù‡
+              </AppText>
+            </View>
+          </TouchableOpacity>
+
+          {/* Ú©Ø§Ø±Øª Ø¢Ø¯Ø±Ø³â€ŒÙ‡Ø§ÛŒ Ù…Ù† */}
+          <TouchableOpacity
+            activeOpacity={0.9}
+            style={[
+              styles.shortcutCard,
+              {
+                width: cardWidth,
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                borderRadius: borderRadius.lg,
+              },
+            ]}
+          >
+            <View
+              style={[styles.iconBox, { backgroundColor: colors.surfaceDim }]}
+            >
+              <Ionicons
+                name="location-outline"
+                size={20}
+                color={colors.textPrimary}
+              />
+            </View>
+            <View style={styles.shortcutText}>
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                Ø¢Ø¯Ø±Ø³â€ŒÙ‡Ø§ÛŒ Ù…Ù†
+              </AppText>
+              <AppText
+                variant="labelSm"
+                color="muted"
+                style={styles.shortcutSub}
+              >
+                Û³ Ø¢Ø¯Ø±Ø³ Ø«Ø¨Øªâ€ŒØ´Ø¯Ù‡
+              </AppText>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        {/* Û³. Ø¨Ø®Ø´ ØªØ§Ø±ÛŒØ®Ú†Ù‡ Ùˆ Ø³ÙˆØ§Ø¨Ù‚ Ø®Ø¯Ù…Ø§Øª */}
+        <View style={[styles.historySection, { marginTop: spacing.xl }]}>
+          {/* Ø³ÙˆØ¦ÛŒÚ†Ø± ØªØ¨ Ø¨ÙˆÙ…ÛŒ Ø¨Ø±Ø§ÛŒ Ø³ÙˆØ§Ø¨Ù‚ */}
+          <View
+            style={[
+              styles.tabContainer,
+              {
+                backgroundColor: colors.surfaceDim,
+                borderRadius: borderRadius.md,
+              },
+            ]}
+          >
+            <TouchableOpacity
+              onPress={() => setActiveTab("orders")}
+              activeOpacity={0.8}
+              style={[
+                styles.tabButton,
+                activeTab === "orders" && {
+                  backgroundColor: colors.surface,
+                  borderRadius: borderRadius.sm,
+                },
+              ]}
+            >
+              <AppText
+                variant="button"
+                style={{
+                  color:
+                    activeTab === "orders"
+                      ? colors.textPrimary
+                      : colors.textSecondary,
+                }}
+              >
+                Ø®Ø±ÛŒØ¯ Ù‚Ø·Ø¹Ø§Øª
+              </AppText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setActiveTab("services")}
+              activeOpacity={0.8}
+              style={[
+                styles.tabButton,
+                activeTab === "services" && {
+                  backgroundColor: colors.surface,
+                  borderRadius: borderRadius.sm,
+                },
+              ]}
+            >
+              <AppText
+                variant="button"
+                style={{
+                  color:
+                    activeTab === "services"
+                      ? colors.textPrimary
+                      : colors.textSecondary,
+                }}
+              >
+                Ø³ÙˆØ§Ø¨Ù‚ Ø³Ø±ÙˆÛŒØ³â€ŒÙ‡Ø§
+              </AppText>
+            </TouchableOpacity>
+          </View>
+
+          {/* Ù„ÛŒØ³Øª Ø³ÙˆØ§Ø¨Ù‚ Ù…ØªÙ†Ø§Ø¸Ø± Ø¨Ø§ Ø²Ø¨Ø§Ù†Ù‡ ÙØ¹Ø§Ù„ */}
+          {activeTab === "services" ? (
+            <View style={[styles.historyList, { gap: spacing.md }]}>
+              {/* Ø±Ú©ÙˆØ±Ø¯ Û± Ø³Ø±ÙˆÛŒØ³ */}
+              <View
+                style={[
+                  styles.historyCard,
+                  {
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    borderRadius: borderRadius.lg,
+                  },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.historyHeaderRow,
+                    { borderBottomColor: colors.border },
+                  ]}
+                >
+                  <AppText
+                    variant="h2"
+                    style={[styles.priceText, { color: colors.textPrimary }]}
+                  >
+                    Û¶,Û°Û°Û°,Û°Û°Û° ØªÙˆÙ…Ø§Ù†
+                  </AppText>
+                  <View style={styles.historyInfo}>
+                    <AppText
+                      variant="button"
+                      style={{ color: colors.textPrimary }}
+                    >
+                      Ø§Ø¹Ø²Ø§Ù… ØªÚ©Ù†ÛŒØ³ÛŒÙ† Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ
+                    </AppText>
+                    <AppText
+                      variant="labelSm"
+                      color="muted"
+                      style={styles.historyDate}
+                    >
+                      Û²Û± Ù…Ù‡Ø± Û±Û´Û°Û³
+                    </AppText>
+                  </View>
+                </View>
+                <View style={styles.historyFooterRow}>
+                  <TouchableOpacity>
+                    <AppText
+                      variant="labelSm"
+                      color="secondary"
+                      style={styles.invoiceLink}
+                    >
+                      Ù…Ø´Ø§Ù‡Ø¯Ù‡ ÙØ§Ú©ØªÙˆØ±
+                    </AppText>
+                  </TouchableOpacity>
+                  <View style={styles.statusBadge}>
+                    <AppText variant="labelSm" style={{ color: "#22C55E" }}>
+                      Ø§Ù†Ø¬Ø§Ù… Ø´Ø¯Ù‡
+                    </AppText>
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={16}
+                      color="#22C55E"
+                      style={{ marginLeft: 6 }}
+                    />
+                  </View>
+                </View>
+              </View>
+
+              {/* Ø±Ú©ÙˆØ±Ø¯ Û² Ø³Ø±ÙˆÛŒØ³ */}
+              <View
+                style={[
+                  styles.historyCard,
+                  {
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    borderRadius: borderRadius.lg,
+                  },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.historyHeaderRow,
+                    { borderBottomColor: colors.border },
+                  ]}
+                >
+                  <AppText
+                    variant="h2"
+                    style={[styles.priceText, { color: colors.textPrimary }]}
+                  >
+                    Û´,Û°Û°Û°,Û°Û°Û° ØªÙˆÙ…Ø§Ù†
+                  </AppText>
+                  <View style={styles.historyInfo}>
+                    <AppText
+                      variant="button"
+                      style={{ color: colors.textPrimary }}
+                    >
+                      Ø³Ø±ÙˆÛŒØ³ Ø¯ÙˆØ±Ù‡â€ŒØ§ÛŒ Ù…Ù†Ø¸Ù… Ù…Ø§Ù‡Ø§Ù†Ù‡
+                    </AppText>
+                    <AppText
+                      variant="labelSm"
+                      color="muted"
+                      style={styles.historyDate}
+                    >
+                      Û±Û° Ø´Ù‡Ø±ÛŒÙˆØ± Û±Û´Û°Û³
+                    </AppText>
+                  </View>
+                </View>
+                <View style={styles.historyFooterRow}>
+                  <TouchableOpacity>
+                    <AppText
+                      variant="labelSm"
+                      color="secondary"
+                      style={styles.invoiceLink}
+                    >
+                      Ù…Ø´Ø§Ù‡Ø¯Ù‡ ÙØ§Ú©ØªÙˆØ±
+                    </AppText>
+                  </TouchableOpacity>
+                  <View style={styles.statusBadge}>
+                    <AppText variant="labelSm" style={{ color: "#22C55E" }}>
+                      Ø§Ù†Ø¬Ø§Ù… Ø´Ø¯Ù‡
+                    </AppText>
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={16}
+                      color="#22C55E"
+                      style={{ marginLeft: 6 }}
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+          ) : (
+            // Ø´Ø¨ÛŒÙ‡â€ŒØ³Ø§Ø²ÛŒ Ø®Ø§Ù„ÛŒ Ø¨ÙˆØ¯Ù† Ù„ÛŒØ³Øª Ø³ÙØ§Ø±Ø´Ø§Øª Ù‚Ø·Ø¹Ø§Øª
+            <View
+              style={[
+                styles.emptyContainer,
+                {
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                  backgroundColor: colors.surface,
+                },
+              ]}
+            >
+              <Ionicons
+                name="cube-outline"
+                size={48}
+                color={colors.textSecondary}
+                style={{ marginBottom: 12 }}
+              />
+              <AppText variant="body" color="muted">
+                Ù‡Ù†ÙˆØ² Ù‡ÛŒÚ† Ø³ÙØ§Ø±Ø´ Ù‚Ø·Ø¹Ù‡â€ŒØ§ÛŒ Ø«Ø¨Øª Ù†Ø´Ø¯Ù‡ Ø§Ø³Øª.
+              </AppText>
+            </View>
+          )}
+        </View>
+
+        {/* Û´. Ù…Ù†ÙˆÛŒ ØªÙ†Ø¸ÛŒÙ…Ø§Øª Ú©Ø§Ø±Ø¨Ø±Ø¯ÛŒ Ù¾Ø§ÛŒÛŒÙ†ÛŒ */}
+        <View
+          style={[
+            styles.settingsCard,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              borderRadius: borderRadius.lg,
+              marginTop: spacing.xl,
+            },
+          ]}
+        >
+          {/* Ú¯Ø²ÛŒÙ†Ù‡ Ù¾Ø´ØªÛŒØ¨Ø§Ù†ÛŒ */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[styles.settingRow, { borderBottomColor: colors.border }]}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={18}
+              color={colors.textSecondary}
+            />
+            <View style={styles.settingTextRow}>
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                Ø±Ø§Ù‡Ù†Ù…Ø§ Ùˆ Ù¾Ø´ØªÛŒØ¨Ø§Ù†ÛŒ ÙÙ†ÛŒ
+              </AppText>
+              <Ionicons
+                name="headset-outline"
+                size={20}
+                color={colors.textPrimary}
+                style={{ marginLeft: 12 }}
+              />
+            </View>
+          </TouchableOpacity>
+
+          {/* Ú¯Ø²ÛŒÙ†Ù‡ Ø­Ø±ÛŒÙ… Ø®ØµÙˆØµÛŒ */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[styles.settingRow, { borderBottomColor: colors.border }]}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={18}
+              color={colors.textSecondary}
+            />
+            <View style={styles.settingTextRow}>
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                Ø­Ø±ÛŒÙ… Ø®ØµÙˆØµÛŒ Ùˆ Ù‚ÙˆØ§Ù†ÛŒÙ† Ø§ÛŒÚ©Ø³ Ø§Ù„ÙˆØ§ØªÙˆØ±
+              </AppText>
+              <Ionicons
+                name="shield-outline"
+                size={20}
+                color={colors.textPrimary}
+                style={{ marginLeft: 12 }}
+              />
+            </View>
+          </TouchableOpacity>
+
+          {/* Ø¯Ú©Ù…Ù‡ Ø®Ø±ÙˆØ¬ Ù‚Ø±Ù…Ø² Ø±Ù†Ú¯ */}
+          <TouchableOpacity
+            onPress={handleSignOut}
+            activeOpacity={0.8}
+            style={styles.settingRow}
+          >
+            <View
+              style={[
+                styles.settingTextRow,
+                { width: "100%", justifyContent: "flex-end" },
+              ]}
+            >
+              <AppText variant="button" style={{ color: colors.error }}>
+                Ø®Ø±ÙˆØ¬ Ø§Ø² Ø­Ø³Ø§Ø¨ Ú©Ø§Ø±Ø¨Ø±ÛŒ
+              </AppText>
+              <Ionicons
+                name="log-out-outline"
+                size={20}
+                color={colors.error}
+                style={{ marginLeft: 12 }}
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+
+      {/* Ù†Ø§ÙˆØ¨Ø±ÛŒ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ø³Ø±Ø§Ø³Ø±ÛŒ Ø¨Ø§ Ø²Ø¨Ø§Ù†Ù‡ ÙØ¹Ø§Ù„ Ù¾Ø±ÙˆÙØ§ÛŒÙ„ */}
+      <AppBottomNav activeTab="profile" />
+    </ScreenWrapper>
+  );
+};
+
+const styles = StyleSheet.create({
+  scrollContainer: {
+    paddingTop: 8,
+  },
+  header: {
+    height: 56,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+  },
+  headerButton: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  brandContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  profileCard: {
+    borderWidth: 1,
+    padding: 16,
+    marginBottom: 16,
+  },
+  profileRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  editBtn: {
+    padding: 4,
+  },
+  profileInfo: {
+    flex: 1,
+    alignItems: "flex-end",
+    paddingRight: 16,
+  },
+  userName: {
+    fontSize: 18,
+    lineHeight: 24,
+    marginBottom: 4,
+  },
+  userPhone: {
+    fontFamily: "IRANYekanXFaNum-Regular",
+  },
+  avatarCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  gridContainer: {
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
+    width: "100%",
+  },
+  shortcutCard: {
+    borderWidth: 1,
+    padding: 16,
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  iconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 12,
+  },
+  shortcutText: {
+    alignItems: "flex-end",
+  },
+  shortcutSub: {
+    fontSize: 10,
+    marginTop: 2,
+    fontFamily: "IRANYekanXFaNum-Regular",
+  },
+  historySection: {
+    width: "100%",
+  },
+  tabContainer: {
+    flexDirection: "row",
+    padding: 4,
+    width: "100%",
+    marginBottom: 16,
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  historyList: {
+    width: "100%",
+  },
+  historyCard: {
+    borderWidth: 1,
+    padding: 16,
+  },
+  historyHeaderRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+  },
+  priceText: {
+    fontSize: 15,
+  },
+  historyInfo: {
+    alignItems: "flex-end",
+  },
+  historyDate: {
+    fontSize: 10,
+    marginTop: 4,
+    fontFamily: "IRANYekanXFaNum-Regular",
+  },
+  historyFooterRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingTop: 12,
+  },
+  invoiceLink: {
+    fontSize: 12,
+    textDecorationLine: "underline",
+  },
+  statusBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  emptyContainer: {
+    borderWidth: 1,
+    padding: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+  },
+  settingsCard: {
+    borderWidth: 1,
+    overflow: "hidden",
+  },
+  settingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 16,
+    borderBottomWidth: 1,
+    width: "100%",
+  },
+  settingTextRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+});
+
+========== src\features\catalog\screens\RequestServiceScreen.tsx ==========
+// src/features/catalog/screens/RequestServiceScreen.tsx
+
+import { ThemeToggleButton } from "@/src/components/common/ThemeToggleButton";
+import { ScreenWrapper } from "@/src/components/layout/ScreenWrapper";
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+    Dimensions,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const { width } = Dimensions.get("window");
+const IMAGE_HEIGHT = 350;
+
+const RequestServiceScreen = () => {
+  const { colors, spacing, borderRadius } = useTheme();
+  const router = useRouter();
+  const insets = useSafeAreaInsets(); // Ø¯Ø±ÛŒØ§ÙØª ÙØ§ØµÙ„Ù‡ Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ù…ÙˆØ¨Ø§ÛŒÙ„
+
+  // Ù…Ø¯ÛŒØ±ÛŒØª Ù†ÙˆØ¹ Ø®Ø¯Ù…Øª (Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ ÛŒØ§ Ø¯ÙˆØ±Ù‡â€ŒØ§ÛŒ)
+  const [serviceType, setServiceType] = useState<"emergency" | "scheduled">(
+    "emergency",
+  );
+  // Ù…Ø¯ÛŒØ±ÛŒØª Ù…Ø´Ú©Ù„ Ø§Ù†ØªØ®Ø§Ø¨ Ø´Ø¯Ù‡
+  const [selectedIssue, setSelectedIssue] = useState<string | null>(null);
+  const [description, setDescription] = useState("");
+
+  const issues = [
+    "Ú©Ø§Ø¨ÛŒÙ† Ú¯ÛŒØ± Ú©Ø±Ø¯Ù‡ Ø§Ø³Øª",
+    "Ø¯Ø±Ø¨â€ŒÙ‡Ø§ Ø¨Ø§Ø² Ù†Ù…ÛŒâ€ŒØ´ÙˆÙ†Ø¯",
+    "ØµØ¯Ø§ÛŒ ØºÛŒØ±Ø¹Ø§Ø¯ÛŒ Ù…ÙˆØªÙˆØ±",
+    "Ù„Ø±Ø²Ø´ ØºÛŒØ±Ø·Ø¨ÛŒØ¹ÛŒ Ú©Ø§Ø¨ÛŒÙ†",
+    "Ø®Ø·Ø§ÛŒ Ù†Ù…Ø§ÛŒØ´Ú¯Ø± Ù¾Ù†Ù„",
+    "Ø³Ø§ÛŒØ± Ù…ÙˆØ§Ø±Ø¯",
+  ];
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/dashboard");
+    }
+  };
+
+  const handleSubmit = () => {
+    router.replace("/dashboard");
+  };
+
+  return (
+    <ScreenWrapper>
+      {/* Ù‡Ø¯Ø± Ø¨Ø§Ù„Ø§ÛŒÛŒ Ø¨Ø§ Ø¯Ú©Ù…Ù‡ Ø¨Ø§Ø²Ú¯Ø´Øª */}
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
+        ]}
+      >
+        <TouchableOpacity
+          onPress={handleBack}
+          activeOpacity={0.7}
+          style={styles.headerButton}
+        >
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+        </TouchableOpacity>
+
+        <View style={styles.brandContainer}>
+          <AppText variant="h2" style={{ color: colors.textPrimary }}>
+            Ø¯Ø±Ø®ÙˆØ§Ø³Øª Ø®Ø¯Ù…Ø§Øª ÙÙ†ÛŒ
+          </AppText>
+        </View>
+
+        <View style={styles.rightActions}>
+          <ThemeToggleButtonHeader />
+        </View>
+      </View>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[
+          styles.scrollContainer,
+          {
+            paddingHorizontal: spacing.lg,
+            paddingBottom: 100 + insets.bottom,
+          },
+        ]}
+      >
+        {/* Û±. Ú©Ø§Ø¯Ø± Ø§Ù†ØªØ®Ø§Ø¨ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ø³Ø§Ø®ØªÙ…Ø§Ù† */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={[
+            styles.elevatorCard,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              borderRadius: borderRadius.lg,
+            },
+          ]}
+        >
+          <Ionicons
+            name="chevron-down"
+            size={20}
+            color={colors.textSecondary}
+          />
+
+          <View style={styles.elevatorInfo}>
+            <AppText
+              variant="labelSm"
+              color="secondary"
+              style={styles.elevatorLabel}
+            >
+              Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ø§Ù†ØªØ®Ø§Ø¨â€ŒØ´Ø¯Ù‡
+            </AppText>
+            <AppText
+              variant="body"
+              style={[styles.elevatorAddress, { color: colors.textPrimary }]}
+            >
+              Ø®ÛŒØ§Ø¨Ø§Ù† Ù†Ú¯ÛŒÙ†ØŒ Ù¾Ù„Ø§Ú© Û±Û²ØŒ Ø·Ø¨Ù‚Ù‡ Û´ØŒ ÙˆØ§Ø­Ø¯ B
+            </AppText>
+          </View>
+
+          <View
+            style={[
+              styles.elevatorIconContainer,
+              { backgroundColor: colors.surfaceDim },
+            ]}
+          >
+            <Ionicons name="business" size={20} color={colors.textPrimary} />
+          </View>
+        </TouchableOpacity>
+
+        {/* Û². Ø³ÙˆØ¦ÛŒÚ†Ø± Û² Ø³ØªÙˆÙ†Ù‡ Ù†ÙˆØ¹ Ø®Ø¯Ù…Ø§Øª */}
+        <View style={styles.serviceToggleGrid}>
+          <TouchableOpacity
+            onPress={() => setServiceType("emergency")}
+            activeOpacity={0.9}
+            style={[
+              styles.toggleCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor:
+                  serviceType === "emergency"
+                    ? colors.secondary
+                    : colors.border,
+                borderWidth: serviceType === "emergency" ? 2 : 1,
+                borderRadius: borderRadius.lg,
+              },
+            ]}
+          >
+            <Ionicons
+              name="alert-circle"
+              size={28}
+              color={
+                serviceType === "emergency"
+                  ? colors.secondary
+                  : colors.textSecondary
+              }
+              style={styles.toggleCardIcon}
+            />
+            <AppText
+              variant="h2"
+              style={[styles.toggleTitle, { color: colors.textPrimary }]}
+            >
+              ØªØ¹Ù…ÛŒØ±Ø§Øª Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ
+            </AppText>
+            <AppText variant="labelSm" color="muted" style={styles.toggleSub}>
+              Ø§Ø¹Ø²Ø§Ù… ÙÙˆÙ‚â€ŒØ³Ø±ÛŒØ¹ ØªÚ©Ù†Ø³ÛŒÙ†
+            </AppText>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setServiceType("scheduled")}
+            activeOpacity={0.9}
+            style={[
+              styles.toggleCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor:
+                  serviceType === "scheduled"
+                    ? colors.secondary
+                    : colors.border,
+                borderWidth: serviceType === "scheduled" ? 2 : 1,
+                borderRadius: borderRadius.lg,
+              },
+            ]}
+          >
+            <Ionicons
+              name="calendar"
+              size={28}
+              color={
+                serviceType === "scheduled"
+                  ? colors.secondary
+                  : colors.textSecondary
+              }
+              style={styles.toggleCardIcon}
+            />
+            <AppText
+              variant="h2"
+              style={[styles.toggleTitle, { color: colors.textPrimary }]}
+            >
+              Ø³Ø±ÙˆÛŒØ³ Ø¯ÙˆØ±Ù‡â€ŒØ§ÛŒ
+            </AppText>
+            <AppText variant="labelSm" color="muted" style={styles.toggleSub}>
+              Ø§Ù†ØªØ®Ø§Ø¨ Ø±ÙˆØ² Ùˆ Ø³Ø§Ø¹Øª Ø¨Ø§Ø²Ø¯ÛŒØ¯
+            </AppText>
+          </TouchableOpacity>
+        </View>
+
+        {/* Û³. Ø¨Ø®Ø´ Ù„ÛŒØ³Øª Ù…Ø´Ú©Ù„Ø§Øª */}
+        <View style={{ marginTop: spacing.lg }}>
+          <AppText
+            variant="h2"
+            style={[styles.sectionHeading, { color: colors.textPrimary }]}
+          >
+            Ù…Ø´Ú©Ù„ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ú†ÛŒØ³ØªØŸ
+          </AppText>
+
+          <View style={styles.pillsContainer}>
+            {issues.map((issue) => {
+              const isSelected = selectedIssue === issue;
+              return (
+                <TouchableOpacity
+                  key={issue}
+                  onPress={() => setSelectedIssue(issue)}
+                  activeOpacity={0.8}
+                  style={[
+                    styles.pill,
+                    {
+                      backgroundColor: isSelected
+                        ? colors.primary
+                        : colors.surface,
+                      borderColor: isSelected ? colors.primary : colors.border,
+                      borderRadius: borderRadius.full,
+                    },
+                  ]}
+                >
+                  <AppText
+                    variant="body"
+                    style={{
+                      color: isSelected
+                        ? colors.onPrimary
+                        : colors.textSecondary,
+                    }}
+                  >
+                    {issue}
+                  </AppText>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* Û´. ØªÙˆØ¶ÛŒØ­Ø§Øª */}
+        <View style={[styles.inputWrapper, { marginTop: spacing.lg }]}>
+          <TextInput
+            value={description}
+            onChangeText={setDescription}
+            multiline
+            numberOfLines={4}
+            placeholder="Ø´Ø±Ø­ Ù…Ø´Ú©Ù„ Ø±Ø§ Ø¨Ù‡ Ø²Ø¨Ø§Ù† Ø®ÙˆØ¯ Ø¨Ù†ÙˆÛŒØ³ÛŒØ¯... (Ø§Ø®ØªÛŒØ§Ø±ÛŒ)"
+            placeholderTextColor={colors.outline}
+            style={[
+              styles.textArea,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                borderRadius: borderRadius.lg,
+                color: colors.textPrimary,
+                fontFamily: "IRANYekanXFaNum-Regular",
+              },
+            ]}
+          />
+          <TouchableOpacity activeOpacity={0.7} style={styles.micButton}>
+            <Ionicons name="mic-outline" size={20} color={colors.outline} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Ûµ. Ø¨Ø®Ø´ Ø²Ù…Ø§Ù†â€ŒØ¨Ù†Ø¯ÛŒ Ù¾ÙˆÛŒØ§ */}
+        <View
+          style={[
+            styles.schedulerSection,
+            { marginTop: spacing.xl },
+            serviceType === "emergency" && styles.disabledSection,
+          ]}
+          pointerEvents={serviceType === "emergency" ? "none" : "auto"}
+        >
+          <AppText
+            variant="h2"
+            style={[styles.sectionHeading, { color: colors.textPrimary }]}
+          >
+            Ø§Ù†ØªØ®Ø§Ø¨ Ø²Ù…Ø§Ù† Ø¨Ø§Ø²Ø¯ÛŒØ¯
+          </AppText>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.daysScroll}
+          >
+            {[
+              { day: "Ø¯ÙˆØ´Ù†Ø¨Ù‡", date: "Û±Û²" },
+              { day: "Ø³Ù‡â€ŒØ´Ù†Ø¨Ù‡", date: "Û±Û³" },
+              { day: "Ú†Ù‡Ø§Ø±Ø´Ù†Ø¨Ù‡", date: "Û±Û´" },
+              { day: "Ù¾Ù†Ø¬â€ŒØ´Ù†Ø¨Ù‡", date: "Û±Ûµ" },
+            ].map((item, index) => {
+              const isFirst = index === 0;
+              return (
+                <View
+                  key={index}
+                  style={[
+                    styles.dayCard,
+                    {
+                      backgroundColor: isFirst
+                        ? colors.surfaceDim
+                        : colors.surface,
+                      borderColor: colors.border,
+                      borderRadius: borderRadius.md,
+                    },
+                  ]}
+                >
+                  <AppText variant="labelSm" color="muted">
+                    {item.day}
+                  </AppText>
+                  <AppText
+                    variant="h2"
+                    style={{
+                      color: colors.textPrimary,
+                      marginTop: 4,
+                      fontFamily: "IRANYekanXFaNum-Bold",
+                    }}
+                  >
+                    {item.date}
+                  </AppText>
+                </View>
+              );
+            })}
+          </ScrollView>
+
+          <View style={styles.hoursContainer}>
+            <View
+              style={[
+                styles.hourBadge,
+                {
+                  backgroundColor: colors.surfaceDim,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.full,
+                },
+              ]}
+            >
+              <AppText variant="labelSm" color="muted">
+                Û°Û¹:Û°Û° Ø§Ù„ÛŒ Û±Û²:Û°Û°
+              </AppText>
+            </View>
+            <View
+              style={[
+                styles.hourBadge,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.full,
+                },
+              ]}
+            >
+              <AppText variant="labelSm" color="muted">
+                Û±Û³:Û°Û° Ø§Ù„ÛŒ Û±Û¶:Û°Û°
+              </AppText>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Û¶. Ø¯Ú©Ù…Ù‡ Ú†Ø³Ø¨Ù†Ø§Ú© Ù¾Ø§ÛŒÛŒÙ† */}
+      <View
+        style={[
+          styles.bottomActionBar,
+          {
+            backgroundColor: colors.surface,
+            borderTopColor: colors.border,
+            height: 64 + insets.bottom,
+            paddingBottom: insets.bottom,
+          },
+        ]}
+      >
+        <TouchableOpacity
+          onPress={handleSubmit}
+          activeOpacity={0.8}
+          style={[
+            styles.submitBtn,
+            {
+              backgroundColor: colors.secondary,
+              borderRadius: borderRadius.md,
+            },
+          ]}
+        >
+          <Ionicons
+            name="flash"
+            size={18}
+            color="#FFFFFF"
+            style={{ marginLeft: 8 }}
+          />
+          <AppText variant="button" style={{ color: "#FFFFFF" }}>
+            Ø¬Ø³ØªØ¬ÙˆÛŒ Ù†Ø²Ø¯ÛŒÚ©â€ŒØªØ±ÛŒÙ† ØªÚ©Ù†Ø³ÛŒÙ†
+          </AppText>
+        </TouchableOpacity>
+      </View>
+    </ScreenWrapper>
+  );
+};
+
+const ThemeToggleButtonHeader = () => {
+  return <ThemeToggleButton />;
+};
+
+// ØªØ¨Ø¯ÛŒÙ„ Ø¨Ù‡ Ø®Ø±ÙˆØ¬ÛŒ Ù¾ÛŒØ´â€ŒÙØ±Ø¶ (Default Export) Ø¬Ù‡Øª Ø­Ù„ Ø¯Ø§Ø¦Ù… Ù…Ø´Ú©Ù„ Ø§ÛŒÙ…Ù¾ÙˆØ±Øª
+export default RequestServiceScreen;
+
+const styles = StyleSheet.create({
+  scrollContainer: {
+    paddingTop: 16,
+  },
+  header: {
+    height: 56,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+  },
+  headerButton: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rightActions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  brandContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  elevatorCard: {
+    borderWidth: 1,
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
+  elevatorInfo: {
+    flex: 1,
+    alignItems: "flex-end",
+    paddingRight: 16,
+  },
+  elevatorLabel: {
+    fontSize: 10,
+    marginBottom: 2,
+  },
+  elevatorAddress: {
+    textAlign: "right",
+    fontSize: 13,
+  },
+  elevatorIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  serviceToggleGrid: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    gap: 12,
+    width: "100%",
+    marginBottom: 24,
+  },
+  toggleCard: {
+    flex: 1,
+    padding: 16,
+    alignItems: "flex-end",
+    borderWidth: 1,
+  },
+  toggleCardIcon: {
+    marginBottom: 8,
+  },
+  toggleTitle: {
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  toggleSub: {
+    fontSize: 11,
+  },
+  sectionHeading: {
+    textAlign: "right",
+    marginBottom: 16,
+    fontFamily: "IRANYekanXFaNum-Bold",
+  },
+  pillsContainer: {
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
+    gap: 8,
+    width: "100%",
+  },
+  pill: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderWidth: 1,
+  },
+  inputWrapper: {
+    width: "100%",
+    position: "relative",
+  },
+  textArea: {
+    width: "100%",
+    height: 120,
+    borderWidth: 1,
+    padding: 12,
+    paddingBottom: 40,
+    textAlign: "right",
+    fontSize: 14,
+  },
+  micButton: {
+    position: "absolute",
+    bottom: 12,
+    right: 12,
+    padding: 4,
+  },
+  schedulerSection: {
+    width: "100%",
+  },
+  disabledSection: {
+    opacity: 0.35,
+  },
+  daysScroll: {
+    flexDirection: "row-reverse",
+    gap: 8,
+    marginBottom: 16,
+  },
+  dayCard: {
+    width: 76,
+    height: 70,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  hoursContainer: {
+    flexDirection: "row-reverse",
+    gap: 8,
+  },
+  hourBadge: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderWidth: 1,
+  },
+  bottomActionBar: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 64,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 24,
+    borderTopWidth: 1,
+    zIndex: 100,
+  },
+  submitBtn: {
+    height: 48,
+    width: "100%",
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "center",
+    ...Platform.select({
+      web: {
+        maxWidth: 440,
+      },
+    }),
+  },
+});
+
+========== src\features\dashboard\screens\DashboardScreen.tsx ==========
+// src/features/dashboard/screens/DashboardScreen.tsx
+
+import { AppBottomNav } from "@/src/components/layout/AppBottomNav";
+import { AppHeader } from "@/src/components/layout/AppHeader";
+import { ScreenWrapper } from "@/src/components/layout/ScreenWrapper";
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router"; // Ø§ÛŒÙ…Ù¾ÙˆØ±Øª Ø§Ø¨Ø²Ø§Ø± Ù†Ø§ÙˆØ¨Ø±ÛŒ Ø¨ÙˆÙ…ÛŒ Ø§Ú©Ø³Ù¾Ùˆ Ø±ÙˆØªØ±
+import React from "react";
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+export const DashboardScreen = () => {
+  const { colors, spacing, borderRadius } = useTheme();
+  const router = useRouter(); // Ø±Ø§Ù‡â€ŒØ§Ù†Ø¯Ø§Ø²ÛŒ Ø«Ø§Ø¨Øª Ø§Ø¨Ø²Ø§Ø± Ù†Ø§ÙˆØ¨Ø±ÛŒ
+
+  const handleEmergencyPress = () => {
+    // Ù‡Ø¯Ø§ÛŒØª Ú©Ø§Ø±Ø¨Ø± Ø¨Ù‡ ØµÙØ­Ù‡ Ø«Ø¨Øª Ø¯Ø±Ø®ÙˆØ§Ø³Øª Ø®Ø¯Ù…Ø§Øª ÙÙ†ÛŒ
+    router.push("/request-service");
+  };
+  const servicePress = () => {
+    // Ù‡Ø¯Ø§ÛŒØª Ú©Ø§Ø±Ø¨Ø± Ø¨Ù‡ ØµÙØ­Ù‡ Ø«Ø¨Øª Ø¯Ø±Ø®ÙˆØ§Ø³Øª Ø®Ø¯Ù…Ø§Øª ÙÙ†ÛŒ
+    router.push("/maintenance");
+  };
+  const handleCatalogPress = () => {
+    // Ù‡Ø¯Ø§ÛŒØª Ú©Ø§Ø±Ø¨Ø± Ø¨Ù‡ Ú©Ø§ØªØ§Ù„ÙˆÚ¯ Ù‚Ø·Ø¹Ø§Øª Ø§ÛŒÚ©Ø³ Ø§Ù„ÙˆØ§ØªÙˆØ±
+    router.push("/catalog");
+  };
+
+  return (
+    <ScreenWrapper>
+      {/* Ù‡Ø¯Ø± Ø³Ø±Ø§Ø³Ø±ÛŒ Ù…Ø³ØªÙ‚Ù„ */}
+      <AppHeader />
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 110 }} // Ø­Ø§Ø´ÛŒÙ‡ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ø¨Ø±Ø§ÛŒ Ø§Ø³Ú©Ø±ÙˆÙ„ Ú©Ø§Ù…Ù„ Ùˆ Ø¹Ø¯Ù… ØªØ¯Ø§Ø®Ù„ Ø¨Ø§ ÙÙˆØªØ± Ùˆ Ù†ÙˆØ§Ø± Ù¾Ø§ÛŒÛŒÙ†ÛŒ
+      >
+        {/* Û±. Ø§Ø¨Ø²Ø§Ø±Ú© Ø®Ù„Ø§ØµÙ‡ ÙˆØ¶Ø¹ÛŒØª Ø¢Ø³Ø§Ù†Ø³ÙˆØ±Ù‡Ø§ÛŒ Ú©Ø§Ø±Ø¨Ø± */}
+        <View
+          style={[
+            styles.fleetStatusCard,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              borderRadius: borderRadius.lg,
+              marginHorizontal: spacing.lg,
+              marginTop: spacing.lg,
+            },
+          ]}
+        >
+          <View style={styles.statusRow}>
+            <View
+              style={[
+                styles.badge,
+                {
+                  backgroundColor: "rgba(34, 197, 94, 0.1)",
+                  borderRadius: borderRadius.sm,
+                },
+              ]}
+            >
+              <View style={[styles.dot, { backgroundColor: "#22C55E" }]} />
+              <AppText variant="labelSm" style={{ color: "#22C55E" }}>
+                Ù‡Ù…Ù‡ ÙØ¹Ø§Ù„ Ùˆ Ø§ÛŒÙ…Ù†
+              </AppText>
+            </View>
+            <AppText variant="h2" style={styles.statusTitle}>
+              ÙˆØ¶Ø¹ÛŒØª Ø¢Ø³Ø§Ù†Ø³ÙˆØ±Ù‡Ø§ÛŒ Ø´Ù…Ø§
+            </AppText>
+          </View>
+          <AppText variant="body" color="muted" style={styles.statusSubtitle}>
+            Ø³Ø§Ø®ØªÙ…Ø§Ù† Ù†Ú¯ÛŒÙ†: Û³ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± ØªØ­Øª Ù¾ÙˆØ´Ø´ Ø¨ÛŒÙ…Ù‡ Ùˆ Ø³Ø±ÙˆÛŒØ³ Ø¯ÙˆØ±Ù‡â€ŒØ§ÛŒ Ù…Ù†Ø¸Ù… ÙØ¹Ø§Ù„
+            Ù‡Ø³ØªÙ†Ø¯.
+          </AppText>
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
+          <View style={styles.statusFooter}>
+            <AppText variant="labelSm" color="muted">
+              Ø³Ø±ÙˆÛŒØ³ Ø¯ÙˆØ±Ù‡â€ŒØ§ÛŒ Ø¨Ø¹Ø¯ÛŒ: Û²Û´ Ø§Ø³ÙÙ†Ø¯ (Û¹ Ø±ÙˆØ² Ø¯ÛŒÚ¯Ø±)
+            </AppText>
+            <Ionicons
+              name="time-outline"
+              size={16}
+              color={colors.textSecondary}
+            />
+          </View>
+        </View>
+
+        {/* Û². Ø¨Ø®Ø´ Ù‡ÛŒØ±Ùˆ (Hero Section) */}
+        <View
+          style={[
+            styles.heroSection,
+            { paddingHorizontal: spacing.lg, paddingVertical: spacing.xl },
+          ]}
+        >
+          <AppText variant="h1" style={styles.heroTitle}>
+            Ù…Ø±Ø§Ù‚Ø¨Øª Ù‡ÙˆØ´Ù…Ù†Ø¯ Ø§Ø² Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ùˆ Ù‚Ø·Ø¹Ø§Øª ÛŒØ¯Ú©ÛŒ Ø§Ø³ØªØ§Ù†Ø¯Ø§Ø±Ø¯
+          </AppText>
+          <AppText variant="body" color="muted" style={styles.heroSubtitle}>
+            Ø§Ø¹Ø²Ø§Ù… ÙÙˆÙ‚â€ŒØ³Ø±ÛŒØ¹ Ú©Ø§Ø±Ø´Ù†Ø§Ø³ ÙÙ†ÛŒ Û²Û´ Ø³Ø§Ø¹ØªÙ‡ Ùˆ ØªØ£Ù…ÛŒÙ† Ø¨Ø¯ÙˆÙ† ÙˆØ§Ø³Ø·Ù‡ Ù‚Ø·Ø¹Ø§Øª Ø§ØµÙ„ÛŒ
+            Ú¯ÙˆØ§Ù‡ÛŒâ€ŒØ´Ø¯Ù‡.
+          </AppText>
+
+          <View style={styles.heroActionContainer}>
+            {/* Ø¯Ú©Ù…Ù‡ Ø§Ù…Ø¯Ø§Ø¯ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ - Ø§Ú©Ù†ÙˆÙ† Ø¨Ø§ Ù„Ù…Ø³ Ø¢Ù† Ú©Ø§Ø±Ø¨Ø± Ø¨Ù‡ ÙØ±Ù… Ø«Ø¨Øª Ø®Ø¯Ù…Ø§Øª ÙÙ†ÛŒ Ù…Ù†ØªÙ‚Ù„ Ù…ÛŒâ€ŒØ´ÙˆØ¯ */}
+            <TouchableOpacity
+              onPress={handleEmergencyPress}
+              activeOpacity={0.8}
+              style={[
+                styles.emergencyButton,
+                {
+                  backgroundColor: colors.secondary,
+                  borderRadius: borderRadius.md,
+                },
+              ]}
+            >
+              <Ionicons
+                name="alert-circle"
+                size={20}
+                color="#FFFFFF"
+                style={{ marginLeft: 8 }}
+              />
+              <AppText variant="button" style={{ color: "#FFFFFF" }}>
+                Ø¯Ø±Ø®ÙˆØ§Ø³Øª Ø§Ø¹Ø²Ø§Ù… ÙÙˆØ±ÛŒ ØªÚ©Ù†Ø³ÛŒÙ†
+              </AppText>
+            </TouchableOpacity>
+
+            {/* Ø¯Ú©Ù…Ù‡ Ú©Ø§ØªØ§Ù„ÙˆÚ¯ Ù‚Ø·Ø¹Ø§Øª - Ø§Ú©Ù†ÙˆÙ† Ø¨Ø§ Ù„Ù…Ø³ Ø¢Ù† Ú©Ø§Ø±Ø¨Ø± Ø¨Ù‡ Ú©Ø§ØªØ§Ù„ÙˆÚ¯ Ù…Ù†ØªÙ‚Ù„ Ù…ÛŒâ€ŒØ´ÙˆØ¯ */}
+            <TouchableOpacity
+              onPress={handleCatalogPress}
+              activeOpacity={0.8}
+              style={[
+                styles.catalogButton,
+                {
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.md,
+                  backgroundColor: colors.surface,
+                },
+              ]}
+            >
+              <Ionicons
+                name="arrow-back"
+                size={18}
+                color={colors.textPrimary}
+                style={{ marginLeft: 8 }}
+              />
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                Ø¬Ø³ØªØ¬ÙˆÛŒ Ù‚Ø·Ø¹Ø§Øª ÛŒØ¯Ú©ÛŒ
+              </AppText>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Û³. Ø¨Ø®Ø´ Ø®Ø¯Ù…Ø§Øª Ù…Ø§ Ø¨Ø§ Ú©Ø§Ø¯Ø±Ø¨Ù†Ø¯ÛŒâ€ŒÙ‡Ø§ÛŒ Ù„ÙˆÚ©Ø³ Ùˆ Ù…Ù„Ø§ÛŒÙ… */}
+        <View
+          style={[
+            styles.section,
+            {
+              backgroundColor: colors.surfaceDim,
+              paddingVertical: spacing.xl,
+              paddingHorizontal: spacing.lg,
+              borderColor: colors.border,
+            },
+          ]}
+        >
+          <AppText variant="h2" style={styles.sectionTitle}>
+            Ø®Ø¯Ù…Ø§Øª Ù†Ú¯Ù‡Ø¯Ø§Ø±ÛŒ Ùˆ Ø§ÙˆØ±Ù‡Ø§Ù„ Ø§ÛŒÚ©Ø³ Ø§Ù„ÙˆØªÙˆØ±
+          </AppText>
+
+          <View style={[styles.servicesStack, { gap: spacing.md }]}>
+            <TouchableOpacity
+              onPress={servicePress}
+              activeOpacity={0.9}
+              style={[
+                styles.serviceCard,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.iconContainer,
+                  {
+                    backgroundColor: colors.background,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                <Ionicons
+                  name="calendar"
+                  size={24}
+                  color={colors.textPrimary}
+                />
+              </View>
+              <AppText variant="h2" style={styles.serviceTitle}>
+                Ø³Ø±ÙˆÛŒØ³ Ùˆ Ù†Ú¯Ù‡Ø¯Ø§Ø±ÛŒ Ø³Ø§Ù„Ø§Ù†Ù‡
+              </AppText>
+              <AppText
+                variant="body"
+                color="muted"
+                style={styles.serviceDescription}
+              >
+                Ø¨Ø§Ø²Ø¯ÛŒØ¯Ù‡Ø§ÛŒ Ø¯ÙˆØ±Ù‡â€ŒØ§ÛŒ Ù…Ù†Ø¸Ù… Ùˆ Ù…Ø±Ø§Ù‚Ø¨Øªâ€ŒÙ‡Ø§ÛŒ Ù¾ÛŒØ´Ú¯ÛŒØ±Ø§Ù†Ù‡ Ø¬Ù‡Øª Ø­ÙØ¸
+                Ø§Ø³ØªØ§Ù†Ø¯Ø§Ø±Ø¯Ù‡Ø§ Ùˆ Ø§ÙØ²Ø§ÛŒØ´ Ø·ÙˆÙ„ Ø¹Ù…Ø± Ù‚Ø·Ø¹Ø§Øª.
+              </AppText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleEmergencyPress}
+              activeOpacity={0.9}
+              style={[
+                styles.serviceCard,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.iconContainer,
+                  {
+                    backgroundColor: colors.background,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                <Ionicons name="construct" size={24} color={colors.secondary} />
+              </View>
+              <AppText variant="h2" style={styles.serviceTitle}>
+                ØªØ¹Ù…ÛŒØ±Ø§Øª ÙÙˆÙ‚â€ŒØ³Ø±ÛŒØ¹ Ø´Ø¨Ø§Ù†Ù‡â€ŒØ±ÙˆØ²ÛŒ
+              </AppText>
+              <AppText
+                variant="body"
+                color="muted"
+                style={styles.serviceDescription}
+              >
+                Ø§Ø¹Ø²Ø§Ù… ÙÙˆØ±ÛŒ ØªÚ©Ù†Ø³ÛŒÙ†â€ŒÙ‡Ø§ÛŒ ØªØ§ÛŒÛŒØ¯Ø´Ø¯Ù‡ Ø¯Ø± Ø²Ù…Ø§Ù† ÙˆÙ‚ÙˆØ¹ Ø®Ø±Ø§Ø¨ÛŒâ€ŒÙ‡Ø§ÛŒ Ø¨Ø­Ø±Ø§Ù†ÛŒ Ùˆ
+                ØªÙˆÙ‚Ù Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ø¯Ø± Ù‡Ø± Ø³Ø§Ø¹Øª Ø§Ø² Ø´Ø¨Ø§Ù†Ù‡â€ŒØ±ÙˆØ².
+              </AppText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleEmergencyPress}
+              activeOpacity={0.9}
+              style={[
+                styles.serviceCard,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.iconContainer,
+                  {
+                    backgroundColor: colors.background,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                <Ionicons
+                  name="trending-up"
+                  size={24}
+                  color={colors.textPrimary}
+                />
+              </View>
+              <AppText variant="h2" style={styles.serviceTitle}>
+                Ø¨Ø§Ø²Ø³Ø§Ø²ÛŒ Ùˆ Ù†ÙˆØ³Ø§Ø²ÛŒ (Ù…Ø¯Ø±Ù†â€ŒØ³Ø§Ø²ÛŒ)
+              </AppText>
+              <AppText
+                variant="body"
+                color="muted"
+                style={styles.serviceDescription}
+              >
+                Ø§Ø±ØªÙ‚Ø§ÛŒ Ú©Ø§Ù…Ù„ Ø³ÛŒØ³ØªÙ…â€ŒÙ‡Ø§ÛŒ Ù‚Ø¯ÛŒÙ…ÛŒ Ø¬Ù‡Øª Ø¨Ù‡Ø¨ÙˆØ¯ Ú©Ø§Ø±Ø§ÛŒÛŒØŒ Ø§Ø±ØªÙ‚Ø§ÛŒ Ø§ÛŒÙ…Ù†ÛŒ Ùˆ
+                Ù†ÙˆØ³Ø§Ø²ÛŒ Ø¯Ú©ÙˆØ±Ø§Ø³ÛŒÙˆÙ† Ø¯Ø§Ø®Ù„ÛŒ Ú©Ø§Ø¨ÛŒÙ†.
+              </AppText>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Û´. Ú©Ø§ØªØ§Ù„ÙˆÚ¯ Ú†Ø±Ø®Ø´ÛŒ Ù‚Ø·Ø¹Ø§Øª Ø¨Ø±Ø¬Ø³ØªÙ‡ */}
+        <View style={{ paddingVertical: spacing.xl }}>
+          <View
+            style={[styles.carouselHeader, { paddingHorizontal: spacing.lg }]}
+          >
+            <AppText variant="h2" style={styles.carouselTitle}>
+              Ù‚Ø·Ø¹Ø§Øª Ø¨Ø±Ø¬Ø³ØªÙ‡ Ùˆ Ù¾Ø±ØªÙ‚Ø§Ø¶Ø§
+            </AppText>
+            <TouchableOpacity onPress={handleCatalogPress}>
+              <AppText variant="labelSm" color="secondary">
+                Ù…Ø´Ø§Ù‡Ø¯Ù‡ Ú©Ø§ØªØ§Ù„ÙˆÚ¯
+              </AppText>
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={[
+              styles.carouselScroll,
+              { paddingHorizontal: spacing.lg },
+            ]}
+          >
+            {/* Ù‚Ø·Ø¹Ù‡ Û± */}
+            <View
+              style={[
+                styles.partCard,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.partImageContainer,
+                  { borderBottomColor: colors.border },
+                ]}
+              >
+                <Image
+                  source={{
+                    uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuCLyPwVcCRRkqBx1sKo_5rvZKEbjyHucB_jlw-WtkCdhV_33MHNtukk0E7dtc8x-PDaVp4CGM93D1D0edg5mBcRAG3dosAn6K1vd2QpBgmmJzjwkierlt1XkpYxfMLzXh440p8lVdW29msBW4A7YdbktyuDlIBq2lfIFA1eiO2FQB0VZFKHGnEeRx_vtzd8ZSHvBKB9EHRm_Zb2D20rYUu_CqNnBB_iNqSDHpwutOjemExBBZn501kLNQ",
+                  }}
+                  style={styles.partImage}
+                />
+                <View style={styles.tagContainer}>
+                  <AppText variant="labelSm" style={styles.tagText}>
+                    Orona OEM
+                  </AppText>
+                </View>
+              </View>
+              <View style={styles.partInfo}>
+                <AppText variant="h2" style={styles.partName}>
+                  Ù‚ÙÙ„ Ø¯Ø±Ø¨ Ø¢Ø³Ø§Ù†Ø³ÙˆØ±
+                </AppText>
+                <AppText variant="body" color="muted" style={styles.partDesc}>
+                  Ù…Ú©Ø§Ù†ÛŒØ²Ù… ØªØ§ÛŒÛŒØ¯Ø´Ø¯Ù‡ Ù‚ÙÙ„ Ø§ÛŒÙ…Ù†ÛŒ Ø¯Ø±Ø¨ Ú©Ø§Ø¨ÛŒÙ†.
+                </AppText>
+                <TouchableOpacity
+                  onPress={handleCatalogPress}
+                  style={[
+                    styles.priceButton,
+                    {
+                      borderColor: colors.border,
+                      borderRadius: borderRadius.md,
+                    },
+                  ]}
+                >
+                  <AppText
+                    variant="button"
+                    style={{ color: colors.textPrimary }}
+                  >
+                    Ø§Ø³ØªØ¹Ù„Ø§Ù… Ù‚ÛŒÙ…Øª
+                  </AppText>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Ù‚Ø·Ø¹Ù‡ Û² */}
+            <View
+              style={[
+                styles.partCard,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.lg,
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.partImageContainer,
+                  { borderBottomColor: colors.border },
+                ]}
+              >
+                <Image
+                  source={{
+                    uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuDPqlTIVIYkBFuSel_rgxQ41WAUlTSkTyxA6joneyzT89nf0J6vcoIdNHRwfFAUYP8go1zP8TVEH2BTYEU-Ttt5zVECDDaXsn4degBLelXw8ZoIQHV-8YrD-r-tkKDHmUgBZVnXzwHieHAIlm4kMsqDEoPPFj23Cs2kjhtzJPK51kDjwz69e2pCFIj9G-wlxjLmeMXEfvsGW37maAxbNa1xq2Z3Di0gUU0h08_WG7ftOhwwnToAUynVTQ",
+                  }}
+                  style={styles.partImage}
+                />
+                <View style={styles.tagContainer}>
+                  <AppText variant="labelSm" style={styles.tagText}>
+                    Universal
+                  </AppText>
+                </View>
+              </View>
+              <View style={styles.partInfo}>
+                <AppText variant="h2" style={styles.partName}>
+                  Ø³ÛŒÙ… Ø¨Ú©Ø³Ù„ Ú©Ø´Ø´ÛŒ ÙÙˆÙ„Ø§Ø¯ÛŒ
+                </AppText>
+                <AppText variant="body" color="muted" style={styles.partDesc}>
+                  Ú©Ø§Ø¨Ù„â€ŒÙ‡Ø§ÛŒ Ø¨Ø§ÙØªÙ‡â€ŒØ´Ø¯Ù‡ Ø¨Ø§ Ù‡Ø³ØªÙ‡ ÙÙˆÙ„Ø§Ø¯ÛŒ Ù…Ø³ØªØ­Ú©Ù….
+                </AppText>
+                <TouchableOpacity
+                  onPress={handleCatalogPress}
+                  style={[
+                    styles.priceButton,
+                    {
+                      borderColor: colors.border,
+                      borderRadius: borderRadius.md,
+                    },
+                  ]}
+                >
+                  <AppText
+                    variant="button"
+                    style={{ color: colors.textPrimary }}
+                  >
+                    Ø§Ø³ØªØ¹Ù„Ø§Ù… Ù‚ÛŒÙ…Øª
+                  </AppText>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </View>
+
+        {/* Ûµ. Ø¨Ù†Ø± ØªØ®Ù…ÛŒÙ† Ù‡ÙˆØ´Ù…Ù†Ø¯ Ù‡Ø²ÛŒÙ†Ù‡ Ø¨Ø§Ø²Ø³Ø§Ø²ÛŒ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± */}
+        <View
+          style={[
+            styles.modernizationBanner,
+            {
+              backgroundColor: colors.primary,
+              borderRadius: borderRadius.lg,
+              marginHorizontal: spacing.lg,
+              padding: spacing.lg,
+            },
+          ]}
+        >
+          <View style={styles.bannerTextContent}>
+            <AppText
+              variant="h2"
+              style={{
+                color: colors.onPrimary,
+                textAlign: "right",
+                marginBottom: 6,
+              }}
+            >
+              Ø¢ÛŒØ§ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ø´Ù…Ø§ Ù‚Ø¯ÛŒÙ…ÛŒ Ø´Ø¯Ù‡ Ø§Ø³ØªØŸ
+            </AppText>
+            <AppText
+              variant="body"
+              style={{
+                color: colors.onPrimary,
+                opacity: 0.8,
+                textAlign: "right",
+                fontSize: 13,
+                lineHeight: 20,
+              }}
+            >
+              Ø¨Ø§ Ø³ÛŒØ³ØªÙ… ØªØ®Ù…ÛŒÙ† Ø¢Ù†Ù„Ø§ÛŒÙ† Ø§ÛŒÚ©Ø³ Ø§Ù„ÙˆØªÙˆØ±ØŒ Ù‡Ø²ÛŒÙ†Ù‡ Ø¨Ø§Ø²Ø³Ø§Ø²ÛŒØŒ ØªØ²Ø¦ÛŒÙ†Ø§Øª
+              Ø¯Ú©ÙˆØ±Ø§Ø³ÛŒÙˆÙ† Ùˆ Ø§Ø±ØªÙ‚Ø§ÛŒ Ø§ÛŒÙ…Ù†ÛŒ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ø®ÙˆØ¯ Ø±Ø§ Ø¯Ø± Ú©Ù…ØªØ± Ø§Ø² Û² Ø¯Ù‚ÛŒÙ‚Ù‡ Ø¨Ø±Ø¢ÙˆØ±Ø¯
+              Ú©Ù†ÛŒØ¯.
+            </AppText>
+          </View>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            style={[
+              styles.bannerButton,
+              {
+                backgroundColor: colors.secondary,
+                borderRadius: borderRadius.md,
+                marginTop: spacing.md,
+              },
+            ]}
+          >
+            <AppText variant="button" style={{ color: "#FFFFFF" }}>
+              Ù…Ø­Ø§Ø³Ø¨Ù‡ Ø¢Ù†Ù„Ø§ÛŒÙ† Ù‡Ø²ÛŒÙ†Ù‡ Ø¨Ø§Ø²Ø³Ø§Ø²ÛŒ
+            </AppText>
+          </TouchableOpacity>
+        </View>
+
+        {/* Û¶. Ù…Ù‚Ø§Ù„Ø§Øª Ø¢Ù…ÙˆØ²Ø´ÛŒ Ùˆ Ù‡Ø§Ø¨ Ø§ÛŒÙ…Ù†ÛŒ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± */}
+        <View style={{ paddingVertical: spacing.xl }}>
+          <View
+            style={[styles.carouselHeader, { paddingHorizontal: spacing.lg }]}
+          >
+            <AppText variant="h2" style={styles.carouselTitle}>
+              Ø¢Ù…ÙˆØ²Ø´ Ùˆ Ù†Ú©Ø§Øª Ø§ÛŒÙ…Ù†ÛŒ Ø¢Ø³Ø§Ù†Ø³ÙˆØ±
+            </AppText>
+            <TouchableOpacity>
+              <AppText variant="labelSm" color="secondary">
+                Ù‡Ù…Ù‡ Ù…Ù‚Ø§Ù„Ø§Øª
+              </AppText>
+            </TouchableOpacity>
+          </View>
+
+          <View
+            style={[
+              styles.articlesContainer,
+              { paddingHorizontal: spacing.lg, gap: spacing.md },
+            ]}
+          >
+            {/* Ù…Ù‚Ø§Ù„Ù‡ Û± */}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={[
+                styles.articleRow,
+                {
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.md,
+                  backgroundColor: colors.surface,
+                },
+              ]}
+            >
+              <View style={styles.articleTextContainer}>
+                <AppText variant="labelSm" color="secondary">
+                  Ù…Ø±Ø§Ù‚Ø¨Øª Ùˆ Ù†Ú¯Ù‡Ø¯Ø§Ø±ÛŒ
+                </AppText>
+                <AppText
+                  variant="h2"
+                  style={[
+                    styles.articleTitle,
+                    { color: colors.textPrimary, fontSize: 14 },
+                  ]}
+                >
+                  Ûµ Ù†Ø´Ø§Ù†Ù‡ Ú©Ù„ÛŒØ¯ÛŒ Ú©Ù‡ Ø²Ù†Ú¯ Ø®Ø·Ø±ÛŒ Ø¨Ø±Ø§ÛŒ ØªØ¹ÙˆÛŒØ¶ Ø³ÛŒÙ…â€ŒØ¨Ú©Ø³Ù„ Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ø§Ø³Øª
+                </AppText>
+                <AppText
+                  variant="body"
+                  color="muted"
+                  numberOfLines={1}
+                  style={{ fontSize: 12, textAlign: "right" }}
+                >
+                  Ø¨Ø±Ø±Ø³ÛŒ ÙÙ†ÛŒ Ø¹Ù„Ø§Ø¦Ù… Ø³Ø§ÛŒØ´ Ùˆ Ø®ÙˆØ±Ø¯Ú¯ÛŒ Ú©Ø§Ø¨Ù„â€ŒÙ‡Ø§ÛŒ Ú©Ø´Ø´ÛŒ Ø¢Ø³Ø§Ù†Ø³ÙˆØ±...
+                </AppText>
+              </View>
+              <View style={styles.articleIconCircle}>
+                <Ionicons
+                  name="book-outline"
+                  size={20}
+                  color={colors.textPrimary}
+                />
+              </View>
+            </TouchableOpacity>
+
+            {/* Ù…Ù‚Ø§Ù„Ù‡ Û² */}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={[
+                styles.articleRow,
+                {
+                  borderColor: colors.border,
+                  borderRadius: borderRadius.md,
+                  backgroundColor: colors.surface,
+                },
+              ]}
+            >
+              <View style={styles.articleTextContainer}>
+                <AppText variant="labelSm" color="secondary">
+                  Ø§Ø³ØªØ§Ù†Ø¯Ø§Ø±Ø¯Ù‡Ø§
+                </AppText>
+                <AppText
+                  variant="h2"
+                  style={[
+                    styles.articleTitle,
+                    { color: colors.textPrimary, fontSize: 14 },
+                  ]}
+                >
+                  Ù…Ù‚Ø±Ø±Ø§Øª Ø¬Ø¯ÛŒØ¯ Ø¢ØªØ´â€ŒÙ†Ø´Ø§Ù†ÛŒ Ø¨Ø±Ø§ÛŒ Ø¯Ø±ÛŒØ§ÙØª Ù¾Ø§ÛŒØ§Ù†â€ŒÚ©Ø§Ø± Ø¢Ø³Ø§Ù†Ø³ÙˆØ± Ø³Ø§Ù„ Û±Û´Û°Ûµ
+                </AppText>
+                <AppText
+                  variant="body"
+                  color="muted"
+                  numberOfLines={1}
+                  style={{ fontSize: 12, textAlign: "right" }}
+                >
+                  Ø¬Ø¯ÛŒÙ†â€ŒØªØ±ÛŒÙ† ØªØºÛŒÛŒØ±Ø§Øª Ø¯Ø± Ù‚ÙˆØ§Ù†ÛŒÙ† Ø¯Ø±Ø¨â€ŒÙ‡Ø§ÛŒ Ù„ÙˆÙ„Ø§ÛŒÛŒ Ùˆ Ø§ØªÙˆÙ…Ø§ØªÛŒÚ©
+                  Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ...
+                </AppText>
+              </View>
+              <View style={styles.articleIconCircle}>
+                <Ionicons
+                  name="shield-outline"
+                  size={20}
+                  color={colors.textPrimary}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Û·. Ù†Ø´Ø§Ù†â€ŒÙ‡Ø§ÛŒ Ø§Ø¹ØªÙ…Ø§Ø¯ Ùˆ Ø§ØµØ§Ù„Øª */}
+        <View
+          style={[
+            styles.trustSection,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              paddingHorizontal: spacing.lg,
+            },
+          ]}
+        >
+          <View style={styles.trustBadge}>
+            <Ionicons
+              name="checkmark-seal-outline"
+              size={28}
+              color={colors.textPrimary}
+              style={{ marginLeft: spacing.sm }}
+            />
+            <AppText variant="button" style={{ color: colors.textPrimary }}>
+              ØªÚ©Ù†Ø³ÛŒÙ†â€ŒÙ‡Ø§ÛŒ Ù…Ø¬Ø±Ø¨ Ùˆ ØªØ§ÛŒÛŒØ¯â€ŒØ´Ø¯Ù‡
+            </AppText>
+          </View>
+          <View
+            style={[
+              styles.trustBadge,
+              {
+                borderTopWidth: 1,
+                borderBottomWidth: 1,
+                borderColor: colors.border,
+              },
+            ]}
+          >
+            <Ionicons
+              name="shield-checkmark-outline"
+              size={28}
+              color={colors.textPrimary}
+              style={{ marginLeft: spacing.sm }}
+            />
+            <AppText variant="button" style={{ color: colors.textPrimary }}>
+              ØªØ¶Ù…ÛŒÙ† Û±Û°Û°Ùª Ø§ØµØ§Ù„Øª Ù‚Ø·Ø¹Ø§Øª ÛŒØ¯Ú©ÛŒ
+            </AppText>
+          </View>
+          <View style={styles.trustBadge}>
+            <Ionicons
+              name="receipt-outline"
+              size={28}
+              color={colors.textPrimary}
+              style={{ marginLeft: spacing.sm }}
+            />
+            <AppText variant="button" style={{ color: colors.textPrimary }}>
+              Ù‚ÛŒÙ…Øªâ€ŒÚ¯Ø°Ø§Ø±ÛŒ Ø´ÙØ§Ù Ùˆ ØªØ¹Ø±ÙÙ‡ Ù…ØµÙˆØ¨
+            </AppText>
+          </View>
+        </View>
+
+        {/* Û¸. Ø·Ø±Ø§Ø­ÛŒ ÙÙˆØªØ± Ù„ÙˆÚ©Ø³ Ùˆ Ù¾Ø±Ø³ØªÛŒÚ˜ Ø¨Ø±Ù†Ø¯ */}
+        <View
+          style={[
+            styles.footerContainer,
+            {
+              backgroundColor: colors.surfaceDim,
+              borderTopColor: colors.border,
+            },
+          ]}
+        >
+          <View style={styles.footerBrandRow}>
+            <AppText
+              variant="h1"
+              style={[styles.footerBrandText, { color: colors.textPrimary }]}
+            >
+              Ø§ÛŒÚ©Ø³ Ø§Ù„ÙˆØªÙˆØ±
+            </AppText>
+            <Ionicons
+              name="construct-outline"
+              size={24}
+              color={colors.secondary}
+            />
+          </View>
+
+          <AppText
+            variant="body"
+            color="muted"
+            style={styles.footerDescription}
+          >
+            Ù¾Ù„ØªÙØ±Ù… ØªØ®ØµØµÛŒ Ù¾Ø§ÛŒØ´ØŒ Ø³Ø±ÙˆÛŒØ³ Ù†Ú¯Ù‡Ø¯Ø§Ø±ÛŒ Ùˆ ØªØ£Ù…ÛŒÙ† Ø¨Ø¯ÙˆÙ† ÙˆØ§Ø³Ø·Ù‡ Ù‚Ø·Ø¹Ø§Øª ÛŒØ¯Ú©ÛŒ Ø§Ù†ÙˆØ§Ø¹
+            Ø¢Ø³Ø§Ù†Ø³ÙˆØ±Ù‡Ø§ÛŒ Ú©Ø´Ø´ÛŒ Ùˆ Ù‡ÛŒØ¯Ø±ÙˆÙ„ÛŒÚ© Ø¯Ø± Ø³Ø±Ø§Ø³Ø± Ú©Ø´ÙˆØ±.
+          </AppText>
+
+          <View style={styles.footerLinksGrid}>
+            <TouchableOpacity>
+              <AppText variant="labelSm" color="muted">
+                Ù‚ÙˆØ§Ù†ÛŒÙ† Ùˆ Ù…Ù‚Ø±Ø±Ø§Øª
+              </AppText>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <AppText variant="labelSm" color="muted">
+                Ø³ÙˆØ§Ù„Ø§Øª Ù…ØªØ¯Ø§ÙˆÙ„
+              </AppText>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <AppText variant="labelSm" color="muted">
+                Ø¯Ø±Ø®ÙˆØ§Ø³Øª Ù¾Ø´ØªÛŒØ¨Ø§Ù†ÛŒ
+              </AppText>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <AppText variant="labelSm" color="muted">
+                Ú©Ø§ØªØ§Ù„ÙˆÚ¯ Ø¨Ø±Ù†Ø¯Ù‡Ø§
+              </AppText>
+            </TouchableOpacity>
+          </View>
+
+          <View
+            style={[styles.footerDivider, { backgroundColor: colors.border }]}
+          />
+
+          <AppText variant="labelSm" color="muted" style={styles.copyrightText}>
+            Â© Û±Û´Û°Ûµ ØªÙ…Ø§Ù…ÛŒ Ø­Ù‚ÙˆÙ‚ Ù…Ø§Ø¯ÛŒ Ùˆ Ù…Ø¹Ù†ÙˆÛŒ Ù…ØªØ¹Ù„Ù‚ Ø¨Ù‡ Ø§ÛŒÚ©Ø³ Ø§Ù„ÙˆØªÙˆØ± Ù…ÛŒâ€ŒØ¨Ø§Ø´Ø¯.
+          </AppText>
+        </View>
+      </ScrollView>
+
+      {/* Ù†Ø§ÙˆØ¨Ø±ÛŒ Ù¾Ø§ÛŒÛŒÙ†ÛŒ Ù…ÙˆØ¨Ø§ÛŒÙ„ */}
+      <AppBottomNav activeTab="home" />
+    </ScreenWrapper>
+  );
+};
+
+const styles = StyleSheet.create({
+  fleetStatusCard: {
+    borderWidth: 1,
+    padding: 16,
+    elevation: 2,
+    shadowColor: "#0F172A",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+  },
+  statusRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  statusTitle: {
+    // Ø¨ÙˆÙ…ÛŒâ€ŒØ³Ø§Ø²ÛŒ Ø´Ø¯Ù‡ ÙØ§Ù‚Ø¯ ØªØ¯Ø§Ø®Ù„ ÙˆØ²Ù†ÛŒ
+  },
+  badge: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginLeft: 6,
+  },
+  statusSubtitle: {
+    textAlign: "right",
+    lineHeight: 20,
+    fontSize: 13,
+    marginBottom: 12,
+  },
+  divider: {
+    height: 1,
+    width: "100%",
+    marginBottom: 12,
+  },
+  statusFooter: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  heroSection: {
+    width: "100%",
+  },
+  heroTitle: {
+    textAlign: "right",
+    fontSize: 26,
+    lineHeight: 36,
+    marginBottom: 12,
+  },
+  heroSubtitle: {
+    textAlign: "right",
+    lineHeight: 24,
+    marginBottom: 24,
+  },
+  heroActionContainer: {
+    width: "100%",
+    gap: 12,
+  },
+  emergencyButton: {
+    height: 48,
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+  },
+  catalogButton: {
+    height: 48,
+    borderWidth: 1,
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+  },
+  section: {
+    width: "100%",
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+  },
+  sectionTitle: {
+    textAlign: "right",
+    marginBottom: 16,
+  },
+  servicesStack: {
+    width: "100%",
+  },
+  serviceCard: {
+    padding: 20,
+    borderWidth: 1,
+  },
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+    alignSelf: "flex-end",
+  },
+  serviceTitle: {
+    textAlign: "right",
+    marginBottom: 8,
+  },
+  serviceDescription: {
+    textAlign: "right",
+    lineHeight: 22,
+  },
+  carouselHeader: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+    marginBottom: 16,
+  },
+  carouselTitle: {
+    // Ø¨ÙˆÙ…ÛŒâ€ŒØ³Ø§Ø²ÛŒ Ø´Ø¯Ù‡ ÙØ§Ù‚Ø¯ ØªØ¯Ø§Ø®Ù„ ÙˆØ²Ù†ÛŒ
+  },
+  carouselScroll: {
+    flexDirection: "row-reverse",
+    gap: 16,
+  },
+  partCard: {
+    width: 280,
+    borderWidth: 1,
+    overflow: "hidden",
+  },
+  partImageContainer: {
+    height: 180,
+    width: "100%",
+    position: "relative",
+    borderBottomWidth: 1,
+  },
+  partImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  tagContainer: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    backgroundColor: "rgba(15, 23, 42, 0.8)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  tagText: {
+    color: "#FFFFFF",
+    fontSize: 10,
+    // ØªØµØ­ÛŒØ­ Ø´Ø¯: Ø­Ø°Ù Ù¾Ø§Ø±Ø§Ù…ØªØ± ØªØ¯Ø§Ø®Ù„â€ŒØ¨Ø±Ø§Ù†Ú¯ÛŒØ² fontWeight Ø¨Ø±Ø§ÛŒ Ø­Ù„ Ú©Ø§Ù…Ù„ Ø±Ù†Ø¯Ø±ÛŒÙ†Ú¯ Ø¯Ø± Ø§Ù†Ø¯Ø±ÙˆÛŒØ¯
+  },
+  partInfo: {
+    padding: 16,
+  },
+  partName: {
+    textAlign: "right",
+    marginBottom: 4,
+  },
+  partDesc: {
+    textAlign: "right",
+    fontSize: 12,
+    lineHeight: 18,
+    marginBottom: 16,
+  },
+  priceButton: {
+    height: 40,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modernizationBanner: {
+    paddingVertical: 24,
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
+  bannerTextContent: {
+    width: "100%",
+  },
+  bannerButton: {
+    height: 44,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  articlesContainer: {
+    width: "100%",
+  },
+  articleRow: {
+    borderWidth: 1,
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  articleTextContainer: {
+    flex: 1,
+    paddingRight: 16,
+  },
+  articleTitle: {
+    textAlign: "right",
+    lineHeight: 20,
+    marginTop: 4,
+    marginBottom: 6,
+  },
+  articleIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(15, 23, 42, 0.04)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  trustSection: {
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    marginVertical: 24,
+  },
+  trustBadge: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingVertical: 16,
+  },
+  footerContainer: {
+    borderTopWidth: 1,
+    paddingVertical: 32,
+    paddingHorizontal: 24,
+    alignItems: "flex-end",
+  },
+  footerBrandRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  footerBrandText: {
+    marginRight: 8,
+  },
+  footerDescription: {
+    textAlign: "right",
+    fontSize: 12,
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  footerLinksGrid: {
+    width: "100%",
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
+    gap: 16,
+    justifyContent: "flex-start",
+    marginBottom: 24,
+  },
+  footerDivider: {
+    height: 1,
+    width: "100%",
+    marginBottom: 16,
+  },
+  copyrightText: {
+    textAlign: "right",
+    fontSize: 10,
+    width: "100%",
+  },
+  brandText: {
+    marginRight: 6,
+  },
+});
+
+========== src\theme\AppText.tsx ==========
+// src/components/common/AppText.tsx
+
+import { useTheme } from "@/src/theme/ThemeContext";
+import React from "react";
+import { Text, TextProps, TextStyle } from "react-native";
+
+interface AppTextProps extends TextProps {
+  variant?: "h1" | "h2" | "body" | "button" | "labelSm";
+  color?: "primary" | "secondary" | "error" | "muted";
+  style?: TextStyle | TextStyle[];
+}
+
+export const AppText: React.FC<AppTextProps> = ({
+  children,
+  variant = "body",
+  color = "primary",
+  style,
+  ...props
+}) => {
+  const { colors, typography } = useTheme();
+
+  const textStyle = typography[variant];
+
+  let textColor = colors.textPrimary;
+  if (color === "secondary") textColor = colors.secondary;
+  if (color === "error") textColor = colors.error;
+  if (color === "muted") textColor = colors.textSecondary;
+
+  return (
+    <Text style={[{ color: textColor }, textStyle, style]} {...props}>
+      {children}
+    </Text>
+  );
+};
+
+========== src\theme\colors.ts ==========
+// src/theme/colors.ts
+
+export const lightColors = {
+  background: '#F8FAFC',       // Slate 50
+  surface: '#FFFFFF',          // Ø³ÙÛŒØ¯ Ø¨Ø±Ø§ÛŒ Ú©Ø§Ø±Øªâ€ŒÙ‡Ø§
+  surfaceDim: '#E2E8F0',       // Slate 200
+  primary: '#0F172A',          // Slate 900 (ØµÙ†Ø¹ØªÛŒ Ùˆ Ø¬Ø¯ÛŒ)
+  onPrimary: '#FFFFFF',
+  secondary: '#D97706',        // Amber 600 (Ø±Ù†Ú¯ Ø§Ú©Ø´Ù† Ø«Ø§Ù†ÙˆÛŒÙ‡ / ØµÙ†Ø¹ØªÛŒ)
+  onSecondary: '#FFFFFF',
+  accent: '#F59E0B',           // Ø±Ù†Ú¯ Ø¢Ù„Ø§Ø±Ù… Ùˆ ÙˆØ¶Ø¹ÛŒØª Ø®Ø§Øµ
+  error: '#EF4444',            // Red 500
+  onError: '#FFFFFF',
+  textPrimary: '#0F172A',      // Slate 900 Ø¨Ø±Ø§ÛŒ Ù…ØªÙˆÙ† Ø§ØµÙ„ÛŒ
+  textSecondary: '#64748B',    // Slate 500 Ø¨Ø±Ø§ÛŒ Ù…ØªÙˆÙ† ÙØ±Ø¹ÛŒ
+  border: '#E2E8F0',           // Slate 200 Ø¨Ø±Ø§ÛŒ Ø®Ø·ÙˆØ· Ø¨Ø§Ø±ÛŒÚ© Ù…Ø±Ø²ÛŒ
+  outline: '#94A3B8',          // Slate 400
+};
+
+export const darkColors: typeof lightColors = {
+  background: '#0F172A',       // Slate 900 (ØªØ§Ø±ÛŒÚ© Ø¹Ù…ÛŒÙ‚)
+  surface: '#1E293B',          // Slate 800 Ø¨Ø±Ø§ÛŒ Ú©Ø§Ø±Øªâ€ŒÙ‡Ø§ Ø¯Ø± Ø¯Ø§Ø±Ú© Ù…ÙˆØ¯
+  surfaceDim: '#334155',       // Slate 700
+  primary: '#F8FAFC',          // Slate 50 (Ø±Ù†Ú¯ Ø³ÙÛŒØ¯Ù Ù…Ø§Øª Ø¯Ø± Ø­Ø§Ù„Øª ØªØ§Ø±ÛŒÚ©)
+  onPrimary: '#0F172A',
+  secondary: '#F59E0B',        // Amber 500
+  onSecondary: '#0F172A',
+  accent: '#FBBF24',
+  error: '#F87171',            // Red 400
+  onError: '#FFFFFF',
+  textPrimary: '#F1F5F9',      // Slate 100 Ø¨Ø±Ø§ÛŒ Ø®ÙˆØ§Ù†Ø§ÛŒÛŒ Ø¨Ø§Ù„Ø§
+  textSecondary: '#94A3B8',    // Slate 400 Ø¨Ø±Ø§ÛŒ Ù…ØªÙˆÙ† ÙØ±Ø¹ÛŒ
+  border: '#334155',           // Slate 700 Ø¨Ø±Ø§ÛŒ Ø®Ø·ÙˆØ· Ø¨Ø§Ø±ÛŒÚ© Ù…Ø±Ø²ÛŒ Ø¯Ø§Ø±Ú© Ù…ÙˆØ¯
+  outline: '#475569',          // Slate 600
+};
+
+========== src\theme\spacing.ts ==========
+// src/theme/spacing.ts
+
+export const spacing = {
+  none: 0,
+  xxs: 2,
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 24,
+  xxl: 32,
+  xxxl: 48,
+};
+
+export const borderRadius = {
+  none: 0,
+  sm: 4,      // Ù„Ø¨Ù‡â€ŒÙ‡Ø§ÛŒ Ú©ÙˆÚ†Ú© Ù…Ø«Ù„ ØªÚ¯â€ŒÙ‡Ø§ Ùˆ ÙˆØ¶Ø¹ÛŒØªâ€ŒÙ‡Ø§
+  md: 8,      // Ù„Ø¨Ù‡â€ŒÙ‡Ø§ÛŒ Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ Ùˆ ÙÛŒÙ„Ø¯Ù‡Ø§ÛŒ ÙˆØ±ÙˆØ¯ÛŒ (Ø¨Ø± Ø§Ø³Ø§Ø³ Ø§Ø³ØªØ§ÛŒÙ„ Ú¯Ø§ÛŒØ¯)
+  lg: 12,     // Ù„Ø¨Ù‡ Ú©Ø§Ø±Øªâ€ŒÙ‡Ø§ Ùˆ Ù¾Ù†Ù„â€ŒÙ‡Ø§ÛŒ Ú©Ù„ÛŒ (Ø¨Ø± Ø§Ø³Ø§Ø³ Ø§Ø³ØªØ§ÛŒÙ„ Ú¯Ø§ÛŒØ¯)
+  xl: 16,
+  full: 9999, // Ú©Ø§Ù…Ù¾ÙˆÙ†Ù†Øªâ€ŒÙ‡Ø§ÛŒ Ú©Ø§Ù…Ù„Ø§Ù‹ Ú¯Ø±Ø¯ Ù…Ø«Ù„ Ø¢ÙˆØ§ØªØ§Ø± ÛŒØ§ Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Ø´Ù†Ø§ÙˆØ±
+};
+
+========== src\theme\ThemeContext.tsx ==========
+// src/theme/ThemeContext.tsx
+
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useColorScheme } from 'react-native';
+import { lightColors, darkColors } from './colors';
+import { spacing, borderRadius } from './spacing';
+import { typography } from './typography';
+
+type ThemeType = {
+  colors: typeof lightColors;
+  spacing: typeof spacing;
+  borderRadius: typeof borderRadius;
+  typography: typeof typography;
+  isDark: boolean;
+  toggleTheme: () => void;
+};
+
+const ThemeContext = createContext<ThemeType | undefined>(undefined);
+
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const systemColorScheme = useColorScheme();
+  const [isDark, setIsDark] = useState(systemColorScheme === 'dark');
+
+  // Ù…Ø§Ù†ÛŒØªÙˆØ± Ú©Ø±Ø¯Ù† ØªØºÛŒÛŒØ± ØªÙ… Ø³ÛŒØ³ØªÙ…â€ŒØ¹Ø§Ù…Ù„ Ø¯Ø± Ù¾Ø³â€ŒØ²Ù…ÛŒÙ†Ù‡
+  useEffect(() => {
+    setIsDark(systemColorScheme === 'dark');
+  }, [systemColorScheme]);
+
+  const toggleTheme = () => {
+    setIsDark((prev) => !prev);
+  };
+
+  const themeValue: ThemeType = {
+    colors: isDark ? darkColors : lightColors,
+    spacing,
+    borderRadius,
+    typography,
+    isDark,
+    toggleTheme,
+  };
+
+  return (
+    <ThemeContext.Provider value={themeValue}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};
+
+========== src\theme\typography.ts ==========
+// src/theme/typography.ts
+
+import { Platform } from "react-native";
+
+const fontFamilies = {
+  bold: Platform.select({
+    ios: "IRANYekanXFaNum-Bold",
+    android: "IRANYekanXFaNum-Bold",
+    default: "IRANYekanXFaNum-Bold",
+  }),
+  medium: Platform.select({
+    ios: "IRANYekanWebFn-Medium",
+    android: "IRANYekanWebFn-Medium",
+    default: "IRANYekanWebFn-Medium",
+  }),
+  regular: Platform.select({
+    ios: "IRANYekanXFaNum-Regular",
+    android: "IRANYekanXFaNum-Regular",
+    default: "IRANYekanXFaNum-Regular",
+  }),
+};
+
+export const typography = {
+  h1: {
+    fontFamily: fontFamilies.bold,
+    fontSize: 24,
+    lineHeight: 32,
+    // ØªØ±ÙÙ†Ø¯ Ù…Ù‡Ù†Ø¯Ø³ÛŒ Ø¨Ø±Ø§ÛŒ Ø§Ù†Ø¯Ø±ÙˆÛŒØ¯: Ø­Ø°Ù Ø¶Ø®Ø§Ù…Øª Ø¹Ø¯Ø¯ÛŒ ØªÚ©Ø±Ø§Ø±ÛŒ Ø±ÙˆÛŒ ÙÙˆÙ†ØªÛŒ Ú©Ù‡ Ø®ÙˆØ¯Ø´ Ø°Ø§ØªØ§Ù‹ Bold Ø§Ø³Øª
+    ...Platform.select({
+      ios: { fontWeight: "700" as const },
+      android: { fontWeight: "normal" as const }, // Ù…Ù…Ø§Ù†Ø¹Øª Ø§Ø² Ú©Ø±Ø´ Ùˆ Ø¨Ø§Ø²Ú¯Ø´Øª Ø¨Ù‡ ÙÙˆÙ†Øª Ø¯ÛŒÙØ§Ù„Øª Ø³ÛŒØ³ØªÙ…
+      default: { fontWeight: "700" as const },
+    }),
+  },
+  h2: {
+    fontFamily: fontFamilies.bold,
+    fontSize: 18,
+    lineHeight: 24,
+    ...Platform.select({
+      ios: { fontWeight: "600" as const },
+      android: { fontWeight: "normal" as const },
+      default: { fontWeight: "600" as const },
+    }),
+  },
+  body: {
+    fontFamily: fontFamilies.regular,
+    fontSize: 14,
+    lineHeight: 20,
+    ...Platform.select({
+      ios: { fontWeight: "400" as const },
+      android: { fontWeight: "normal" as const },
+      default: { fontWeight: "400" as const },
+    }),
+  },
+  button: {
+    fontFamily: fontFamilies.medium,
+    fontSize: 14,
+    lineHeight: 20,
+    ...Platform.select({
+      ios: { fontWeight: "500" as const },
+      android: { fontWeight: "normal" as const },
+      default: { fontWeight: "500" as const },
+    }),
+  },
+  labelSm: {
+    fontFamily: fontFamilies.medium,
+    fontSize: 12,
+    lineHeight: 16,
+    letterSpacing: 0.5,
+    ...Platform.select({
+      ios: { fontWeight: "600" as const },
+      android: { fontWeight: "normal" as const },
+      default: { fontWeight: "600" as const },
+    }),
+  },
+};
+
