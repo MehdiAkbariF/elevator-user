@@ -1,24 +1,41 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+// app/_layout.tsx
+
+import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { useFonts } from 'expo-font';
+import { ActivityIndicator, View } from 'react-native';
+import { ThemeProvider } from '@/src/theme/ThemeContext';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  // بارگذاری دقیق فایل‌های فونت به صورت آدرس‌دهی نسبی استاندارد مترو
+  const [fontsLoaded, fontError] = useFonts({
+    'IRANYekanXFaNum-Bold': require('../src/assets/fonts/IranYekan/IRANYekanXFaNum-Bold.woff2'),
+    'IRANYekanXFaNum-Regular': require('../src/assets/fonts/IranYekan/IRANYekanXFaNum-Regular.woff2'),
+    'IRANYekanWebFn-Medium': require('../src/assets/fonts/IranYekan/IRANYekanWebFn-Medium.woff2'),
+  });
+
+  // لاگ کردن خطای احتمالی برای عیب‌یابی سریع‌تر در وب‌باندلر
+  useEffect(() => {
+    if (fontError) {
+      console.warn('مشکل لود فونت:', fontError);
+    }
+  }, [fontError]);
+
+  // نمایش صفحه انتظار تا لود کامل فونت‌ها (جهت جلوگیری از اعمال نشدن فونت یا پریدن صفحه)
+  if (!fontsLoaded && !fontError) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F8FAFC' }}>
+        <ActivityIndicator size="large" color="#0F172A" />
+      </View>
+    );
+  }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+    <ThemeProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="verify" />
       </Stack>
-      <StatusBar style="auto" />
     </ThemeProvider>
   );
 }
