@@ -8,19 +8,19 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { AppText } from '@/src/theme/AppText';
 
 interface AppBottomNavProps {
-  activeTab: 'home' | 'shop' | 'cart' | 'support' | 'fleet';
+  activeTab: 'home' | 'shop' | 'cart' | 'categories' | 'profile';
 }
 
 export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
   const { colors } = useTheme();
   const router = useRouter();
 
-  // ساختاردهی ۵ کلید ناوبری از چپ به راست در زبان فارسی
+  // ساختاردهی جدید ۵ کلید ناوبری از چپ به راست در زبان فارسی بر اساس دستور شما
   const tabs = [
-    { id: 'fleet', title: 'دستگاه‌های من', iconActive: 'business', iconInactive: 'business-outline' },
-    { id: 'support', title: 'پشتیبانی', iconActive: 'information-circle', iconInactive: 'information-circle-outline' },
+    { id: 'profile', title: 'پروفایل', iconActive: 'person', iconInactive: 'person-outline' },
+    { id: 'categories', title: 'دسته‌بندی', iconActive: 'apps', iconInactive: 'apps-outline' },
     { id: 'cart', title: 'سبد خرید', iconActive: 'cart', iconInactive: 'cart-outline' },
-    { id: 'shop', title: 'فروشگاه', iconActive: 'grid', iconInactive: 'grid-outline' },
+    { id: 'shop', title: 'فروشگاه', iconActive: 'cube', iconInactive: 'cube-outline' },
     { id: 'home', title: 'خانه', iconActive: 'home', iconInactive: 'home-outline' },
   ] as const;
 
@@ -30,7 +30,11 @@ export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
     } else if (tabId === 'shop') {
       router.replace('/catalog'); // هدایت پویا به کاتالوگ قطعات برند ایکس الواتور
     } else if (tabId === 'cart') {
-      router.replace('/cart'); // مسیر سبد خرید (آماده برای مراحل بعدی)
+      router.replace('/cart'); // مسیر سبد خرید
+    } else if (tabId === 'categories') {
+      router.replace('/categories'); // مسیر دسته‌بندی‌ها (آماده برای کدهای بعدی)
+    } else if (tabId === 'profile') {
+      router.replace('/profile'); // مسیر پروفایل کاربر (آماده برای کدهای بعدی)
     }
   };
 

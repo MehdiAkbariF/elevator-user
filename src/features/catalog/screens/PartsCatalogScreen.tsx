@@ -9,17 +9,19 @@ import {
   TextInput,
   Image,
   Dimensions,
-  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { ScreenWrapper } from '@/src/components/layout/ScreenWrapper';
-import { AppText } from '@/src/theme/AppText'; // استفاده از آدرس مستقیم مورد نظر شما
+import { AppText } from '@/src/theme/AppText';
+import { ThemeToggleButton } from '@/src/components/common/ThemeToggleButton';
+import { AppBottomNav } from '@/src/components/layout/AppBottomNav';
+import { AppModal } from '@/src/components/common/AppModal';
+import { AppButton } from '@/src/components/common/AppButton';
 
 const { width } = Dimensions.get('window');
 
-// داده‌های نمونه قطعات یدکی با ترجمه دقیق و تخصصی
 const INITIAL_PRODUCTS = [
   {
     id: '1',
@@ -50,24 +52,8 @@ const INITIAL_PRODUCTS = [
     brand: 'GENERIC',
     name: 'لنت کفشک ریل آسانسور ۱۶ میلی‌متری',
     price: 'استعلام قیمت',
-    isAvailable: false, // بدون قیمت مستقیم (نیاز به تماس)
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD4vAK9ArcMrUX6fKRpFrkv_tC1y6EPlXazYt1NWyFo-PS1fULY2qhD_4i4aSz26jcfp_Ft9Tr035oOhvySU6EpQvv7ksjz6Gf4cHdDsAtXlrB4V0qCOHh6vMLxvDbzL5JAVNSg1HkBtwbpZkVXNEveZnoCWwYybB5kdPR3zTKEgd6IU1FzDxxda5JFHvNccIdGZvX5r4bt1u9QlsKpSPMv45YXqZNoyjYMccqHskJ7d2_-NL7TGUOelw',
-  },
-  {
-    id: '5',
-    brand: 'KONE',
-    name: 'پنل شستی احضار داخل کابین استیل',
-    price: '۴,۵۰۰,۰۰۰ تومان',
-    isAvailable: true,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCEtNoaGxkNdnEySJvgvaM8kRD0FxMc8Jhx_StikfxY8WCh_Wol2gXb9E9ksIsijUW1nTfn-FdKBVZ86b9a2YVsenM0CpAVFQfXg05j32eWUMh1ohyPDgKSN_QZtwGBmsjtNApYgnX6LV-xWLE0abcLcA18jW1UTbr1Say2Cx_UvWkp2EsLFLz0IO86n3sW5d3Vl7D-uAoFa6Wy_62g5VwnAA-GeMQvDccSpfnZ2M9PE3uTs_DvVkamIw',
-  },
-  {
-    id: '6',
-    brand: 'SCHINDLER',
-    name: 'فلکه هرزگرد چدنی اصلی ۶۲۰ میلی‌متری',
-    price: 'استعلام قیمت',
     isAvailable: false,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBSoQy7h1rkiF0bvL4yVTLavNcAirvglxPSsCDgFexuLPTOfFGuGZtWefVXQyCe08jm6Vzl_r7wWrMltUW3TiPNO45KaxUrX7fzjXixW8NZgNKbadpOIGsTM3tNJ35PLbsSg8cK-YEMPD-grNp7P3JluiBXtohcpKuhaycg4SpWqhDH7qiZ_ba_jceLHwBYBgDZIp10MRBrTgmGwLTq3vZxDXmSCQfRvJuVynEAjF4TSIeh4PRUPObQLg',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD4vAK9ArcMrUX6fKRpFrkv_tC1y6EPlXazYt1NWyFo-PS1fULY2qhD_4i4aSz26jcfp_Ft9Tr035oOhvySU6EpQvv7ksjz6Gf4cHdDsAtXlrB4V0qCOHh6vMLxvDbzL5JAVNSg1HkBtwbpZkVXNEveZnoCWwYybB5kdPR3zTKEgd6IU1FzDxxda5JFHvNccIdGZvX5r4bt1u9QlsKpSPMv45YXqZNoyjYMccqHskJ7d2_-NL7TGUOelw',
   },
 ];
 
@@ -76,8 +62,11 @@ export const PartsCatalogScreen = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
+  
+  const [filterVisible, setFilterVisible] = useState(false);
+  const [sortBy, setSortBy] = useState('popular');
+  const [selectedBrand, setSelectedBrand] = useState('all');
 
-  // دسته‌بندی‌های کاتالوگ قطعات
   const categories = [
     { id: 'all', title: 'همه قطعات' },
     { id: 'motors', title: 'موتورهای کششی' },
@@ -86,40 +75,56 @@ export const PartsCatalogScreen = () => {
     { id: 'cables', title: 'سیم بکسل و کابل' },
   ];
 
-  // محاسبه ریاضی و دقیق عرض کارت‌ها برای ۲ ستونه شدن در تمام پلتفرم‌ها
   const cardWidth = (width - spacing.lg * 2 - spacing.md) / 2;
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/dashboard');
+    }
+  };
+
+  const handleProductPress = (productId: string) => {
+    // ناوبری بومی با کلیک روی کارت محصول به صفحه جزئیات محصول
+    router.push({
+      pathname: '/product',
+      params: { id: productId }
+    });
+  };
 
   return (
     <ScreenWrapper>
-      {/* هدر بالایی با دکمه سبد خرید فعال و ناوبری بومی */}
+      {/* هدر بالایی کاتالوگ */}
       <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-        {/* سبد خرید در چپ */}
         <TouchableOpacity
+          onPress={handleBack}
           activeOpacity={0.7}
           style={styles.headerButton}
         >
-          <Ionicons name="cart-outline" size={24} color={colors.textPrimary} />
-          <View style={[styles.cartBadge, { backgroundColor: colors.error, borderColor: colors.surface }]} />
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
 
-        {/* عنوان کاتالوگ با برند ایکس الواتور */}
         <View style={styles.brandContainer}>
           <AppText variant="h2" style={{ fontWeight: '700', color: colors.textPrimary }}>
             قطعات و تجهیزات ایکس الواتور
           </AppText>
         </View>
 
-        {/* دکمه برگشت بومی در راست */}
-        <TouchableOpacity
-          onPress={() => router.back()}
-          activeOpacity={0.7}
-          style={styles.headerButton}
-        >
-          <Ionicons name="arrow-forward" size={24} color={colors.textPrimary} />
-        </TouchableOpacity>
+        <View style={styles.rightActions}>
+          <ThemeToggleButton />
+          
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={[styles.headerButton, { marginLeft: spacing.xs }]}
+          >
+            <Ionicons name="cart-outline" size={24} color={colors.textPrimary} />
+            <View style={[styles.cartBadge, { backgroundColor: colors.error, borderColor: colors.surface }]} />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* بخش کادر جستجوی یکپارچه و زیبا */}
+      {/* بخش جستجو */}
       <View style={[styles.searchSection, { paddingHorizontal: spacing.lg, paddingVertical: spacing.md }]}>
         <View style={[styles.searchBar, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: borderRadius.md }]}>
           <Ionicons name="search-outline" size={20} color={colors.outline} style={{ marginLeft: 12 }} />
@@ -133,7 +138,7 @@ export const PartsCatalogScreen = () => {
         </View>
       </View>
 
-      {/* فیلترهای چرخشی افقی (Pills) به صورت کاملاً RTL */}
+      {/* فیلترهای چرخشی افقی */}
       <View style={styles.categoryContainer}>
         <ScrollView
           horizontal
@@ -168,16 +173,18 @@ export const PartsCatalogScreen = () => {
         </ScrollView>
       </View>
 
-      {/* گرید ۲ ستونه قطعات با پایداری کامل در اسکرول */}
+      {/* گرید ۲ ستونه قطعات با ناوبری پیوند داده شده */}
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[styles.gridContainer, { paddingHorizontal: spacing.lg, paddingBottom: 100 }]}
+        contentContainerStyle={[styles.gridContainer, { paddingHorizontal: spacing.lg, paddingBottom: 160 }]}
       >
         <View style={styles.productGrid}>
           {INITIAL_PRODUCTS.map((product) => {
             return (
-              <View
+              <TouchableOpacity
                 key={product.id}
+                activeOpacity={0.9}
+                onPress={() => handleProductPress(product.id)} // تریگر رفتن به صفحه محصول
                 style={[
                   styles.productCard,
                   {
@@ -188,17 +195,14 @@ export const PartsCatalogScreen = () => {
                   },
                 ]}
               >
-                {/* بخش تصویر محصول با نسبت مربع */}
                 <View style={[styles.imageWrapper, { backgroundColor: colors.surfaceDim }]}>
                   <Image source={{ uri: product.image }} style={styles.productImage} />
                   
-                  {/* دکمه افزودن به علاقه‌مندی‌ها */}
                   <TouchableOpacity activeOpacity={0.7} style={styles.favoriteButton}>
                     <Ionicons name="heart-outline" size={20} color={colors.outline} />
                   </TouchableOpacity>
                 </View>
 
-                {/* اطلاعات محصول */}
                 <View style={styles.productInfo}>
                   <AppText variant="labelSm" color="muted" style={styles.productBrand}>
                     {product.brand}
@@ -212,7 +216,6 @@ export const PartsCatalogScreen = () => {
                     {product.name}
                   </AppText>
 
-                  {/* قیمت و دکمه خرید در انتهای کارت */}
                   <View style={styles.cardFooter}>
                     <AppText
                       variant="button"
@@ -241,15 +244,16 @@ export const PartsCatalogScreen = () => {
                     )}
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             );
           })}
         </View>
       </ScrollView>
 
-      {/* دکمه شناور فیلتر و مرتب‌سازی در مرکز پایین صفحه */}
+      {/* دکمه شناور فیلتر */}
       <View style={styles.floatingButtonContainer}>
         <TouchableOpacity
+          onPress={() => setFilterVisible(true)}
           activeOpacity={0.9}
           style={[
             styles.floatingFilterBtn,
@@ -266,6 +270,90 @@ export const PartsCatalogScreen = () => {
           <Ionicons name="tune-outline" size={18} color={colors.onPrimary} style={{ marginRight: 8 }} />
         </TouchableOpacity>
       </View>
+
+      {/* پاپ آپ مودال کشویی */}
+      <AppModal
+        visible={filterVisible}
+        onClose={() => setFilterVisible(false)}
+        title="فیلتر و مرتب‌سازی"
+      >
+        <View style={styles.modalContent}>
+          <AppText variant="h2" style={styles.modalSubTitle}>مرتب‌سازی بر اساس</AppText>
+          <View style={styles.filterPillsRow}>
+            {[
+              { id: 'popular', label: 'محبوب‌ترین' },
+              { id: 'cheapest', label: 'ارزان‌ترین' },
+              { id: 'expensive', label: 'گران‌ترین' },
+              { id: 'newest', label: 'جدیدترین' },
+            ].map((item) => {
+              const active = sortBy === item.id;
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  onPress={() => setSortBy(item.id)}
+                  style={[
+                    styles.modalPill,
+                    {
+                      backgroundColor: active ? colors.secondary : colors.surface,
+                      borderColor: active ? colors.secondary : colors.border,
+                      borderRadius: borderRadius.md,
+                    },
+                  ]}
+                >
+                  <AppText variant="button" style={{ color: active ? '#FFFFFF' : colors.textSecondary }}>
+                    {item.label}
+                  </AppText>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          <AppText variant="h2" style={[styles.modalSubTitle, { marginTop: spacing.lg }]}>برند سازنده</AppText>
+          <View style={styles.filterPillsRow}>
+            {[
+              { id: 'all', label: 'همه برندها' },
+              { id: 'kone', label: 'KONE' },
+              { id: 'schindler', label: 'Schindler' },
+              { id: 'orona', label: 'Orona' },
+            ].map((item) => {
+              const active = selectedBrand === item.id;
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  onPress={() => setSelectedBrand(item.id)}
+                  style={[
+                    styles.modalPill,
+                    {
+                      backgroundColor: active ? colors.secondary : colors.surface,
+                      borderColor: active ? colors.secondary : colors.border,
+                      borderRadius: borderRadius.md,
+                    },
+                  ]}
+                >
+                  <AppText variant="button" style={{ color: active ? '#FFFFFF' : colors.textSecondary }}>
+                    {item.label}
+                  </AppText>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          <View style={[styles.modalFooterActions, { marginTop: spacing.xl, gap: spacing.md }]}>
+            <AppButton title="اعمال فیلتر" onPress={() => setFilterVisible(false)} />
+            <TouchableOpacity
+              onPress={() => {
+                setSortBy('popular');
+                setSelectedBrand('all');
+              }}
+              style={[styles.clearBtn, { borderColor: colors.border, borderRadius: borderRadius.md }]}
+            >
+              <AppText variant="button" color="muted">پاک کردن همه</AppText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </AppModal>
+
+      <AppBottomNav activeTab="shop" />
     </ScreenWrapper>
   );
 };
@@ -286,6 +374,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
+  },
+  rightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   cartBadge: {
     position: 'absolute',
@@ -313,7 +405,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     paddingHorizontal: 12,
-    textAlign: 'right', // راست‌چین کردن باکس سرچ فارسی
+    textAlign: 'right',
     fontSize: 14,
   },
   categoryContainer: {
@@ -321,7 +413,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   categoryScroll: {
-    flexDirection: 'row-reverse', // شروع چرخونک دسته‌بندی از راست به چپ
+    flexDirection: 'row-reverse',
     gap: 8,
   },
   categoryPill: {
@@ -333,7 +425,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   productGrid: {
-    flexDirection: 'row-reverse', // رندر قطعات از راست به چپ
+    flexDirection: 'row-reverse',
     flexWrap: 'wrap',
     gap: 12,
     width: '100%',
@@ -358,7 +450,7 @@ const styles = StyleSheet.create({
   favoriteButton: {
     position: 'absolute',
     top: 8,
-    left: 8, // موقعیت علاقه‌مندی در بالا سمت چپ کارت قطعه
+    left: 8,
     padding: 4,
   },
   productInfo: {
@@ -377,7 +469,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     marginBottom: 12,
-    height: 36, // ارتفاع دو خط ثابت متون نام برای یکپارچگی ابعاد کارت‌ها
+    height: 36,
   },
   cardFooter: {
     flexDirection: 'row',
@@ -400,7 +492,7 @@ const styles = StyleSheet.create({
   },
   floatingButtonContainer: {
     position: 'absolute',
-    bottom: 24,
+    bottom: 80,
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -416,5 +508,35 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
+  },
+  modalContent: {
+    width: '100%',
+  },
+  modalSubTitle: {
+    textAlign: 'right',
+    fontWeight: '700',
+    marginBottom: 12,
+  },
+  filterPillsRow: {
+    flexDirection: 'row-reverse',
+    flexWrap: 'wrap',
+    gap: 8,
+    width: '100%',
+    marginBottom: 8,
+  },
+  modalPill: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderWidth: 1,
+  },
+  modalFooterActions: {
+    width: '100%',
+  },
+  clearBtn: {
+    height: 56,
+    width: '100%',
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
