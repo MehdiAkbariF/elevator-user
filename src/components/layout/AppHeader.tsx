@@ -15,7 +15,7 @@ interface AppHeaderProps {
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
-  title = 'ورتییکال‌کِر',
+  title = 'xElevator',
   showBackButton = false,
   showThemeToggle = true,
 }) => {

@@ -20,15 +20,15 @@ export const DashboardScreen = () => {
 
   return (
     <ScreenWrapper>
-      {/* هدر سراسری مستقل و عمومی */}
+      {/* هدر سراسری مستقل */}
       <AppHeader />
 
       <ScrollView 
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 90 }} // جلوگیری از تداخل محتوا با نوار پایینی
+        contentContainerStyle={{ paddingBottom: 110 }} // حاشیه پایینی برای اسکرول کامل و عدم تداخل با فوتر و نوار پایینی
       >
         
-        {/* ابزارک جدید UX: پنل خلاصه وضعیت آسانسورها و دستگاه‌های کاربر */}
+        {/* ۱. ابزارک خلاصه وضعیت آسانسورهای کاربر */}
         <View style={[styles.fleetStatusCard, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: borderRadius.lg, marginHorizontal: spacing.lg, marginTop: spacing.lg }]}>
           <View style={styles.statusRow}>
             <View style={[styles.badge, { backgroundColor: 'rgba(34, 197, 94, 0.1)', borderRadius: borderRadius.sm }]}>
@@ -38,7 +38,7 @@ export const DashboardScreen = () => {
             <AppText variant="h2" style={styles.statusTitle}>وضعیت آسانسورهای شما</AppText>
           </View>
           <AppText variant="body" color="muted" style={styles.statusSubtitle}>
-            ساختمان نگین: ۳ آسانسور تحت پوشش بیمه و سرویس منظم فعال هستند.
+            ساختمان نگین: ۳ آسانسور تحت پوشش بیمه و سرویس دوره‌ای منظم فعال هستند.
           </AppText>
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
           <View style={styles.statusFooter}>
@@ -47,7 +47,7 @@ export const DashboardScreen = () => {
           </View>
         </View>
 
-        {/* ۱. بخش هیرو (Hero Section) */}
+        {/* ۲. بخش هیرو (Hero Section) */}
         <View style={[styles.heroSection, { paddingHorizontal: spacing.lg, paddingVertical: spacing.xl }]}>
           <AppText variant="h1" style={styles.heroTitle}>
             مراقبت هوشمند از آسانسور و قطعات یدکی استاندارد
@@ -57,7 +57,6 @@ export const DashboardScreen = () => {
           </AppText>
           
           <View style={styles.heroActionContainer}>
-            {/* دکمه امداد اضطراری */}
             <TouchableOpacity
               activeOpacity={0.8}
               style={[styles.emergencyButton, { backgroundColor: colors.secondary, borderRadius: borderRadius.md }]}
@@ -68,7 +67,6 @@ export const DashboardScreen = () => {
               </AppText>
             </TouchableOpacity>
 
-            {/* دکمه کاتالوگ قطعات با اصلاح بردر ملایم */}
             <TouchableOpacity
               activeOpacity={0.8}
               style={[styles.catalogButton, { borderColor: colors.border, borderRadius: borderRadius.md, backgroundColor: colors.surface }]}
@@ -81,14 +79,13 @@ export const DashboardScreen = () => {
           </View>
         </View>
 
-        {/* ۲. بخش خدمات ما با اصلاح بردارهای فوق‌العاده ملایم و لوکس */}
+        {/* ۳. بخش خدمات ما با کادربندی‌های لوکس و ملایم */}
         <View style={[styles.section, { backgroundColor: colors.surfaceDim, paddingVertical: spacing.xl, paddingHorizontal: spacing.lg, borderColor: colors.border }]}>
           <AppText variant="h2" style={styles.sectionTitle}>
-            خدمات نگهداری و اورهال ورتییکال‌کِر
+            خدمات نگهداری و اورهال ایکس الوتور
           </AppText>
           
           <View style={[styles.servicesStack, { gap: spacing.md }]}>
-            {/* خدمت اول */}
             <View style={[styles.serviceCard, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: borderRadius.lg }]}>
               <View style={[styles.iconContainer, { backgroundColor: colors.background, borderColor: colors.border }]}>
                 <Ionicons name="calendar" size={24} color={colors.textPrimary} />
@@ -101,7 +98,6 @@ export const DashboardScreen = () => {
               </AppText>
             </View>
 
-            {/* خدمت دوم */}
             <View style={[styles.serviceCard, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: borderRadius.lg }]}>
               <View style={[styles.iconContainer, { backgroundColor: colors.background, borderColor: colors.border }]}>
                 <Ionicons name="construct" size={24} color={colors.secondary} />
@@ -114,7 +110,6 @@ export const DashboardScreen = () => {
               </AppText>
             </View>
 
-            {/* خدمت سوم */}
             <View style={[styles.serviceCard, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: borderRadius.lg }]}>
               <View style={[styles.iconContainer, { backgroundColor: colors.background, borderColor: colors.border }]}>
                 <Ionicons name="trending-up" size={24} color={colors.textPrimary} />
@@ -129,7 +124,7 @@ export const DashboardScreen = () => {
           </View>
         </View>
 
-        {/* ۳. کاتالوگ چرخشی قطعات برجسته */}
+        {/* ۴. کاتالوگ چرخشی قطعات برجسته */}
         <View style={{ paddingVertical: spacing.xl }}>
           <View style={[styles.carouselHeader, { paddingHorizontal: spacing.lg }]}>
             <AppText variant="h2" style={styles.carouselTitle}>
@@ -186,30 +181,78 @@ export const DashboardScreen = () => {
                 </TouchableOpacity>
               </View>
             </View>
-
-            {/* قطعه ۳ */}
-            <View style={[styles.partCard, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: borderRadius.lg }]}>
-              <View style={[styles.partImageContainer, { borderBottomColor: colors.border }]}>
-                <Image
-                  source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA1tjHZ_JLpwbxMivJ60eHMVoE0Z848L0di1qczuYajVk3MwCeeCXNqTf6hzPyaAnQuh_5EkE2xtdy1k9XY5uhAR6nQLbEF-jIdHXrQYFezUlx7iG3slwzf4_KT2UZtHrBdM6ZbDlSn5HWxarAHAukOpcK3XyBrq_AQ8LRWydZeu33qnTkQ3yj_ZN6xIb382l3nHQ181d6SueG5Zoqv3F0fBWxq0_sv0hYm12U1zxpXhkNk2gXPydKIgA' }}
-                  style={styles.partImage}
-                />
-                <View style={styles.tagContainer}>
-                  <AppText variant="labelSm" style={styles.tagText}>Schindler</AppText>
-                </View>
-              </View>
-              <View style={styles.partInfo}>
-                <AppText variant="h2" style={styles.partName}>شستی احضار و پنل کابین</AppText>
-                <AppText variant="body" color="muted" style={styles.partDesc}>کلیدهای استیل ضدزنگ به همراه خط بریل برجسته.</AppText>
-                <TouchableOpacity style={[styles.priceButton, { borderColor: colors.border, borderRadius: borderRadius.md }]}>
-                  <AppText variant="button" style={{ color: colors.textPrimary }}>استعلام قیمت</AppText>
-                </TouchableOpacity>
-              </View>
-            </View>
           </ScrollView>
         </View>
 
-        {/* ۴. نشان‌های اعتماد و اصالت با کادربندی‌های Slate ملایم */}
+        {/* ۵. کامپوننت بیزینسی جدید اول: بنر تخمین هوشمند هزینه بازسازی آسانسور (جذب مشتری) */}
+        <View style={[styles.modernizationBanner, { backgroundColor: colors.primary, borderRadius: borderRadius.lg, marginHorizontal: spacing.lg, padding: spacing.lg }]}>
+          <View style={styles.bannerTextContent}>
+            <AppText variant="h2" style={{ color: colors.onPrimary, textAlign: 'right', fontWeight: '700', marginBottom: 6 }}>
+              آیا آسانسور شما قدیمی شده است؟
+            </AppText>
+            <AppText variant="body" style={{ color: colors.onPrimary, opacity: 0.8, textAlign: 'right', fontSize: 13, lineHeight: 20 }}>
+              با سیستم تخمین آنلاین ایکس الوتور، هزینه بازسازی، تزئینات دکوراسیون و ارتقای ایمنی آسانسور خود را در کمتر از ۲ دقیقه برآورد کنید.
+            </AppText>
+          </View>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            style={[styles.bannerButton, { backgroundColor: colors.secondary, borderRadius: borderRadius.md, marginTop: spacing.md }]}
+          >
+            <AppText variant="button" style={{ color: '#FFFFFF', fontWeight: '700' }}>
+              محاسبه آنلاین هزینه بازسازی
+            </AppText>
+          </TouchableOpacity>
+        </View>
+
+        {/* ۶. کامپوننت بیزینسی جدید دوم: مقالات آموزشی و هاب ایمنی آسانسور (افزایش اعتماد کاربر) */}
+        <View style={{ paddingVertical: spacing.xl }}>
+          <View style={[styles.carouselHeader, { paddingHorizontal: spacing.lg }]}>
+            <AppText variant="h2" style={styles.carouselTitle}>
+              آموزش و نکات ایمنی آسانسور
+            </AppText>
+            <TouchableOpacity>
+              <AppText variant="labelSm" color="secondary">
+                همه مقالات
+              </AppText>
+            </TouchableOpacity>
+          </View>
+
+          <View style={[styles.articlesContainer, { paddingHorizontal: spacing.lg, gap: spacing.md }]}>
+            {/* مقاله ۱ */}
+            <TouchableOpacity activeOpacity={0.8} style={[styles.articleRow, { borderColor: colors.border, borderRadius: borderRadius.md, backgroundColor: colors.surface }]}>
+              <View style={styles.articleTextContainer}>
+                <AppText variant="labelSm" color="secondary">مراقبت و نگهداری</AppText>
+                <AppText variant="h2" style={[styles.articleTitle, { color: colors.textPrimary, fontSize: 14 }]}>
+                  ۵ نشانه کلیدی که زنگ خطری برای تعویض سیم‌بکسل آسانسور است
+                </AppText>
+                <AppText variant="body" color="muted" numberOfLines={1} style={{ fontSize: 12, textAlign: 'right' }}>
+                  بررسی فنی علائم سایش و خوردگی کابل‌های کششی آسانسور...
+                </AppText>
+              </View>
+              <View style={styles.articleIconCircle}>
+                <Ionicons name="book-outline" size={20} color={colors.textPrimary} />
+              </View>
+            </TouchableOpacity>
+
+            {/* مقاله ۲ */}
+            <TouchableOpacity activeOpacity={0.8} style={[styles.articleRow, { borderColor: colors.border, borderRadius: borderRadius.md, backgroundColor: colors.surface }]}>
+              <View style={styles.articleTextContainer}>
+                <AppText variant="labelSm" color="secondary">استانداردها</AppText>
+                <AppText variant="h2" style={[styles.articleTitle, { color: colors.textPrimary, fontSize: 14 }]}>
+                  مقررات جدید آتش‌نشانی برای دریافت پایان‌کار آسانسور سال ۱۴۰۵
+                </AppText>
+                <AppText variant="body" color="muted" numberOfLines={1} style={{ fontSize: 12, textAlign: 'right' }}>
+                  جدیدترین تغییرات در قوانین درب‌های لولایی و اتوماتیک اضطراری...
+                </AppText>
+              </View>
+              <View style={styles.articleIconCircle}>
+                <Ionicons name="shield-outline" size={20} color={colors.textPrimary} />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* ۷. نشان‌های اعتماد و اصالت */}
         <View style={[styles.trustSection, { backgroundColor: colors.surface, borderColor: colors.border, paddingHorizontal: spacing.lg }]}>
           <View style={styles.trustBadge}>
             <Ionicons name="checkmark-seal-outline" size={28} color={colors.textPrimary} style={{ marginLeft: spacing.sm }} />
@@ -224,9 +267,39 @@ export const DashboardScreen = () => {
             <AppText variant="button" style={{ color: colors.textPrimary }}>قیمت‌گذاری شفاف و تعرفه مصوب</AppText>
           </View>
         </View>
+
+        {/* ۸. طراحی فوتر لوکس و پرستیژ برند (Footer Component) */}
+        <View style={[styles.footerContainer, { backgroundColor: colors.surfaceDim, borderTopColor: colors.border }]}>
+          <View style={styles.footerBrandRow}>
+            <AppText variant="h1" style={[styles.footerBrandText, { color: colors.textPrimary }]}>
+              ایکس الوتور
+            </AppText>
+            <Ionicons name="construct-outline" size={24} color={colors.secondary} />
+          </View>
+          
+          <AppText variant="body" color="muted" style={styles.footerDescription}>
+            پلتفرم تخصصی پایش، سرویس نگهداری و تأمین بدون واسطه قطعات یدکی انواع آسانسورهای کششی و هیدرولیک در سراسر کشور.
+          </AppText>
+
+          {/* لینک‌های راهنما به سبک وب‌اپلیکیشن‌های برتر */}
+          <View style={styles.footerLinksGrid}>
+            <TouchableOpacity><AppText variant="labelSm" color="muted">قوانین و مقررات</AppText></TouchableOpacity>
+            <TouchableOpacity><AppText variant="labelSm" color="muted">سوالات متداول</AppText></TouchableOpacity>
+            <TouchableOpacity><AppText variant="labelSm" color="muted">درخواست پشتیبانی</AppText></TouchableOpacity>
+            <TouchableOpacity><AppText variant="labelSm" color="muted">کاتالوگ برندها</AppText></TouchableOpacity>
+          </View>
+
+          <View style={[styles.footerDivider, { backgroundColor: colors.border }]} />
+
+          {/* کپی‌رایت رسمی */}
+          <AppText variant="labelSm" color="muted" style={styles.copyrightText}>
+            © ۱۴۰۵ تمامی حقوق مادی و معنوی متعلق به ایکس الوتور می‌باشد.
+          </AppText>
+        </View>
+
       </ScrollView>
 
-      {/* ناوبری پایینی سراسری، ماژولار و قابل استفاده مجدد */}
+      {/* ناوبری پایینی موبایل */}
       <AppBottomNav activeTab="home" />
     </ScreenWrapper>
   );
@@ -409,15 +482,97 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  modernizationBanner: {
+    paddingVertical: 24,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  bannerTextContent: {
+    width: '100%',
+  },
+  bannerButton: {
+    height: 44,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  articlesContainer: {
+    width: '100%',
+  },
+  articleRow: {
+    borderWidth: 1,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  articleTextContainer: {
+    flex: 1,
+    paddingRight: 16,
+  },
+  articleTitle: {
+    textAlign: 'right',
+    fontWeight: '700',
+    lineHeight: 20,
+    marginTop: 4,
+    marginBottom: 6,
+  },
+  articleIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(15, 23, 42, 0.04)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   trustSection: {
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    marginTop: 24,
+    marginVertical: 24,
   },
   trustBadge: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'flex-start',
     paddingVertical: 16,
+  },
+  footerContainer: {
+    borderTopWidth: 1,
+    paddingVertical: 32,
+    paddingHorizontal: 24,
+    alignItems: 'flex-end',
+  },
+  footerBrandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  footerBrandText: {
+    fontWeight: '800',
+    marginRight: 8,
+  },
+  footerDescription: {
+    textAlign: 'right',
+    fontSize: 12,
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  footerLinksGrid: {
+    width: '100%',
+    flexDirection: 'row-reverse',
+    flexWrap: 'wrap',
+    gap: 16,
+    justifyContent: 'flex-start',
+    marginBottom: 24,
+  },
+  footerDivider: {
+    height: 1,
+    width: '100%',
+    marginBottom: 16,
+  },
+  copyrightText: {
+    textAlign: 'right',
+    fontSize: 10,
+    width: '100%',
   },
 });
