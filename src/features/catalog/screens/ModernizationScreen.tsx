@@ -705,7 +705,7 @@ export const ModernizationScreen = () => {
             variant="button"
             style={{
               color: colors.onPrimary,
-              fontWeight: 'bold',
+           
             }}
           >
             درخواست بازدید و استعلام رایگان

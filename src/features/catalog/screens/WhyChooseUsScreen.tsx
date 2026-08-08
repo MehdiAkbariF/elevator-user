@@ -42,7 +42,7 @@ const TESTIMONIALS = [
   },
   {
     id: '3',
-    name: 'سارا محمدی',
+    name: 'ساناز محمدی',
     role: 'مدیر ساختمان، برج میلاد',
     text: 'بیش از ۳ سال است که با ایکس‌الوتور همکاری می‌کنیم. کیفیت خدمات و تعهد آنها به ایمنی، بی‌نظیر است. قطعاً به دیگران نیز توصیه می‌کنم.',
     avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD4vAK9ArcMrUX6fKRpFrkv_tC1y6EPlXazYt1NWyFo-PS1fULY2qhD_4i4aSz26jcfp_Ft9Tr035oOhvySU6EpQvv7ksjz6Gf4cHdDsAtXlrB4V0qCOHh6vMLxvDbzL5JAVNSg1HkBtwbpZkVXNEveZnoCWwYybB5kdPR3zTKEgd6IU1FzDxxda5JFHvNccIdGZvX5r4bt1u9QlsKpSPMv45YXqZNoyjYMccqHskJ7d2_-NL7TGUOelw',
@@ -166,7 +166,7 @@ export const WhyChooseUsScreen = () => {
               styles.authorName,
               {
                 color: colors.textPrimary,
-                fontWeight: '600',
+               
               },
             ]}
           >
@@ -354,7 +354,7 @@ export const WhyChooseUsScreen = () => {
                     {
                       color: colors.textPrimary,
                       fontSize: 24,
-                      fontWeight: '700',
+                
                     },
                   ]}
                 >
@@ -441,7 +441,7 @@ export const WhyChooseUsScreen = () => {
                         color: colors.textPrimary,
                         flex: 1,
                         textAlign: 'right',
-                        fontWeight: '500',
+                       
                       },
                     ]}
                   >
@@ -490,7 +490,7 @@ export const WhyChooseUsScreen = () => {
                   {
                     color: insuranceColors.text,
                     fontSize: 18,
-                    fontWeight: '600',
+                 
                   },
                 ]}
               >
@@ -571,7 +571,7 @@ export const WhyChooseUsScreen = () => {
                   {
                     color: colors.textPrimary,
                     fontSize: 18,
-                    fontWeight: '600',
+                    
                   },
                 ]}
               >
@@ -768,7 +768,7 @@ export const WhyChooseUsScreen = () => {
             variant="button"
             style={{
               color: colors.onPrimary,
-              fontWeight: 'bold',
+             
             }}
           >
             تماس با ما

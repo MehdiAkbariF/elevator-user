@@ -494,7 +494,7 @@ export const InstallationScreen = () => {
             variant="button"
             style={{
               color: colors.onPrimary,
-              fontWeight: 'bold',
+             
             }}
           >
             درخواست بازدید و برآورد رایگان

@@ -510,7 +510,7 @@ const handleCallEmergency = () => {
             variant="button"
             style={{
               color: colors.onPrimary,
-              fontWeight: 'bold',
+            
             }}
           >
             تماس با امداد اضطراری

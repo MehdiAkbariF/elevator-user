@@ -42,7 +42,7 @@ export const DashboardScreen = () => {
     router.push("/installation");
   };
   const handleRepairPress = () => {
-    router.push("/request-service");
+    router.push("/contact-us");
   };
 
   // محاسبه عرض کارت‌های خدمات (۲ ستون)
@@ -185,7 +185,7 @@ export const DashboardScreen = () => {
                   },
                 ]}
               >
-                نگهداری سالانه
+               سرویس و نگهداری
               </AppText>
               <AppText
                 variant="body"
@@ -504,7 +504,7 @@ export const DashboardScreen = () => {
                 ]}
               >
                 <Ionicons
-                  name="hammer-outline"
+                  name="contract"
                   size={20}
                   color={colors.secondary}
                 />
@@ -520,7 +520,7 @@ export const DashboardScreen = () => {
                   },
                 ]}
               >
-                تعمیر و عیب‌یابی
+               تماس با ما
               </AppText>
               <AppText
                 variant="body"
@@ -534,7 +534,7 @@ export const DashboardScreen = () => {
                   },
                 ]}
               >
-                تشخیص سریع و تعمیر دائمی
+              پاسخگویی سریع
               </AppText>
             </TouchableOpacity>
           </View>

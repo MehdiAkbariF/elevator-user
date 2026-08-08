@@ -142,7 +142,7 @@ export const BlogDetailScreen = () => {
           <AppText
             variant="h1"
             style={[
-              styles.articleTitle,
+             
               {
                 color: colors.textPrimary,
                 fontSize: 22,
@@ -320,10 +320,10 @@ export const BlogDetailScreen = () => {
                 <AppText
                   variant="button"
                   style={[
-                    styles.calloutTitle,
+                    
                     {
                       color: isDark ? '#FFDCC3' : '#92400E',
-                      fontWeight: 'bold',
+                    
                       marginBottom: spacing.xxs,
                     },
                   ]}
