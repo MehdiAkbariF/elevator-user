@@ -7,21 +7,21 @@ import { ActivityIndicator, View } from 'react-native';
 import { ThemeProvider } from '@/src/theme/ThemeContext';
 
 export default function RootLayout() {
-  // بارگذاری دقیق فایل‌های فونت به صورت آدرس‌دهی نسبی استاندارد مترو
+  // بارگذاری دقیق فایل‌های فونت بومی ttf از پوشه جدید واسط ttf
   const [fontsLoaded, fontError] = useFonts({
-    'IRANYekanXFaNum-Bold': require('../src/assets/fonts/IranYekan/woff2/IRANYekanXFaNum-Bold.woff2'),
-    'IRANYekanXFaNum-Regular': require('../src/assets/fonts/IranYekan/woff2/IRANYekanXFaNum-Regular.woff2'),
-    'IRANYekanWebFn-Medium': require('../src/assets/fonts/IranYekan/woff2/IRANYekanWebFn-Medium.woff2'),
+    'IRANYekanXFaNum-Bold': require('../src/assets/fonts/IranYekan/ttf/IRANYekanXFaNum-Bold.ttf'),
+    'IRANYekanXFaNum-Regular': require('../src/assets/fonts/IranYekan/ttf/IRANYekanXFaNum-Regular.ttf'),
+    'IRANYekanWebFn-Medium': require('../src/assets/fonts/IranYekan/ttf/IRANYekanWebFn-Medium.ttf'),
   });
 
-  // لاگ کردن خطای احتمالی برای عیب‌یابی سریع‌تر در وب‌باندلر
+  // مانیتور کردن خطای احتمالی لود فونت
   useEffect(() => {
     if (fontError) {
-      console.warn('مشکل لود فونت:', fontError);
+      console.warn('مشکل لود فونت روی موبایل:', fontError);
     }
   }, [fontError]);
 
-  // نمایش صفحه انتظار تا لود کامل فونت‌ها (جهت جلوگیری از اعمال نشدن فونت یا پریدن صفحه)
+  // نمایش لودینگ شکیل تا زمان لود کامل فایل‌های ttf
   if (!fontsLoaded && !fontError) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F8FAFC' }}>
@@ -35,6 +35,9 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="verify" />
+        <Stack.Screen name="dashboard" />
+        <Stack.Screen name="catalog" />
+        <Stack.Screen name="product" />
       </Stack>
     </ThemeProvider>
   );

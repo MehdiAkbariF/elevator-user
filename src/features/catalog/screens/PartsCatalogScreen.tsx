@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context'; // ایمپورت محاسبات حاشیه امن برای دکمه فیلتر
 import { useTheme } from '@/src/theme/ThemeContext';
 import { ScreenWrapper } from '@/src/components/layout/ScreenWrapper';
 import { AppText } from '@/src/theme/AppText';
@@ -60,6 +61,7 @@ const INITIAL_PRODUCTS = [
 export const PartsCatalogScreen = () => {
   const { colors, spacing, borderRadius } = useTheme();
   const router = useRouter();
+  const insets = useSafeAreaInsets(); // رصد پویای فاصله دکمه‌های پایینی موبایل
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   
@@ -69,10 +71,9 @@ export const PartsCatalogScreen = () => {
 
   const categories = [
     { id: 'all', title: 'همه قطعات' },
-    { id: 'motors', title: 'موتورهای کششی' },
     { id: 'doors', title: 'مکانیزم درب‌ها' },
-    { id: 'safety', title: 'پاراشوت و ترمز ایمنی' },
-    { id: 'cables', title: 'سیم بکسل و کابل' },
+    { id: 'safety', title: 'ترمز ایمنی' },
+    { id: 'cables', title: 'سیم بکسل' },
   ];
 
   const cardWidth = (width - spacing.lg * 2 - spacing.md) / 2;
@@ -86,7 +87,6 @@ export const PartsCatalogScreen = () => {
   };
 
   const handleProductPress = (productId: string) => {
-    // ناوبری بومی با کلیک روی کارت محصول به صفحه جزئیات محصول
     router.push({
       pathname: '/product',
       params: { id: productId }
@@ -95,8 +95,10 @@ export const PartsCatalogScreen = () => {
 
   return (
     <ScreenWrapper>
-      {/* هدر بالایی کاتالوگ */}
+      {/* هدر بالایی کاتالوگ با بازگشت هوشمند چپ‌چین */}
       <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+        
+        {/* کلید بک استاندارد به سمت چپ */}
         <TouchableOpacity
           onPress={handleBack}
           activeOpacity={0.7}
@@ -173,7 +175,7 @@ export const PartsCatalogScreen = () => {
         </ScrollView>
       </View>
 
-      {/* گرید ۲ ستونه قطعات با ناوبری پیوند داده شده */}
+      {/* گرید ۲ ستونه قطعات */}
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.gridContainer, { paddingHorizontal: spacing.lg, paddingBottom: 160 }]}
@@ -184,7 +186,7 @@ export const PartsCatalogScreen = () => {
               <TouchableOpacity
                 key={product.id}
                 activeOpacity={0.9}
-                onPress={() => handleProductPress(product.id)} // تریگر رفتن به صفحه محصول
+                onPress={() => handleProductPress(product.id)}
                 style={[
                   styles.productCard,
                   {
@@ -250,8 +252,8 @@ export const PartsCatalogScreen = () => {
         </View>
       </ScrollView>
 
-      {/* دکمه شناور فیلتر */}
-      <View style={styles.floatingButtonContainer}>
+      {/* دکمه شناور فیلتر با اصلاح پویای ارتفاع جهت جلوگیری از تداخل با منوی پایینی */}
+      <View style={[styles.floatingButtonContainer, { bottom: 80 + insets.bottom }]}>
         <TouchableOpacity
           onPress={() => setFilterVisible(true)}
           activeOpacity={0.9}
@@ -492,7 +494,6 @@ const styles = StyleSheet.create({
   },
   floatingButtonContainer: {
     position: 'absolute',
-    bottom: 80,
     left: 0,
     right: 0,
     alignItems: 'center',

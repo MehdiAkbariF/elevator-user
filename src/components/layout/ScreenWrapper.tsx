@@ -1,9 +1,9 @@
-
 // src/components/layout/ScreenWrapper.tsx
 
 import React from 'react';
-import { StyleSheet, SafeAreaView, StatusBar, View, ViewStyle, Platform } from 'react-native';
-import { useTheme } from '../../theme/ThemeContext';
+import { StyleSheet, View, ViewStyle, Platform, StatusBar } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from '@/src/theme/ThemeContext';
 
 interface ScreenWrapperProps {
   children: React.ReactNode;
@@ -12,32 +12,44 @@ interface ScreenWrapperProps {
 
 export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({ children, style }) => {
   const { colors, isDark } = useTheme();
+  const insets = useSafeAreaInsets(); // دریافت پویای فاصله ناچ دوربین از سیستم‌عامل
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.background,
+          // اعمال خودکار پدینگ بالا برای جلوگیری از نفوذ هدر به زیر دوربین و ناچ در اندروید و iOS
+          paddingTop: insets.top,
+        },
+        style,
+      ]}
+    >
+      {/* هماهنگ‌سازی استایل نوتیفیکیشن‌بار گوشی */}
       <StatusBar
         barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor={colors.background}
+        backgroundColor="transparent"
+        translucent={true}
       />
-      <View style={[styles.container, style]}>
+      <View style={styles.innerContainer}>
         {children}
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
   },
-  container: {
+  innerContainer: {
     flex: 1,
     width: '100%',
     alignSelf: 'center',
-    // شبیه‌سازی مکس‌وید (Max-Width) روی وب و تبلت برای حفظ ری‌پانسیو بودن
     ...Platform.select({
       web: {
-        maxWidth: 440,
+        maxWidth: 440, // رعایت مکس‌وید روی وب
       }
     })
   },

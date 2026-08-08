@@ -11,17 +11,19 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context'; // پوزیشن‌دهی پویا نوار ثابت قیمت بر اساس موبایل
 import { useTheme } from '@/src/theme/ThemeContext';
 import { ScreenWrapper } from '@/src/components/layout/ScreenWrapper';
 import { AppText } from '@/src/theme/AppText';
 import { ThemeToggleButton } from '@/src/components/common/ThemeToggleButton';
 
 const { width } = Dimensions.get('window');
-const IMAGE_HEIGHT = 350; // ارتفاع ثابت تصویر پس‌زمینه
+const IMAGE_HEIGHT = 350;
 
 export const ProductDetailScreen = () => {
   const { colors, spacing, borderRadius } = useTheme();
   const router = useRouter();
+  const insets = useSafeAreaInsets(); // گرفتن حاشیه پایینی برای فیکس کردن دکمه چسبناک قیمت
 
   const handleBack = () => {
     if (router.canGoBack()) {
@@ -33,7 +35,7 @@ export const ProductDetailScreen = () => {
 
   return (
     <ScreenWrapper>
-      {/* ۱. هدر چسبنده بالایی با اولویت لایه‌ای بالا (zIndex: 100) */}
+      {/* ۱. هدر چسبنده بالایی */}
       <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
         <TouchableOpacity onPress={handleBack} activeOpacity={0.7} style={styles.headerButton}>
           <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
@@ -52,7 +54,7 @@ export const ProductDetailScreen = () => {
         </View>
       </View>
 
-      {/* ۲. لایه پس‌زمینه فیکس شده (پایین‌ترین لایه بصری - zIndex: 1) */}
+      {/* ۲. لایه پس‌زمینه فیکس شده */}
       <View style={[styles.imageGalleryBackground, { backgroundColor: colors.surfaceDim, height: IMAGE_HEIGHT }]}>
         <Image
           source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBciiNHmbwI70GkRaFNTcLQdydKCwSoF4BQSpZURFP8ZQdZgT_icxvtICmLexDU2pTxGM4ss2QOm57ujT2TTNyAF3p_ugXUD5rEzViJliYztHtxcsbFPkQUd-wtBWAFjAczI1vR2dOrbJoWCwXke5Ia-HOdkpHAXI6g3n-6MDr0oeYPb01zbhy-CKIyZX7wR4adbvBPjrlXilzKgHano84DlHD6xDk7gwcEKjaJpwOopQH-jCiFihzODA' }}
@@ -67,16 +69,16 @@ export const ProductDetailScreen = () => {
         </View>
       </View>
 
-      {/* ۳. کانتینر اصلی اسکرول با اولویت لایه‌ای میانی (zIndex: 10) روی عکس */}
+      {/* ۳. کانتینر اصلی اسکرول با اولویت لایه‌ای بالا */}
       <ScrollView 
         style={styles.scrollView} 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}
       >
-        {/* هدر اسپیسر کاملاً شفاف جهت دیده شدن عکس زیرین */}
+        {/* هدر اسپیسر شفاف */}
         <View style={styles.transparentSpacer} />
 
-        {/* بدنه و مشخصات فنی محصول با پس‌زمینه جامد */}
+        {/* بدنه مشخصات فنی محصول */}
         <View style={[styles.contentCard, { backgroundColor: colors.surface, borderTopLeftRadius: borderRadius.xl, borderTopRightRadius: borderRadius.xl, padding: spacing.lg }]}>
           
           {/* بخش اطلاعات اصلی محصول */}
@@ -155,10 +157,19 @@ export const ProductDetailScreen = () => {
         </View>
       </ScrollView>
 
-      {/* ۴. نوار چسبنده پایینی خرید با بالاترین اولویت لایه‌ای (zIndex: 110) */}
-      <View style={[styles.bottomActionBar, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
-        
-        {/* قیمت (با حذف flex اضافی جهت پخش کامل چپ و راست) */}
+      {/* ۴. نوار چسبنده پایینی خرید با پدینگ امن پویا جهت ممانعت از تداخل با کلیدهای مجازی اندروید و آیفون */}
+      <View
+        style={[
+          styles.bottomActionBar,
+          {
+            backgroundColor: colors.surface,
+            borderTopColor: colors.border,
+            height: 80 + insets.bottom,
+            paddingBottom: insets.bottom,
+          },
+        ]}
+      >
+        {/* قیمت */}
         <View style={styles.priceContainer}>
           <AppText variant="labelSm" color="muted" style={styles.totalPriceLabel}>قیمت کل</AppText>
           <AppText variant="h1" style={[styles.totalPriceText, { color: colors.textPrimary }]}>
@@ -166,7 +177,7 @@ export const ProductDetailScreen = () => {
           </AppText>
         </View>
 
-        {/* دکمه افزودن به سبد خرید (بدون عرض اجباری جهت فاصله امن تا قیمت) */}
+        {/* دکمه افزودن به سبد خرید */}
         <TouchableOpacity
           activeOpacity={0.8}
           style={[styles.addToCartBtn, { backgroundColor: colors.primary, borderRadius: borderRadius.md }]}
@@ -205,7 +216,7 @@ const styles = StyleSheet.create({
   imageGalleryBackground: {
     width: width,
     position: 'absolute',
-    top: 56,
+    top: 0, // شروع موقعیت مطلق تصویر از سقف بدنه (ناچ به همراه پدینگ کنترل می‌شود)
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -239,7 +250,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   transparentSpacer: {
-    height: IMAGE_HEIGHT - 20,
+    height: IMAGE_HEIGHT - 60, // تنظیم مجدد فاصله شفاف به دلیل اصلاح پدینگ Safe Area بالای صفحه
     backgroundColor: 'transparent',
   },
   contentCard: {
@@ -343,7 +354,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 80,
     flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'space-between',

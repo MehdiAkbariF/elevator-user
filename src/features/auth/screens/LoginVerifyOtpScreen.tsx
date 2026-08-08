@@ -65,7 +65,6 @@ export const LoginVerifyOtpScreen = () => {
   const handleVerify = () => {
     const otpValue = code.join('');
     if (otpValue.length === 4) {
-      // بعد از تایید کد، کاربر مستقیماً به داشبورد روت می‌شود
       router.replace('/dashboard');
     }
   };
@@ -78,18 +77,20 @@ export const LoginVerifyOtpScreen = () => {
       >
         <View style={[styles.mainContainer, { paddingHorizontal: spacing.lg }]}>
           
+          {/* هدر بالایی با فلش بک اصلاح‌شده به سمت چپ */}
           <View style={styles.header}>
             <TouchableOpacity
               onPress={() => router.back()}
               activeOpacity={0.7}
               style={styles.closeButton}
             >
-              <Ionicons name="arrow-forward" size={24} color={colors.textPrimary} />
+              <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
             </TouchableOpacity>
 
             <ThemeToggleButton />
           </View>
 
+          {/* فرم اصلی */}
           <View style={[styles.contentArea, { marginTop: spacing.xl }]}>
             <View style={{ marginBottom: spacing.xl }}>
               <AppText variant="h1" style={[styles.title, { color: colors.textPrimary }]}>

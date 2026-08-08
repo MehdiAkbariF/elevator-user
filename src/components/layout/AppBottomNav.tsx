@@ -4,6 +4,7 @@ import React from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context'; // ایمپورت دریافت حاشیه‌های امن سیستم‌عامل
 import { useTheme } from '@/src/theme/ThemeContext';
 import { AppText } from '@/src/theme/AppText';
 
@@ -14,8 +15,8 @@ interface AppBottomNavProps {
 export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
   const { colors } = useTheme();
   const router = useRouter();
+  const insets = useSafeAreaInsets(); // دریافت فاصله دکمه‌های لمسی کف گوشی از سیستم‌عامل
 
-  // ساختاردهی جدید ۵ کلید ناوبری از چپ به راست در زبان فارسی بر اساس دستور شما
   const tabs = [
     { id: 'profile', title: 'پروفایل', iconActive: 'person', iconInactive: 'person-outline' },
     { id: 'categories', title: 'دسته‌بندی', iconActive: 'apps', iconInactive: 'apps-outline' },
@@ -28,18 +29,25 @@ export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
     if (tabId === 'home') {
       router.replace('/dashboard');
     } else if (tabId === 'shop') {
-      router.replace('/catalog'); // هدایت پویا به کاتالوگ قطعات برند ایکس الواتور
+      router.replace('/catalog');
     } else if (tabId === 'cart') {
-      router.replace('/cart'); // مسیر سبد خرید
-    } else if (tabId === 'categories') {
-      router.replace('/categories'); // مسیر دسته‌بندی‌ها (آماده برای کدهای بعدی)
-    } else if (tabId === 'profile') {
-      router.replace('/profile'); // مسیر پروفایل کاربر (آماده برای کدهای بعدی)
+      router.replace('/cart');
     }
   };
 
   return (
-    <View style={[styles.bottomNav, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
+    <View
+      style={[
+        styles.bottomNav,
+        {
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
+          // افزایش پویای ارتفاع دکمه‌های ناوبری جهت جلوگیری از تداخل فیزیکی با دکمه‌های مجازی خانه در موبایل
+          height: 64 + insets.bottom,
+          paddingBottom: insets.bottom,
+        },
+      ]}
+    >
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         const tintColor = isActive ? colors.secondary : colors.textSecondary;
@@ -75,7 +83,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 64,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
