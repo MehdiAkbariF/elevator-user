@@ -1,63 +1,93 @@
 // src/features/catalog/screens/ProductDetailScreen.tsx
 
-import React from 'react';
+import { ThemeToggleButton } from "@/src/components/common/ThemeToggleButton";
+import { ScreenWrapper } from "@/src/components/layout/ScreenWrapper";
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React from "react";
 import {
-  StyleSheet,
-  View,
-  ScrollView,
-  TouchableOpacity,
-  Image,
   Dimensions,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context'; // پوزیشن‌دهی پویا نوار ثابت قیمت بر اساس موبایل
-import { useTheme } from '@/src/theme/ThemeContext';
-import { ScreenWrapper } from '@/src/components/layout/ScreenWrapper';
-import { AppText } from '@/src/theme/AppText';
-import { ThemeToggleButton } from '@/src/components/common/ThemeToggleButton';
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 const IMAGE_HEIGHT = 350;
 
 export const ProductDetailScreen = () => {
   const { colors, spacing, borderRadius } = useTheme();
   const router = useRouter();
-  const insets = useSafeAreaInsets(); // گرفتن حاشیه پایینی برای فیکس کردن دکمه چسبناک قیمت
+  const insets = useSafeAreaInsets(); // گرفتن حاشیه‌ امن برای پدینگ دکمه پایینی خرید
 
   const handleBack = () => {
     if (router.canGoBack()) {
       router.back();
     } else {
-      router.replace('/catalog');
+      router.replace("/catalog");
     }
   };
 
   return (
     <ScreenWrapper>
       {/* ۱. هدر چسبنده بالایی */}
-      <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-        <TouchableOpacity onPress={handleBack} activeOpacity={0.7} style={styles.headerButton}>
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
+        ]}
+      >
+        <TouchableOpacity
+          onPress={handleBack}
+          activeOpacity={0.7}
+          style={styles.headerButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
 
         <View style={styles.rightActions}>
           <ThemeToggleButton />
-          
-          <TouchableOpacity activeOpacity={0.7} style={[styles.headerButton, { marginLeft: spacing.xs }]}>
-            <Ionicons name="share-social-outline" size={22} color={colors.textPrimary} />
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={[styles.headerButton, { marginLeft: spacing.xs }]}
+          >
+            <Ionicons
+              name="share-social-outline"
+              size={22}
+              color={colors.textPrimary}
+            />
           </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.7} style={[styles.headerButton, { marginLeft: spacing.xs }]}>
-            <Ionicons name="heart-outline" size={22} color={colors.textPrimary} />
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={[styles.headerButton, { marginLeft: spacing.xs }]}
+          >
+            <Ionicons
+              name="heart-outline"
+              size={22}
+              color={colors.textPrimary}
+            />
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* ۲. لایه پس‌زمینه فیکس شده */}
-      <View style={[styles.imageGalleryBackground, { backgroundColor: colors.surfaceDim, height: IMAGE_HEIGHT }]}>
+      {/* ۲. لایه پس‌زمینه تصویر کالا (لایه زیرین ثابت) */}
+      <View
+        style={[
+          styles.imageGalleryBackground,
+          { backgroundColor: colors.surfaceDim, height: IMAGE_HEIGHT },
+        ]}
+      >
         <Image
-          source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBciiNHmbwI70GkRaFNTcLQdydKCwSoF4BQSpZURFP8ZQdZgT_icxvtICmLexDU2pTxGM4ss2QOm57ujT2TTNyAF3p_ugXUD5rEzViJliYztHtxcsbFPkQUd-wtBWAFjAczI1vR2dOrbJoWCwXke5Ia-HOdkpHAXI6g3n-6MDr0oeYPb01zbhy-CKIyZX7wR4adbvBPjrlXilzKgHano84DlHD6xDk7gwcEKjaJpwOopQH-jCiFihzODA' }}
+          source={{
+            uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuBciiNHmbwI70GkRaFNTcLQdydKCwSoF4BQSpZURFP8ZQdZgT_icxvtICmLexDU2pTxGM4ss2QOm57ujT2TTNyAF3p_ugXUD5rEzViJliYztHtxcsbFPkQUd-wtBWAFjAczI1vR2dOrbJoWCwXke5Ia-HOdkpHAXI6g3n-6MDr0oeYPb01zbhy-CKIyZX7wR4adbvBPjrlXilzKgHano84DlHD6xDk7gwcEKjaJpwOopQH-jCiFihzODA",
+          }}
           style={styles.productImage}
         />
         {/* دات‌های وضعیت گالری */}
@@ -69,95 +99,221 @@ export const ProductDetailScreen = () => {
         </View>
       </View>
 
-      {/* ۳. کانتینر اصلی اسکرول با اولویت لایه‌ای بالا */}
-      <ScrollView 
-        style={styles.scrollView} 
+      {/* ۳. کانتینر اصلی اسکرول روی تصویر */}
+      <ScrollView
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}
       >
         {/* هدر اسپیسر شفاف */}
         <View style={styles.transparentSpacer} />
 
-        {/* بدنه مشخصات فنی محصول */}
-        <View style={[styles.contentCard, { backgroundColor: colors.surface, borderTopLeftRadius: borderRadius.xl, borderTopRightRadius: borderRadius.xl, padding: spacing.lg }]}>
-          
+        {/* بدنه و کارت سفید مشخصات کالا */}
+        <View
+          style={[
+            styles.contentCard,
+            {
+              backgroundColor: colors.surface,
+              borderTopLeftRadius: borderRadius.xl,
+              borderTopRightRadius: borderRadius.xl,
+              padding: spacing.lg,
+            },
+          ]}
+        >
           {/* بخش اطلاعات اصلی محصول */}
           <View style={styles.sectionInfo}>
-            <AppText variant="labelSm" color="secondary" style={styles.brandTag}>
+            <AppText
+              variant="labelSm"
+              color="secondary"
+              style={styles.brandTag}
+            >
               سیکور - ایتالیا (SICOR - ITALY)
             </AppText>
-            <AppText variant="h1" style={[styles.productTitle, { color: colors.textPrimary }]}>
+            <AppText
+              variant="h1"
+              style={[styles.productTitle, { color: colors.textPrimary }]}
+            >
               موتور گیرلس آسانسور مدل SG10
             </AppText>
-            
+
             {/* امتیازدهی و وضعیت موجودی */}
             <View style={styles.ratingRow}>
-              <View style={[styles.stockBadge, { backgroundColor: 'rgba(34, 197, 94, 0.1)', borderRadius: borderRadius.sm }]}>
-                <AppText variant="labelSm" style={{ color: '#22C55E' }}>موجود در انبار</AppText>
+              <View
+                style={[
+                  styles.stockBadge,
+                  {
+                    backgroundColor: "rgba(34, 197, 94, 0.1)",
+                    borderRadius: borderRadius.sm,
+                  },
+                ]}
+              >
+                <AppText variant="labelSm" style={{ color: "#22C55E" }}>
+                  موجود در انبار
+                </AppText>
               </View>
-              <View style={[styles.dotSpacer, { backgroundColor: colors.border }]} />
+              <View
+                style={[styles.dotSpacer, { backgroundColor: colors.border }]}
+              />
               <View style={styles.ratingInfo}>
-                <AppText variant="body" color="muted" style={{ fontSize: 12 }}>(۲۴ نظر)</AppText>
-                <AppText variant="button" style={{ color: colors.textPrimary, marginRight: 4, fontFamily: 'IRANYekanXFaNum-Bold' }}>۴.۸</AppText>
+                <AppText variant="body" color="muted" style={{ fontSize: 12 }}>
+                  (۲۴ نظر)
+                </AppText>
+                <AppText
+                  variant="button"
+                  style={{
+                    color: colors.textPrimary,
+                    marginRight: 4,
+                    fontFamily: "IRANYekanXFaNum-Bold",
+                  }}
+                >
+                  ۴.۸
+                </AppText>
                 <Ionicons name="star" size={16} color="#D97706" />
               </View>
             </View>
           </View>
 
           {/* ابزارک تایید سازگاری */}
-          <View style={[styles.compatibilityCard, { backgroundColor: colors.surfaceDim, borderColor: colors.border, borderRadius: borderRadius.lg }]}>
+          <View
+            style={[
+              styles.compatibilityCard,
+              {
+                backgroundColor: colors.surfaceDim,
+                borderColor: colors.border,
+                borderRadius: borderRadius.lg,
+              },
+            ]}
+          >
             <View style={styles.compatibilityHeader}>
-              <Ionicons name="construct-outline" size={20} color={colors.textPrimary} style={{ marginLeft: 8 }} />
-              <AppText variant="body" style={[styles.compatibilityText, { color: colors.textPrimary }]}>
+              <Ionicons
+                name="construct-outline"
+                size={20}
+                color={colors.textPrimary}
+                style={{ marginLeft: 8 }}
+              />
+              <AppText
+                variant="body"
+                style={[
+                  styles.compatibilityText,
+                  { color: colors.textPrimary },
+                ]}
+              >
                 سازگاری موتور را با آسانسور ساختمان خود بررسی کنید.
               </AppText>
             </View>
-            <TouchableOpacity activeOpacity={0.7} style={styles.compatibilityLink}>
-              <AppText variant="button" color="secondary">انتخاب مدل آسانسور ساختمان</AppText>
-              <Ionicons name="arrow-back-outline" size={16} color={colors.secondary} style={{ marginRight: 4 }} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={styles.compatibilityLink}
+            >
+              <AppText variant="button" color="secondary">
+                انتخاب مدل آسانسور ساختمان
+              </AppText>
+              <Ionicons
+                name="arrow-back-outline"
+                size={16}
+                color={colors.secondary}
+                style={{ marginRight: 4 }}
+              />
             </TouchableOpacity>
           </View>
 
           {/* جدول مشخصات فنی */}
           <View style={styles.specsSection}>
-            <AppText variant="h2" style={[styles.sectionHeading, { color: colors.textPrimary }]}>
+            <AppText
+              variant="h2"
+              style={[styles.sectionHeading, { color: colors.textPrimary }]}
+            >
               مشخصات فنی قطعه
             </AppText>
-            
+
             <View style={styles.table}>
-              <View style={[styles.tableRow, { borderBottomColor: colors.surfaceDim }]}>
-                <AppText variant="body" color="muted">ظرفیت باربری آسانسور</AppText>
-                <AppText variant="button" style={[styles.specVal, { color: colors.textPrimary }]}>۳۲۰ الی ۴۵۰ کیلوگرم</AppText>
+              <View
+                style={[
+                  styles.tableRow,
+                  { borderBottomColor: colors.surfaceDim },
+                ]}
+              >
+                <AppText variant="body" color="muted">
+                  ظرفیت باربری آسانسور
+                </AppText>
+                <AppText
+                  variant="button"
+                  style={[styles.specVal, { color: colors.textPrimary }]}
+                >
+                  ۳۲۰ الی ۴۵۰ کیلوگرم
+                </AppText>
               </View>
-              <View style={[styles.tableRow, { borderBottomColor: colors.surfaceDim }]}>
-                <AppText variant="body" color="muted">سرعت نامی موتور</AppText>
-                <AppText variant="button" style={[styles.specVal, { color: colors.textPrimary }]}>۱.۰ متر بر ثانیه</AppText>
+              <View
+                style={[
+                  styles.tableRow,
+                  { borderBottomColor: colors.surfaceDim },
+                ]}
+              >
+                <AppText variant="body" color="muted">
+                  سرعت نامی موتور
+                </AppText>
+                <AppText
+                  variant="button"
+                  style={[styles.specVal, { color: colors.textPrimary }]}
+                >
+                  ۱.۰ متر بر ثانیه
+                </AppText>
               </View>
-              <View style={[styles.tableRow, { borderBottomColor: colors.surfaceDim }]}>
-                <AppText variant="body" color="muted">ولتاژ تغذیه کارکرد</AppText>
-                <AppText variant="button" style={[styles.specVal, { color: colors.textPrimary }]}>۳۸۰ ولت (۳ فاز)</AppText>
+              <View
+                style={[
+                  styles.tableRow,
+                  { borderBottomColor: colors.surfaceDim },
+                ]}
+              >
+                <AppText variant="body" color="muted">
+                  ولتاژ تغذیه کارکرد
+                </AppText>
+                <AppText
+                  variant="button"
+                  style={[styles.specVal, { color: colors.textPrimary }]}
+                >
+                  ۳۸۰ ولت (۳ فاز)
+                </AppText>
               </View>
-              <View style={[styles.tableRow, { borderBottomColor: colors.surfaceDim }]}>
-                <AppText variant="body" color="muted">گارانتی اصالت</AppText>
-                <AppText variant="button" style={[styles.specVal, { color: colors.textPrimary }]}>۱۲ ماه گارانتی رسمی طلایی</AppText>
+              <View
+                style={[
+                  styles.tableRow,
+                  { borderBottomColor: colors.surfaceDim },
+                ]}
+              >
+                <AppText variant="body" color="muted">
+                  گارانتی اصالت
+                </AppText>
+                <AppText
+                  variant="button"
+                  style={[styles.specVal, { color: colors.textPrimary }]}
+                >
+                  ۱۲ ماه گارانتی رسمی طلایی
+                </AppText>
               </View>
             </View>
           </View>
 
           {/* مرور کلی محصول */}
           <View style={styles.overviewSection}>
-            <AppText variant="h2" style={[styles.sectionHeading, { color: colors.textPrimary }]}>
+            <AppText
+              variant="h2"
+              style={[styles.sectionHeading, { color: colors.textPrimary }]}
+            >
               مرور کلی قطعه
             </AppText>
             <AppText variant="body" color="muted" style={styles.overviewText}>
-              موتور گیرلس آسانسور مدل SG10 با مهندسی پیشرفته ایتالیا، طراحی شده برای ساختمان‌های مسکونی و تجاری مرتفع است. این موتور دوام فوق‌العاده بالا، سطح نویز نزدیک به صفر و صرفه‌جویی چشمگیر در مصرف برق را ارائه می‌دهد. بهترین انتخاب برای پروژه‌های بازسازی و نوسازی نیازمند سیستم بدون موتورخانه (MRL).
+              موتور گیرلس آسانسور مدل SG10 با مهندسی پیشرفته ایتالیا، طراحی شده
+              برای ساختمان‌های مسکونی و تجاری مرتفع است. این موتور دوام
+              فوق‌العاده بالا، سطح نویز نزدیک به صفر و صرفه‌جویی چشمگیر در مصرف
+              برق را ارائه می‌دهد. بهترین انتخاب برای پروژه‌های بازسازی و نوسازی
+              نیازمند سیستم بدون موتورخانه (MRL).
             </AppText>
           </View>
-
         </View>
       </ScrollView>
 
-      {/* ۴. نوار چسبنده پایینی خرید با پدینگ امن پویا جهت ممانعت از تداخل با کلیدهای مجازی اندروید و آیفون */}
+      {/* ۴. نوار چسبنده پایینی خرید با پدینگ امن پویا */}
       <View
         style={[
           styles.bottomActionBar,
@@ -169,10 +325,19 @@ export const ProductDetailScreen = () => {
           },
         ]}
       >
-        {/* قیمت */}
+        {/* قیمت و مقدار کل */}
         <View style={styles.priceContainer}>
-          <AppText variant="labelSm" color="muted" style={styles.totalPriceLabel}>قیمت کل</AppText>
-          <AppText variant="h1" style={[styles.totalPriceText, { color: colors.textPrimary }]}>
+          <AppText
+            variant="labelSm"
+            color="muted"
+            style={styles.totalPriceLabel}
+          >
+            قیمت کل
+          </AppText>
+          <AppText
+            variant="h1"
+            style={[styles.totalPriceText, { color: colors.textPrimary }]}
+          >
             ۱۲۰,۰۰۰,۰۰۰ تومان
           </AppText>
         </View>
@@ -180,10 +345,18 @@ export const ProductDetailScreen = () => {
         {/* دکمه افزودن به سبد خرید */}
         <TouchableOpacity
           activeOpacity={0.8}
-          style={[styles.addToCartBtn, { backgroundColor: colors.primary, borderRadius: borderRadius.md }]}
+          style={[
+            styles.addToCartBtn,
+            { backgroundColor: colors.primary, borderRadius: borderRadius.md },
+          ]}
         >
-          <Ionicons name="bag-handle" size={20} color={colors.onPrimary} style={{ marginLeft: spacing.sm }} />
-          <AppText variant="button" style={{ color: colors.onPrimary, fontWeight: '700' }}>
+          <Ionicons
+            name="bag-handle"
+            size={20}
+            color={colors.onPrimary}
+            style={{ marginLeft: spacing.sm }}
+          />
+          <AppText variant="button" style={{ color: colors.onPrimary }}>
             افزودن به سبد خرید
           </AppText>
         </TouchableOpacity>
@@ -195,10 +368,10 @@ export const ProductDetailScreen = () => {
 const styles = StyleSheet.create({
   header: {
     height: 56,
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     zIndex: 100,
@@ -206,35 +379,35 @@ const styles = StyleSheet.create({
   headerButton: {
     width: 40,
     height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   rightActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   imageGalleryBackground: {
     width: width,
-    position: 'absolute',
-    top: 0, // شروع موقعیت مطلق تصویر از سقف بدنه (ناچ به همراه پدینگ کنترل می‌شود)
+    position: "absolute",
+    top: 0,
     left: 0,
     right: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     zIndex: 1,
   },
   productImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
   },
   dotContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 40,
     left: 0,
     right: 0,
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     gap: 8,
   },
   dot: {
@@ -250,39 +423,39 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   transparentSpacer: {
-    height: IMAGE_HEIGHT - 60, // تنظیم مجدد فاصله شفاف به دلیل اصلاح پدینگ Safe Area بالای صفحه
-    backgroundColor: 'transparent',
+    height: IMAGE_HEIGHT - 60,
+    backgroundColor: "transparent",
   },
   contentCard: {
-    width: '100%',
+    width: "100%",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     elevation: 4,
-    shadowColor: '#0F172A',
+    shadowColor: "#0F172A",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.05,
     shadowRadius: 12,
   },
   sectionInfo: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     marginBottom: 20,
   },
   brandTag: {
-    fontWeight: '700',
+    // حذف اورراید وزن قلم بومی اندروید
     marginBottom: 4,
   },
   productTitle: {
-    textAlign: 'right',
+    textAlign: "right",
     fontSize: 22,
-    fontWeight: '700',
+    // حذف اورراید وزن قلم بومی اندروید
     lineHeight: 30,
     marginBottom: 8,
   },
   ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
     marginTop: 4,
   },
   stockBadge: {
@@ -296,94 +469,94 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
   },
   ratingInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   compatibilityCard: {
     borderWidth: 1,
-    borderStyle: 'dashed',
+    borderStyle: "dashed",
     padding: 16,
     marginBottom: 24,
   },
   compatibilityHeader: {
-    flexDirection: 'row-reverse',
-    alignItems: 'flex-start',
+    flexDirection: "row-reverse",
+    alignItems: "flex-start",
     marginBottom: 12,
   },
   compatibilityText: {
-    textAlign: 'right',
+    textAlign: "right",
     flex: 1,
     lineHeight: 20,
   },
   compatibilityLink: {
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    alignSelf: 'flex-start',
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    alignSelf: "flex-start",
   },
   specsSection: {
     marginBottom: 24,
   },
   sectionHeading: {
-    textAlign: 'right',
-    fontWeight: '700',
+    textAlign: "right",
+    // حذف اورراید وزن قلم بومی اندروید
     marginBottom: 12,
   },
   table: {
-    width: '100%',
+    width: "100%",
   },
   tableRow: {
-    flexDirection: 'row-reverse',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 14,
     borderBottomWidth: 1,
   },
   specVal: {
-    fontFamily: 'IRANYekanXFaNum-Bold',
+    fontFamily: "IRANYekanXFaNum-Bold",
   },
   overviewSection: {
     marginBottom: 24,
   },
   overviewText: {
-    textAlign: 'right',
+    textAlign: "right",
     lineHeight: 24,
   },
   bottomActionBar: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 24,
     borderTopWidth: 1,
     elevation: 12,
-    shadowColor: '#0F172A',
+    shadowColor: "#0F172A",
     shadowOffset: { width: 0, height: -6 },
     shadowOpacity: 0.08,
     shadowRadius: 16,
     zIndex: 110,
   },
   priceContainer: {
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   totalPriceLabel: {
-    textAlign: 'left',
+    textAlign: "left",
   },
   totalPriceText: {
-    fontFamily: 'IRANYekanXFaNum-Bold',
+    fontFamily: "IRANYekanXFaNum-Bold",
     fontSize: 18,
-    fontWeight: '700',
+    // حذف اورراید وزن قلم بومی اندروید
     marginTop: 2,
-    textAlign: 'left',
+    textAlign: "left",
   },
   addToCartBtn: {
     height: 48,
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 20,
   },
 });

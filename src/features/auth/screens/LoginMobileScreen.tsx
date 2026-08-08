@@ -1,29 +1,53 @@
 // src/features/auth/screens/LoginMobileScreen.tsx
 
-import React, { useState } from 'react';
+import { AppButton } from "@/src/components/common/AppButton";
+import { ThemeToggleButton } from "@/src/components/common/ThemeToggleButton";
+import { ScreenWrapper } from "@/src/components/layout/ScreenWrapper";
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
 import {
-  StyleSheet,
-  View,
-  TextInput,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { useTheme } from '@/src/theme/ThemeContext';
-import { ScreenWrapper } from '@/src/components/layout/ScreenWrapper';
-import { AppText } from '@/src/theme/AppText';
-import { AppButton } from '@/src/components/common/AppButton';
-import { ThemeToggleButton } from '@/src/components/common/ThemeToggleButton';
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 // مبدل هوشمند اعداد فارسی و عربی به انگلیسی جهت پردازش صحیح فرمت شماره همراه
 const convertToEnglishDigits = (str: string) => {
-  const persianDigits = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
-  const arabicDigits = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
+  const persianDigits = [
+    /۰/g,
+    /۱/g,
+    /۲/g,
+    /۳/g,
+    /۴/g,
+    /۵/g,
+    /۶/g,
+    /۷/g,
+    /۸/g,
+    /۹/g,
+  ];
+  const arabicDigits = [
+    /٠/g,
+    /١/g,
+    /٢/g,
+    /٣/g,
+    /٤/g,
+    /٥/g,
+    /٦/g,
+    /٧/g,
+    /٨/g,
+    /٩/g,
+  ];
   let clean = str;
   for (let i = 0; i < 10; i++) {
-    clean = clean.replace(persianDigits[i], i.toString()).replace(arabicDigits[i], i.toString());
+    clean = clean
+      .replace(persianDigits[i], i.toString())
+      .replace(arabicDigits[i], i.toString());
   }
   return clean;
 };
@@ -31,35 +55,35 @@ const convertToEnglishDigits = (str: string) => {
 export const LoginMobileScreen = () => {
   const { colors, spacing, borderRadius } = useTheme();
   const router = useRouter();
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   // معتبرسازی شماره تلفن همراه ایران (شروع با ۰۹ و دارای ۱۱ رقم)
   const isPhoneNumberValid = /^09[0-9]{9}$/.test(phoneNumber);
 
   const handleTextChange = (text: string) => {
     // تبدیل ورودی به اعداد انگلیسی و حذف کاراکترهای مزاحم غیر عددی
-    const cleanNumber = convertToEnglishDigits(text).replace(/[^0-9]/g, '');
+    const cleanNumber = convertToEnglishDigits(text).replace(/[^0-9]/g, "");
     setPhoneNumber(cleanNumber);
   };
 
   const handleContinue = () => {
     if (isPhoneNumberValid) {
-      router.push('/verify');
+      router.push("/verify");
     }
   };
 
   return (
     <ScreenWrapper>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
       >
         <View style={[styles.mainWrapper, { paddingHorizontal: spacing.lg }]}>
-          
           {/* هدر بالایی با چیدمان ثابت */}
           <View style={styles.header}>
-            {/* بستن در چپ */}
+            {/* بستن در چپ - اکنون با لمس آن کاربر به صورت ایمن به داشبورد منتقل می‌شود */}
             <TouchableOpacity
+              onPress={() => router.replace("/dashboard")}
               activeOpacity={0.7}
               style={styles.closeButton}
             >
@@ -73,11 +97,15 @@ export const LoginMobileScreen = () => {
           {/* محتوای اصلی فرم */}
           <View style={[styles.content, { marginTop: spacing.xl }]}>
             <View style={styles.textContainer}>
-              <AppText variant="h1" style={[styles.title, { color: colors.textPrimary }]}>
+              <AppText
+                variant="h1"
+                style={[styles.title, { color: colors.textPrimary }]}
+              >
                 ورود شماره موبایل
               </AppText>
               <AppText variant="body" color="muted" style={styles.subtitle}>
-                برای ورود یا ثبت‌نام، شماره موبایل خود را وارد کنید تا کد تأیید ارسال شود.
+                برای ورود یا ثبت‌نام، شماره موبایل خود را وارد کنید تا کد تأیید
+                ارسال شود.
               </AppText>
             </View>
 
@@ -93,11 +121,21 @@ export const LoginMobileScreen = () => {
               ]}
             >
               {/* بخش ثابت کد کشور در سمت چپ */}
-              <View style={[styles.countryCode, { borderRightColor: colors.border }]}>
+              <View
+                style={[
+                  styles.countryCode,
+                  { borderRightColor: colors.border },
+                ]}
+              >
                 <AppText variant="body" style={styles.countryText}>
                   +۹۸
                 </AppText>
-                <Ionicons name="arrow-down" size={12} color={colors.textSecondary} style={{ marginRight: 4 }} />
+                <Ionicons
+                  name="arrow-down"
+                  size={12}
+                  color={colors.textSecondary}
+                  style={{ marginRight: 4 }}
+                />
               </View>
 
               {/* کادر ورود متن شماره همراه در سمت راست با فونت اعداد فارسی */}
@@ -112,7 +150,7 @@ export const LoginMobileScreen = () => {
                   styles.textInput,
                   {
                     color: colors.textPrimary,
-                    fontFamily: 'IRANYekanXFaNum-Regular', // اعمال فونت جهت نمایش زیبای اعداد به فارسی
+                    fontFamily: "IRANYekanXFaNum-Regular", // اعمال فونت جهت نمایش زیبای اعداد به فارسی
                   },
                 ]}
               />
@@ -127,7 +165,6 @@ export const LoginMobileScreen = () => {
               disabled={!isPhoneNumberValid}
             />
           </View>
-
         </View>
       </KeyboardAvoidingView>
     </ScreenWrapper>
@@ -140,21 +177,21 @@ const styles = StyleSheet.create({
   },
   mainWrapper: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   header: {
-    width: '100%',
+    width: "100%",
     height: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginTop: 8,
   },
   closeButton: {
     width: 40,
     height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   content: {
     flex: 1,
@@ -163,40 +200,39 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   title: {
-    textAlign: 'right',
+    textAlign: "right",
     marginBottom: 8,
   },
   subtitle: {
-    textAlign: 'right',
+    textAlign: "right",
     lineHeight: 22,
   },
   inputWrapper: {
     height: 56,
     borderWidth: 1,
-    flexDirection: 'row', // تغییر جهت به LTR برای قرار گرفتن کشور در چپ
-    alignItems: 'center',
-    overflow: 'hidden',
+    flexDirection: "row",
+    alignItems: "center",
+    overflow: "hidden",
   },
   countryCode: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    height: "100%",
     paddingHorizontal: 16,
-    borderRightWidth: 1, // خط مرزی در سمت راست کد کشور
+    borderRightWidth: 1,
   },
   countryText: {
     marginRight: 4,
-    fontWeight: '600',
-    fontFamily: 'IRANYekanXFaNum-Bold',
+    fontFamily: "IRANYekanXFaNum-Bold", // وزن قلم کاملاً به صورت بومی مدیریت می‌شود
   },
   textInput: {
     flex: 1,
-    height: '100%',
+    height: "100%",
     paddingHorizontal: 16,
-    textAlign: 'left', // شماره تماس چپ‌چین وارد می‌شود
+    textAlign: "left",
     fontSize: 16,
   },
   footer: {
-    width: '100%',
+    width: "100%",
   },
 });

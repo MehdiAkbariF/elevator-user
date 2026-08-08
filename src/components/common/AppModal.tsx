@@ -1,17 +1,17 @@
 // src/components/common/AppModal.tsx
 
-import React from 'react';
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
 import {
-  StyleSheet,
   Modal,
-  View,
+  Platform,
+  StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  Platform,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@/src/theme/ThemeContext';
-import { AppText } from '@/src/theme/AppText';
+  View,
+} from "react-native";
 
 interface AppModalProps {
   visible: boolean;
@@ -20,7 +20,12 @@ interface AppModalProps {
   children: React.ReactNode;
 }
 
-export const AppModal: React.FC<AppModalProps> = ({ visible, onClose, title, children }) => {
+export const AppModal: React.FC<AppModalProps> = ({
+  visible,
+  onClose,
+  title,
+  children,
+}) => {
   const { colors, borderRadius, spacing } = useTheme();
 
   return (
@@ -32,8 +37,12 @@ export const AppModal: React.FC<AppModalProps> = ({ visible, onClose, title, chi
     >
       {/* بک‌دراپ نیمه‌شفاف برای بستن مودال در صورت کلیک روی فضای خالی */}
       <TouchableWithoutFeedback onPress={onClose}>
-        <View style={[styles.backdrop, { backgroundColor: 'rgba(15, 23, 42, 0.4)' }]}>
-          
+        <View
+          style={[
+            styles.backdrop,
+            { backgroundColor: "rgba(15, 23, 42, 0.4)" },
+          ]}
+        >
           {/* بدنه اصلی مودال کشویی */}
           <TouchableWithoutFeedback>
             <View
@@ -48,14 +57,20 @@ export const AppModal: React.FC<AppModalProps> = ({ visible, onClose, title, chi
               ]}
             >
               {/* هدر مودال به صورت RTL */}
-              <View style={[styles.header, { borderBottomColor: colors.border }]}>
+              <View
+                style={[styles.header, { borderBottomColor: colors.border }]}
+              >
                 {/* دکمه بستن در چپ */}
-                <TouchableOpacity onPress={onClose} activeOpacity={0.7} style={styles.closeBtn}>
+                <TouchableOpacity
+                  onPress={onClose}
+                  activeOpacity={0.7}
+                  style={styles.closeBtn}
+                >
                   <Ionicons name="close" size={24} color={colors.textPrimary} />
                 </TouchableOpacity>
 
                 {/* عنوان وسط */}
-                <AppText variant="h2" style={{ fontWeight: '700', color: colors.textPrimary }}>
+                <AppText variant="h2" style={{ color: colors.textPrimary }}>
                   {title}
                 </AppText>
 
@@ -64,13 +79,9 @@ export const AppModal: React.FC<AppModalProps> = ({ visible, onClose, title, chi
               </View>
 
               {/* کانتنت داینامیک داخلی مودال */}
-              <View style={styles.content}>
-                {children}
-              </View>
-
+              <View style={styles.content}>{children}</View>
             </View>
           </TouchableWithoutFeedback>
-
         </View>
       </TouchableWithoutFeedback>
     </Modal>
@@ -80,35 +91,35 @@ export const AppModal: React.FC<AppModalProps> = ({ visible, onClose, title, chi
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    justifyContent: 'flex-end', // تبدیل به حالت کشویی پایین صفحه (BottomSheet)
+    justifyContent: "flex-end", // تبدیل به حالت کشویی پایین صفحه (BottomSheet)
   },
   modalContainer: {
-    width: '100%',
-    alignSelf: 'center',
-    maxHeight: '85%',
+    width: "100%",
+    alignSelf: "center",
+    maxHeight: "85%",
     ...Platform.select({
       web: {
         maxWidth: 440, // رعایت مکس‌وید روی مرورگر وب
       },
     }),
     elevation: 10,
-    shadowColor: '#0F172A',
+    shadowColor: "#0F172A",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
     shadowRadius: 16,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingBottom: 16,
     borderBottomWidth: 1,
   },
   closeBtn: {
     width: 40,
     height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   content: {
     paddingTop: 16,
