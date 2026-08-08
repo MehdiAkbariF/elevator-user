@@ -1,15 +1,15 @@
 // src/components/layout/AppBottomNav.tsx
 
-import React from 'react';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context'; // ایمپورت دریافت حاشیه‌های امن سیستم‌عامل
-import { useTheme } from '@/src/theme/ThemeContext';
-import { AppText } from '@/src/theme/AppText';
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context"; // ایمپورت دریافت حاشیه‌های امن سیستم‌عامل
 
 interface AppBottomNavProps {
-  activeTab: 'home' | 'shop' | 'cart' | 'categories' | 'profile';
+  activeTab: "home" | "shop" | "cart" | "categories" | "profile";
 }
 
 export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
@@ -18,20 +18,49 @@ export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
   const insets = useSafeAreaInsets(); // دریافت فاصله دکمه‌های لمسی کف گوشی از سیستم‌عامل
 
   const tabs = [
-    { id: 'profile', title: 'پروفایل', iconActive: 'person', iconInactive: 'person-outline' },
-    { id: 'categories', title: 'دسته‌بندی', iconActive: 'apps', iconInactive: 'apps-outline' },
-    { id: 'cart', title: 'سبد خرید', iconActive: 'cart', iconInactive: 'cart-outline' },
-    { id: 'shop', title: 'فروشگاه', iconActive: 'cube', iconInactive: 'cube-outline' },
-    { id: 'home', title: 'خانه', iconActive: 'home', iconInactive: 'home-outline' },
+    {
+      id: "profile",
+      title: "پروفایل",
+      iconActive: "person",
+      iconInactive: "person-outline",
+    },
+    {
+      id: "categories",
+      title: "دسته‌بندی",
+      iconActive: "apps",
+      iconInactive: "apps-outline",
+    },
+    {
+      id: "cart",
+      title: "سبد خرید",
+      iconActive: "cart",
+      iconInactive: "cart-outline",
+    },
+    {
+      id: "shop",
+      title: "فروشگاه",
+      iconActive: "cube",
+      iconInactive: "cube-outline",
+    },
+    {
+      id: "home",
+      title: "خانه",
+      iconActive: "home",
+      iconInactive: "home-outline",
+    },
   ] as const;
 
   const handleTabPress = (tabId: typeof activeTab) => {
-    if (tabId === 'home') {
-      router.replace('/dashboard');
-    } else if (tabId === 'shop') {
-      router.replace('/catalog');
-    } else if (tabId === 'cart') {
-      router.replace('/cart');
+    if (tabId === "home") {
+      router.replace("/dashboard");
+    } else if (tabId === "shop") {
+      router.replace("/catalog");
+    } else if (tabId === "cart") {
+      router.replace("/cart");
+    } else if (tabId === "categories") {
+      router.replace("/categories");
+    } else if (tabId === "profile") {
+      router.replace("/profile");
     }
   };
 
@@ -79,25 +108,25 @@ export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
 
 const styles = StyleSheet.create({
   bottomNav: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
     borderTopWidth: 1,
     zIndex: 100,
   },
   navItem: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     flex: 1,
-    height: '100%',
+    height: "100%",
   },
   navText: {
     marginTop: 2,
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
