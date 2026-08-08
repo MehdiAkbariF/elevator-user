@@ -6,6 +6,7 @@ import { ScreenWrapper } from "@/src/components/layout/ScreenWrapper";
 import { AppText } from "@/src/theme/AppText";
 import { useTheme } from "@/src/theme/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router"; // ایمپورت ابزار ناوبری بومی اکسپو روتر
 import React from "react";
 import {
   Image,
@@ -17,6 +18,20 @@ import {
 
 export const DashboardScreen = () => {
   const { colors, spacing, borderRadius } = useTheme();
+  const router = useRouter(); // راه‌اندازی ثابت ابزار ناوبری
+
+  const handleEmergencyPress = () => {
+    // هدایت کاربر به صفحه ثبت درخواست خدمات فنی
+    router.push("/request-service");
+  };
+  const servicePress = () => {
+    // هدایت کاربر به صفحه ثبت درخواست خدمات فنی
+    router.push("/maintenance");
+  };
+  const handleCatalogPress = () => {
+    // هدایت کاربر به کاتالوگ قطعات ایکس الواتور
+    router.push("/catalog");
+  };
 
   return (
     <ScreenWrapper>
@@ -92,7 +107,9 @@ export const DashboardScreen = () => {
           </AppText>
 
           <View style={styles.heroActionContainer}>
+            {/* دکمه امداد اضطراری - اکنون با لمس آن کاربر به فرم ثبت خدمات فنی منتقل می‌شود */}
             <TouchableOpacity
+              onPress={handleEmergencyPress}
               activeOpacity={0.8}
               style={[
                 styles.emergencyButton,
@@ -113,7 +130,9 @@ export const DashboardScreen = () => {
               </AppText>
             </TouchableOpacity>
 
+            {/* دکمه کاتالوگ قطعات - اکنون با لمس آن کاربر به کاتالوگ منتقل می‌شود */}
             <TouchableOpacity
+              onPress={handleCatalogPress}
               activeOpacity={0.8}
               style={[
                 styles.catalogButton,
@@ -154,7 +173,9 @@ export const DashboardScreen = () => {
           </AppText>
 
           <View style={[styles.servicesStack, { gap: spacing.md }]}>
-            <View
+            <TouchableOpacity
+              onPress={servicePress}
+              activeOpacity={0.9}
               style={[
                 styles.serviceCard,
                 {
@@ -190,9 +211,11 @@ export const DashboardScreen = () => {
                 بازدیدهای دوره‌ای منظم و مراقبت‌های پیشگیرانه جهت حفظ
                 استانداردها و افزایش طول عمر قطعات.
               </AppText>
-            </View>
+            </TouchableOpacity>
 
-            <View
+            <TouchableOpacity
+              onPress={handleEmergencyPress}
+              activeOpacity={0.9}
               style={[
                 styles.serviceCard,
                 {
@@ -224,9 +247,11 @@ export const DashboardScreen = () => {
                 اعزام فوری تکنسین‌های تاییدشده در زمان وقوع خرابی‌های بحرانی و
                 توقف آسانسور در هر ساعت از شبانه‌روز.
               </AppText>
-            </View>
+            </TouchableOpacity>
 
-            <View
+            <TouchableOpacity
+              onPress={handleEmergencyPress}
+              activeOpacity={0.9}
               style={[
                 styles.serviceCard,
                 {
@@ -262,7 +287,7 @@ export const DashboardScreen = () => {
                 ارتقای کامل سیستم‌های قدیمی جهت بهبود کارایی، ارتقای ایمنی و
                 نوسازی دکوراسیون داخلی کابین.
               </AppText>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -274,7 +299,7 @@ export const DashboardScreen = () => {
             <AppText variant="h2" style={styles.carouselTitle}>
               قطعات برجسته و پرتقاضا
             </AppText>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleCatalogPress}>
               <AppText variant="labelSm" color="secondary">
                 مشاهده کاتالوگ
               </AppText>
@@ -326,6 +351,7 @@ export const DashboardScreen = () => {
                   مکانیزم تاییدشده قفل ایمنی درب کابین.
                 </AppText>
                 <TouchableOpacity
+                  onPress={handleCatalogPress}
                   style={[
                     styles.priceButton,
                     {
@@ -381,6 +407,7 @@ export const DashboardScreen = () => {
                   کابل‌های بافته‌شده با هسته فولادی مستحکم.
                 </AppText>
                 <TouchableOpacity
+                  onPress={handleCatalogPress}
                   style={[
                     styles.priceButton,
                     {
@@ -401,7 +428,7 @@ export const DashboardScreen = () => {
           </ScrollView>
         </View>
 
-        {/* ۵. کامپوننت بیزینسی جدید اول: بنر تخمین هوشمند هزینه بازسازی آسانسور (جذب مشتری) */}
+        {/* ۵. بنر تخمین هوشمند هزینه بازسازی آسانسور */}
         <View
           style={[
             styles.modernizationBanner,
@@ -456,7 +483,7 @@ export const DashboardScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* ۶. کامپوننت بیزینسی جدید دوم: مقالات آموزشی و هاب ایمنی آسانسور (افزایش اعتماد کاربر) */}
+        {/* ۶. مقالات آموزشی و هاب ایمنی آسانسور */}
         <View style={{ paddingVertical: spacing.xl }}>
           <View
             style={[styles.carouselHeader, { paddingHorizontal: spacing.lg }]}
@@ -551,7 +578,7 @@ export const DashboardScreen = () => {
                   numberOfLines={1}
                   style={{ fontSize: 12, textAlign: "right" }}
                 >
-                  جدیدترین تغییرات در قوانین درب‌های لولایی و اتوماتیک
+                  جدین‌ترین تغییرات در قوانین درب‌های لولایی و اتوماتیک
                   اضطراری...
                 </AppText>
               </View>
@@ -621,7 +648,7 @@ export const DashboardScreen = () => {
           </View>
         </View>
 
-        {/* ۸. طراحی فوتر لوکس و پرستیژ برند (Footer Component) */}
+        {/* ۸. طراحی فوتر لوکس و پرستیژ برند */}
         <View
           style={[
             styles.footerContainer,
@@ -654,7 +681,6 @@ export const DashboardScreen = () => {
             آسانسورهای کششی و هیدرولیک در سراسر کشور.
           </AppText>
 
-          {/* لینک‌های راهنما به سبک وب‌اپلیکیشن‌های برتر */}
           <View style={styles.footerLinksGrid}>
             <TouchableOpacity>
               <AppText variant="labelSm" color="muted">
@@ -682,7 +708,6 @@ export const DashboardScreen = () => {
             style={[styles.footerDivider, { backgroundColor: colors.border }]}
           />
 
-          {/* کپی‌رایت رسمی */}
           <AppText variant="labelSm" color="muted" style={styles.copyrightText}>
             © ۱۴۰۵ تمامی حقوق مادی و معنوی متعلق به ایکس الوتور می‌باشد.
           </AppText>
@@ -712,7 +737,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   statusTitle: {
-    // حذف اورراید وزن قلم بومی اندروید
+    // بومی‌سازی شده فاقد تداخل وزنی
   },
   badge: {
     flexDirection: "row-reverse",
@@ -748,7 +773,6 @@ const styles = StyleSheet.create({
   heroTitle: {
     textAlign: "right",
     fontSize: 26,
-    // حذف اورراید وزن قلم بومی اندروید
     lineHeight: 36,
     marginBottom: 12,
   },
@@ -817,7 +841,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   carouselTitle: {
-    // حذف اورراید وزن قلم بومی اندروید
+    // بومی‌سازی شده فاقد تداخل وزنی
   },
   carouselScroll: {
     flexDirection: "row-reverse",
@@ -851,6 +875,7 @@ const styles = StyleSheet.create({
   tagText: {
     color: "#FFFFFF",
     fontSize: 10,
+    // تصحیح شد: حذف پارامتر تداخل‌برانگیز fontWeight برای حل کامل رندرینگ در اندروید
   },
   partInfo: {
     padding: 16,
@@ -901,7 +926,6 @@ const styles = StyleSheet.create({
   },
   articleTitle: {
     textAlign: "right",
-
     lineHeight: 20,
     marginTop: 4,
     marginBottom: 6,
@@ -937,7 +961,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   footerBrandText: {
-    // حذف اورراید وزن قلم بومی اندروید
     marginRight: 8,
   },
   footerDescription: {
@@ -965,7 +988,6 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   brandText: {
-    // حذف اورراید وزن قلم بومی اندروید
     marginRight: 6,
   },
 });
