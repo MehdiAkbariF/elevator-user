@@ -8,14 +8,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    Dimensions,
-    Image,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Image,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -64,7 +64,7 @@ export const FeedbackScreen = () => {
               <Ionicons
                 name={isActive ? "star" : "star-outline"}
                 size={32}
-                color={isActive ? "#D97706" : colors.outlineVariant}
+                color={isActive ? "#D97706" : colors.outline}
               />
             </TouchableOpacity>
           );

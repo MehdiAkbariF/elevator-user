@@ -74,7 +74,7 @@ export const TicketConversationScreen = () => {
           </View>
         </View>
 
-        <View style={styles.rightActions}>
+        <View>
           <ThemeToggleButton />
         </View>
       </View>

@@ -267,7 +267,7 @@ export const ProfileScreen = () => {
                     borderRadius: borderRadius.lg,
                   },
                 ]}
-                onPress={() => router.push("/service-history/1")}
+                onPress={() => router.push("/")}
               >
                 <View
                   style={[
@@ -332,7 +332,7 @@ export const ProfileScreen = () => {
                     borderRadius: borderRadius.lg,
                   },
                 ]}
-                onPress={() => router.push("/service-history/2")}
+                onPress={() => router.push("/")}
               >
                 <View
                   style={[
@@ -822,7 +822,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 16,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0,
     width: "100%",
   },
   settingTextRow: {

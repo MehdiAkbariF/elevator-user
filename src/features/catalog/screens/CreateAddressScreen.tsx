@@ -7,18 +7,74 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Animated,
-    Dimensions,
-    Platform,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  Platform,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import MapView, { UrlTile } from "react-native-maps";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { WebView } from "react-native-webview"; // ایمپورت وب‌ویو استاندارد اکسپو
 
 const { width } = Dimensions.get("window");
+
+// کدهای بومی HTML/CSS/JS برای لود بدون فیلتر نقشه تعاملی Leaflet با تم لایت CartoDB
+const LEAFLET_MAP_HTML = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { height: 100vh; width: 100vw; }
+    .leaflet-control-attribution { display: none !important; }
+    .leaflet-bar { border: none !important; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08) !important; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+  <script>
+    // راه‌اندازی بومی نقشه روی مختصات تهران
+    var map = L.map('map', {
+      zoomControl: false
+    }).setView([35.6892, 51.3890], 15);
+
+    // لود کاشی‌های لایت، ملایم و فوق‌العاده سریع بدون تحریم CartoDB
+    L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(map);
+
+    // ارسال لایو طول و عرض جغرافیایی به ری‌اکت نیتیو پس از پایان جابجایی نقشه
+    map.on('moveend', function() {
+      var center = map.getCenter();
+      var message = {
+        latitude: center.lat,
+        longitude: center.lng
+      };
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(JSON.stringify(message));
+      }
+    });
+
+    // لود اولیه مختصات
+    setTimeout(function() {
+      var center = map.getCenter();
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(JSON.stringify({
+          latitude: center.lat,
+          longitude: center.lng
+        }));
+      }
+    }, 400);
+  </script>
+</body>
+</html>
+`;
 
 export const CreateAddressScreen = () => {
   const { colors, spacing, borderRadius } = useTheme();
@@ -27,14 +83,6 @@ export const CreateAddressScreen = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedZone, setSelectedZone] = useState("در حال دریافت موقعیت...");
-
-  // مختصات پیش‌فرض نقشه (تهران)
-  const [region, setRegion] = useState({
-    latitude: 35.6892,
-    longitude: 51.389,
-    latitudeDelta: 0.015,
-    longitudeDelta: 0.015,
-  });
 
   // انیمیشن بومی جهش پین لوکیشن
   const bounceAnim = useRef(new Animated.Value(0)).current;
@@ -65,57 +113,54 @@ export const CreateAddressScreen = () => {
   };
 
   const handleConfirmLocation = () => {
-    // ناوبری هوشمند به صفحه جدید ورود جزئیات تکمیلی آدرس
     router.replace("/create-address-detail");
   };
 
-  // استعلام زنده آدرس متنی فارسی با تکان دادن نقشه
-  const handleRegionChangeComplete = async (newRegion: typeof region) => {
-    setRegion(newRegion);
+  // دریافت اطلاعات لایو نقشه از وب‌ویو و استعلام آدرس فارسی
+  const handleMessage = async (event: any) => {
     try {
+      const data = JSON.parse(event.nativeEvent.data);
+      const { latitude, longitude } = data;
+
+      // استعلام مستقیم آدرس از وب‌سرویس بدون تحریم
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${newRegion.latitude}&lon=${newRegion.longitude}&accept-language=fa`,
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&accept-language=fa`,
         {
           headers: {
             "User-Agent": "X-Elevator-App",
           },
         },
       );
-      const data = await response.json();
+      const resData = await response.json();
 
-      if (data && data.address) {
+      if (resData && resData.address) {
         const neighborhood =
-          data.address.neighborhood ||
-          data.address.suburb ||
-          data.address.quarter ||
-          data.address.road ||
+          resData.address.neighborhood ||
+          resData.address.suburb ||
+          resData.address.quarter ||
+          resData.address.road ||
           "محدوده نامشخص";
-        const city = data.address.city || data.address.town || "تهران";
+        const city = resData.address.city || resData.address.town || "تهران";
         setSelectedZone(`محدوده: ${neighborhood}، ${city}`);
       }
     } catch (error) {
-      console.warn("خطا در دریافت آدرس:", error);
+      console.warn("خطا در دریافت آدرس از نقشه:", error);
       setSelectedZone("خطا در اتصال به سرور نقشه");
     }
   };
 
   return (
     <ScreenWrapper style={styles.wrapperOverride}>
-      {/* ۱. نقشه بومی واقعی با سرورهای آزاد CartoDB */}
+      {/* ۱. نقشه بومی وب‌ویو با متد ایمن و بدون کروشه و بدون نیاز به کلید گوگل‌مپ */}
       <View style={styles.mapContainer}>
-        <MapView
+        <WebView
+          originWhitelist={["*"]}
+          source={{ html: LEAFLET_MAP_HTML }}
+          onMessage={handleMessage} // گوش دادن به تغییرات لوکیشن نقشه بومی
           style={StyleSheet.absoluteFillObject}
-          initialRegion={region}
-          onRegionChangeComplete={handleRegionChangeComplete}
-          showsUserLocation={true}
-          showsMyLocationButton={false}
-        >
-          <UrlTile
-            urlTemplate="https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
-            maximumZ={19}
-            flipY={false}
-          />
-        </MapView>
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+        />
       </View>
 
       {/* ۲. کادر جستجوی شناور بالایی */}
@@ -168,6 +213,7 @@ export const CreateAddressScreen = () => {
 
       {/* ۳. پین ثابت مرکزی لوکیشن به همراه حباب راهنما */}
       <View style={styles.centerPinContainer}>
+        {/* حباب راهنما */}
         <View
           style={[
             styles.tooltipBubble,
@@ -186,6 +232,7 @@ export const CreateAddressScreen = () => {
           />
         </View>
 
+        {/* پین متحرک بومی */}
         <Animated.View style={{ transform: [{ translateY: bounceAnim }] }}>
           <Ionicons name="location" size={40} color={colors.primary} />
         </Animated.View>
@@ -239,7 +286,7 @@ export const CreateAddressScreen = () => {
         </View>
 
         <TouchableOpacity
-          onPress={handleConfirmLocation} // ناوبری به صفحه فرم ثبت جزئیات
+          onPress={handleConfirmLocation}
           activeOpacity={0.8}
           style={[
             styles.submitBtn,
@@ -309,6 +356,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     zIndex: 10,
     width: 220,
+    pointerEvents: "none", // برای اینکه کلیک‌های روی پین مزاحم تعامل کاربر با نقشه زیرین نشود
   },
   tooltipBubble: {
     paddingHorizontal: 12,

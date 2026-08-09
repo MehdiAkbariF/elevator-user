@@ -6,16 +6,17 @@ import { AppText } from "@/src/theme/AppText";
 import { useTheme } from "@/src/theme/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react"; // اضافه شدن useEffect
 import {
-    Dimensions,
-    Image,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
+  BackHandler,
+  Dimensions,
+  Image,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -28,6 +29,23 @@ export const YourCartScreen = () => {
 
   const [promoCode, setPromoCode] = useState("");
   const [quantities, setQuantities] = useState({ item1: 1, item2: 1 });
+
+  // هوک هوشمند اندروید جهت ممانعت از بسته شدن برنامه در زمان فشردن کلید فیزیکی بازگشت گوشی
+  useEffect(() => {
+    const backAction = () => {
+      // هدایت اتوماتیک و نرم به داشبورد به جای بستن اجباری برنامه
+      router.replace("/dashboard");
+      return true; // جلوگیری از رفتار پیش‌فرض سیستم‌عامل (خروج از برنامه)
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction,
+    );
+
+    // پاک‌سازی لیسنر در زمان خروج از صفحه
+    return () => backHandler.remove();
+  }, []);
 
   const handleBack = () => {
     if (router.canGoBack()) {
@@ -59,7 +77,6 @@ export const YourCartScreen = () => {
           { backgroundColor: colors.surface, borderBottomColor: colors.border },
         ]}
       >
-        {/* دکمه بازگشت به چپ استاندارد */}
         <TouchableOpacity
           onPress={handleBack}
           activeOpacity={0.7}
@@ -74,7 +91,6 @@ export const YourCartScreen = () => {
           </AppText>
         </View>
 
-        {/* دکمه پاک کردن کل سبد در سمت راست */}
         <TouchableOpacity activeOpacity={0.7} style={styles.headerButton}>
           <AppText variant="button" color="secondary">
             حذف همه
@@ -84,7 +100,6 @@ export const YourCartScreen = () => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        // پدینگ پایینی بزرگ‌تر برای عدم تداخل با دکمه پرداخت چسبنده و نوار پایینی
         contentContainerStyle={[
           styles.scrollContainer,
           {
@@ -106,7 +121,6 @@ export const YourCartScreen = () => {
               },
             ]}
           >
-            {/* تصویر کالا در سمت راست */}
             <View
               style={[
                 styles.imageWrapper,
@@ -124,7 +138,6 @@ export const YourCartScreen = () => {
               />
             </View>
 
-            {/* مشخصات کالا در سمت چپ */}
             <View style={styles.cardContent}>
               <View style={styles.cardHeaderRow}>
                 <View style={styles.productMeta}>
@@ -143,7 +156,6 @@ export const YourCartScreen = () => {
                     سیم بکسل کششی فولادی ۸ میلی‌متری
                   </AppText>
                 </View>
-                {/* دکمه حذف آیتم در بالا سمت چپ کارت */}
                 <TouchableOpacity
                   activeOpacity={0.7}
                   style={styles.deleteButton}
@@ -156,7 +168,6 @@ export const YourCartScreen = () => {
                 </TouchableOpacity>
               </View>
 
-              {/* قیمت و کنترلر تعداد */}
               <View style={styles.cardFooterRow}>
                 <AppText
                   variant="h2"
@@ -165,7 +176,6 @@ export const YourCartScreen = () => {
                   ۲,۴۵۰,۰۰۰ تومان
                 </AppText>
 
-                {/* کنترل‌کننده بومی تعداد */}
                 <View
                   style={[
                     styles.quantitySelector,
@@ -367,7 +377,7 @@ export const YourCartScreen = () => {
           </View>
         </View>
 
-        {/* بخش سوم: کارت شیوه ارسال به صورت باربری یا پیک */}
+        {/* بخش سوم: کارت شیوه ارسال */}
         <View
           style={[
             styles.deliveryCard,
@@ -418,7 +428,6 @@ export const YourCartScreen = () => {
             </TouchableOpacity>
           </View>
 
-          {/* فیلد اجباری آدرس */}
           <TouchableOpacity activeOpacity={0.8} style={styles.addressButton}>
             <Ionicons
               name="chevron-back-outline"
@@ -437,7 +446,7 @@ export const YourCartScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* بخش چهارم: فاکتور محاسباتی مبالغ (Order Summary) */}
+        {/* بخش چهارم: فاکتور محاسباتی */}
         <View
           style={[
             styles.summaryCard,
@@ -545,6 +554,8 @@ export const YourCartScreen = () => {
   );
 };
 
+export default YourCartScreen;
+
 const styles = StyleSheet.create({
   scrollContainer: {
     paddingTop: 8,
@@ -574,8 +585,8 @@ const styles = StyleSheet.create({
   cartCard: {
     borderWidth: 1,
     padding: 16,
-    flexDirection: "row-reverse", // چینش عکس راست، متن چپ برای RTL فارسی
-    alignItems: "flex-start", // تصحیح شد: تغییر مقدار غیرمجاز 'start' به 'flex-start' برای جلوگیری از کرش در اندروید
+    flexDirection: "row-reverse",
+    alignItems: "flex-start",
   },
   imageWrapper: {
     width: 80,
@@ -607,7 +618,6 @@ const styles = StyleSheet.create({
   brandTag: {
     fontSize: 10,
     marginBottom: 2,
-    // تصحیح شد: حذف کامپوننت تداخل‌برانگیز fontWeight
   },
   productName: {
     textAlign: "right",

@@ -363,7 +363,7 @@ export const PartsCatalogScreen = () => {
             فیلتر و مرتب‌سازی
           </AppText>
           <Ionicons
-            name="tune-outline"
+            name="at-outline"
             size={18}
             color={colors.onPrimary}
             style={{ marginRight: 8 }}
