@@ -588,7 +588,7 @@ export const ProfileScreen = () => {
           <TouchableOpacity
             activeOpacity={0.8}
             style={[styles.settingRow, { borderBottomColor: colors.border }]}
-            onPress={() => router.push("/settings")}
+            onPress={() => router.push("/profile/edit")}
           >
             <Ionicons
               name="chevron-back"
@@ -612,6 +612,7 @@ export const ProfileScreen = () => {
           <TouchableOpacity
             activeOpacity={0.8}
             style={[styles.settingRow, { borderBottomColor: colors.border }]}
+            onPress={() => router.push("/privacy")}
           >
             <Ionicons
               name="chevron-back"
