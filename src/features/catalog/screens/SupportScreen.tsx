@@ -9,12 +9,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
-    Dimensions,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    View
+  Dimensions,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -94,7 +94,7 @@ export const SupportScreen = () => {
           </AppText>
         </View>
 
-        {/* دوقلوهای تماس به صورت ستونی عریض و جادار (Spacious Vertical Rows) - حل کامل مشکل چسبندگی متون */}
+        {/* دوقلوهای تماس اصلاح‌شده به صورت کاملاً RTL: متون در راست، آیکون و فلش در چپ */}
         <View style={[styles.shortcutsContainer, { gap: spacing.md }]}>
           {/* چت زنده آنلاین عریض */}
           <TouchableOpacity
@@ -108,28 +108,31 @@ export const SupportScreen = () => {
               },
             ]}
           >
-            {/* فلش برگشت در دورترین سمت چپ کادر */}
-            <Ionicons
-              name="chevron-back"
-              size={18}
-              color={colors.textSecondary}
-            />
+            {/* ۱. متون و توضیحات فارسی در راست‌ترین نقطه کارت (اولین فرزند در row-reverse) */}
+            <View style={styles.shortcutText}>
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                چت گفتگوی آنلاین و زنده
+              </AppText>
+              <AppText
+                variant="labelSm"
+                style={{ color: "#10B981", marginTop: 4 }}
+              >
+                پاسخگویی سریع زیر ۲ دقیقه
+              </AppText>
+            </View>
 
-            {/* آیکون و متن تراز شده در سمت راست کادر */}
-            <View style={styles.shortcutRight}>
-              <View style={styles.shortcutText}>
-                <AppText variant="button" style={{ color: colors.textPrimary }}>
-                  چت گفتگوی آنلاین و زنده
-                </AppText>
-                <AppText
-                  variant="labelSm"
-                  style={{ color: "#10B981", marginTop: 4 }}
-                >
-                  پاسخگویی سریع زیر ۲ دقیقه
-                </AppText>
-              </View>
+            {/* ۲. آیکون و فلش در چپ‌ترین نقطه کارت در کنار هم (دومین فرزند در row-reverse) */}
+            <View style={styles.shortcutLeft}>
+              <Ionicons
+                name="chevron-back"
+                size={18}
+                color={colors.textSecondary}
+              />
               <View
-                style={[styles.iconBox, { backgroundColor: colors.surfaceDim }]}
+                style={[
+                  styles.iconBox,
+                  { backgroundColor: colors.surfaceDim, marginLeft: 12 },
+                ]}
               >
                 <Ionicons
                   name="chatbubble-ellipses-outline"
@@ -152,27 +155,28 @@ export const SupportScreen = () => {
               },
             ]}
           >
-            <Ionicons
-              name="chevron-back"
-              size={18}
-              color={colors.textSecondary}
-            />
+            {/* ۱. متون در راست */}
+            <View style={styles.shortcutText}>
+              <AppText variant="button" style={{ color: colors.textPrimary }}>
+                تماس تلفنی ۲۴ ساعته
+              </AppText>
+              <AppText variant="labelSm" color="muted" style={{ marginTop: 4 }}>
+                پشتیبانی خط مستقیم واحد مهندسی
+              </AppText>
+            </View>
 
-            <View style={styles.shortcutRight}>
-              <View style={styles.shortcutText}>
-                <AppText variant="button" style={{ color: colors.textPrimary }}>
-                  تماس تلفنی ۲۴ ساعته
-                </AppText>
-                <AppText
-                  variant="labelSm"
-                  color="muted"
-                  style={{ marginTop: 4 }}
-                >
-                  پشتیبانی خط مستقیم واحد مهندسی
-                </AppText>
-              </View>
+            {/* ۲. آیکون و فلش در چپ */}
+            <View style={styles.shortcutLeft}>
+              <Ionicons
+                name="chevron-back"
+                size={18}
+                color={colors.textSecondary}
+              />
               <View
-                style={[styles.iconBox, { backgroundColor: colors.surfaceDim }]}
+                style={[
+                  styles.iconBox,
+                  { backgroundColor: colors.surfaceDim, marginLeft: 12 },
+                ]}
               >
                 <Ionicons
                   name="call-outline"
@@ -184,8 +188,8 @@ export const SupportScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* لیست تیکت‌های پشتیبانی کاربر */}
-        <View style={styles.ticketsSection}>
+        {/* لیست تیکت‌های پشتیبانی کاربر با رعایت فاصله استاندارد از بالا */}
+        <View style={[styles.ticketsSection, { marginTop: spacing.xl }]}>
           <AppText variant="body" color="primary" style={styles.sectionHeading}>
             تیکت‌های پشتیبانی ثبت‌شده من
           </AppText>
@@ -203,6 +207,17 @@ export const SupportScreen = () => {
               ]}
             >
               <View style={styles.ticketHeaderRow}>
+                {/* تایتل تیکت در راست‌ترین نقطه کارت */}
+                <View style={styles.ticketTitleContainer}>
+                  <AppText
+                    variant="h2"
+                    style={[styles.ticketTitle, { color: colors.textPrimary }]}
+                  >
+                    مغایرت فاکتور در مأموریت شماره #۸۰۱
+                  </AppText>
+                </View>
+
+                {/* بج وضعیت در چپ‌ترین نقطه کارت */}
                 <View
                   style={[
                     styles.statusBadge,
@@ -215,15 +230,6 @@ export const SupportScreen = () => {
                 >
                   <AppText variant="labelSm" style={{ color: "#22C55E" }}>
                     پاسخ داده شده
-                  </AppText>
-                </View>
-
-                <View style={styles.ticketTitleContainer}>
-                  <AppText
-                    variant="h2"
-                    style={[styles.ticketTitle, { color: colors.textPrimary }]}
-                  >
-                    مغایرت فاکتور در مأموریت شماره #۸۰۱
                   </AppText>
                 </View>
               </View>
@@ -279,6 +285,17 @@ export const SupportScreen = () => {
               ]}
             >
               <View style={styles.ticketHeaderRow}>
+                {/* تایتل تیکت در راست */}
+                <View style={styles.ticketTitleContainer}>
+                  <AppText
+                    variant="h2"
+                    style={[styles.ticketTitle, { color: colors.textPrimary }]}
+                  >
+                    درخواست گارانتی سیم بکسل فرسوده
+                  </AppText>
+                </View>
+
+                {/* بج در چپ */}
                 <View
                   style={[
                     styles.statusBadge,
@@ -291,15 +308,6 @@ export const SupportScreen = () => {
                 >
                   <AppText variant="labelSm" style={{ color: "#3B82F6" }}>
                     در حال بررسی
-                  </AppText>
-                </View>
-
-                <View style={styles.ticketTitleContainer}>
-                  <AppText
-                    variant="h2"
-                    style={[styles.ticketTitle, { color: colors.textPrimary }]}
-                  >
-                    درخواست گارانتی سیم بکسل فرسوده
                   </AppText>
                 </View>
               </View>
@@ -356,6 +364,17 @@ export const SupportScreen = () => {
               ]}
             >
               <View style={styles.ticketHeaderRow}>
+                {/* تایتل تیکت در راست */}
+                <View style={styles.ticketTitleContainer}>
+                  <AppText
+                    variant="h2"
+                    style={[styles.ticketTitle, { color: colors.textPrimary }]}
+                  >
+                    بروز خطا در ثبت آدرس جدید اپلیکیشن
+                  </AppText>
+                </View>
+
+                {/* بج در چپ */}
                 <View
                   style={[
                     styles.statusBadge,
@@ -373,15 +392,6 @@ export const SupportScreen = () => {
                     بسته شده
                   </AppText>
                 </View>
-
-                <View style={styles.ticketTitleContainer}>
-                  <AppText
-                    variant="h2"
-                    style={[styles.ticketTitle, { color: colors.textPrimary }]}
-                  >
-                    بروز خطا در ثبت آدرس جدید اپلیکیشن
-                  </AppText>
-                </View>
               </View>
 
               <AppText
@@ -396,7 +406,7 @@ export const SupportScreen = () => {
         </View>
       </ScrollView>
 
-      {/* دکمه ثابت و چسبناک ثبت تیکت پشتیبانی جدید با اتصال به روت جدید */}
+      {/* دکمه ثابت و چسبناک ثبت تیکت پشتیبانی جدید (بالای نوار ناوبری پایینی) با اتصال به روت جدید */}
       <View
         style={[
           styles.floatingButtonContainer,
@@ -477,17 +487,17 @@ const styles = StyleSheet.create({
   shortcutCard: {
     borderWidth: 1,
     padding: 16,
-    flexDirection: "row", // تراز آیکون در راست، دکمه چت در چپ به صورت RTL
+    flexDirection: "row-reverse", // تراز راست‌به‌چپ سراسری: اولین فرزند (تکست) در راست، دومین فرزند (گروه آیکون) در چپ
     justifyContent: "space-between",
     alignItems: "center",
   },
-  shortcutRight: {
-    flexDirection: "row-reverse",
+  shortcutLeft: {
+    flexDirection: "row", // چیدمان افقی آیکون و فلش در چپ‌ترین نقطه
     alignItems: "center",
   },
   shortcutText: {
     alignItems: "flex-end",
-    marginRight: 16, // ایجاد فاصله تا آیکون باکس در RTL
+    flex: 1,
   },
   iconBox: {
     width: 44,
@@ -518,7 +528,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
   },
   ticketHeaderRow: {
-    flexDirection: "row-reverse",
+    flexDirection: "row-reverse", // تراز راست‌به‌چپ هدر کارت تیکت: تایتل راست، بج چپ
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
@@ -531,7 +541,7 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
   },
   ticketTitle: {
-    fontSize: 14, // بهینه‌سازی سایز برای هماهنگی فونت‌ها
+    fontSize: 14,
     textAlign: "right",
     lineHeight: 20,
   },

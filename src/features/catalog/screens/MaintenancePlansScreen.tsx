@@ -8,12 +8,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
-    Dimensions,
-    Image,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -315,6 +315,7 @@ const MaintenancePlansScreen = () => {
       >
         <TouchableOpacity
           activeOpacity={0.8}
+          onPress={() => router.replace("/project-inquiry")}
           style={[
             styles.submitBtn,
             { backgroundColor: colors.primary, borderRadius: borderRadius.md },

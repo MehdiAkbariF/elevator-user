@@ -1,12 +1,12 @@
 // src/components/layout/AppHeader.tsx
 
-import React from 'react';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { useTheme } from '@/src/theme/ThemeContext';
-import { AppText } from '@/src/theme/AppText';
-import { ThemeToggleButton } from '@/src/components/common/ThemeToggleButton';
+import { ThemeToggleButton } from "@/src/components/common/ThemeToggleButton";
+import { AppText } from "@/src/theme/AppText";
+import { useTheme } from "@/src/theme/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface AppHeaderProps {
   title?: string;
@@ -16,7 +16,7 @@ interface AppHeaderProps {
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
-  title = 'ایکس‌الوتور',
+  title = "ایکس‌الوتور",
   showBackButton = false,
   showThemeToggle = true,
   showWhyUs = true,
@@ -25,11 +25,16 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   const router = useRouter();
 
   const handleWhyUsPress = () => {
-    router.push('/why-choose-us');
+    router.push("/why-choose-us");
   };
 
   return (
-    <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+    <View
+      style={[
+        styles.header,
+        { backgroundColor: colors.surface, borderBottomColor: colors.border },
+      ]}
+    >
       {/* سمت چپ: دکمه تغییر تم */}
       <View style={styles.leftContainer}>
         {showThemeToggle && <ThemeToggleButton />}
@@ -41,7 +46,12 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           {title}
         </AppText>
         {!showBackButton && (
-          <Ionicons name="construct" size={20} color={colors.secondary} style={{ marginLeft: 6 }} />
+          <Ionicons
+            name="construct"
+            size={20}
+            color={colors.secondary}
+            style={{ marginLeft: 6 }}
+          />
         )}
       </View>
 
@@ -64,7 +74,11 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             activeOpacity={0.7}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-forward" size={24} color={colors.textPrimary} />
+            <Ionicons
+              name="arrow-forward"
+              size={24}
+              color={colors.textPrimary}
+            />
           </TouchableOpacity>
         )}
       </View>
@@ -75,38 +89,36 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
 const styles = StyleSheet.create({
   header: {
     height: 56,
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
     borderBottomWidth: 1,
   },
   leftContainer: {
     flex: 1,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   centerContainer: {
     flex: 2,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  titleText: {
-    fontWeight: '700',
-  },
+  titleText: {},
   rightContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
     gap: 4,
   },
   backButton: {
     width: 40,
     height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   whyUsButton: {
     paddingHorizontal: 8,

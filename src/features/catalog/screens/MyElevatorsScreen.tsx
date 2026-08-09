@@ -9,12 +9,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
-    Dimensions,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -38,12 +38,10 @@ export const MyElevatorsScreen = () => {
   };
 
   const handleRegisterElevator = () => {
-    // ناوبری هوشمند به صفحه جدید ثبت آسانسور یا ساختمان جدید
     router.push("/create-elevator");
   };
 
   const handleElevatorDetailPress = () => {
-    // ناوبری هوشمند بومی به شناسنامه فنی آسانسور
     router.push("/elevator-detail");
   };
 
@@ -77,7 +75,6 @@ export const MyElevatorsScreen = () => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        // حاشیه انتهای اسکرول محاسبه شده بر اساس ارتفاع کلید شناور و منوی پایینی
         contentContainerStyle={[
           styles.scrollContainer,
           {
@@ -86,7 +83,7 @@ export const MyElevatorsScreen = () => {
           },
         ]}
       >
-        {/* کادر ۱ مینیمال: آپارتمان مسکونی (سالم و فعال) */}
+        {/* کادر ۱ مینیمال: آپارتمان مسکونی */}
         <View
           style={[
             styles.elevatorCard,
@@ -98,18 +95,7 @@ export const MyElevatorsScreen = () => {
           ]}
         >
           <View style={styles.cardPadding}>
-            {/* هدر کارت: عنوان راست، وضعیت چپ با نقطه کوچک سبز درخشان */}
             <View style={styles.cardHeaderRow}>
-              {/* تگ مینیمال فعال بودن با نقطه سبز درخشان */}
-              <View style={styles.statusBadge}>
-                <AppText variant="labelSm" style={{ color: "#22C55E" }}>
-                  فعال و ایمن
-                </AppText>
-                <View
-                  style={[styles.statusDot, { backgroundColor: "#22C55E" }]}
-                />
-              </View>
-
               <View style={styles.metaInfo}>
                 <AppText variant="h2" style={{ color: colors.textPrimary }}>
                   آپارتمان مسکونی - آسانسور اصلی
@@ -122,16 +108,23 @@ export const MyElevatorsScreen = () => {
                   تهران، خیابان ونک، پلاک ۴۵، مجتمع نگین
                 </AppText>
               </View>
+
+              <View style={styles.statusBadge}>
+                <AppText variant="labelSm" style={{ color: "#22C55E" }}>
+                  فعال و ایمن
+                </AppText>
+                <View
+                  style={[styles.statusDot, { backgroundColor: "#22C55E" }]}
+                />
+              </View>
             </View>
 
-            {/* مشخصات فنی به صورت خطی (Inline Specs) فوق‌العاده مینیمال */}
             <View style={styles.inlineSpecsRow}>
               <AppText variant="labelSm" color="muted">
                 موتور کششی • ۵ ایستگاه • ظرفیت ۶ نفره (۴۵۰kg)
               </AppText>
             </View>
 
-            {/* اطلاعات تاریخچه سرویس به صورت فِلَت و بدون کادربندی‌های تیره */}
             <View style={styles.dateInfoContainer}>
               <View style={styles.dateRow}>
                 <Ionicons
@@ -157,13 +150,11 @@ export const MyElevatorsScreen = () => {
               </View>
             </View>
 
-            {/* خط جداکننده نازک و ملایم */}
             <View
               style={[styles.cardDivider, { backgroundColor: colors.border }]}
             />
 
-            {/* کلیدهای اکشن متقارن و خلوت پایین کارت */}
-            <View style={styles.actionRow}>
+            <View style={[styles.actionRow, { gap: spacing.sm }]}>
               <TouchableOpacity
                 onPress={handleRequestService}
                 activeOpacity={0.8}
@@ -177,27 +168,33 @@ export const MyElevatorsScreen = () => {
                 </AppText>
               </TouchableOpacity>
 
-              {/* اتصال دکمه سوابق تعمیرات به شناسنامه فنی بومی */}
               <TouchableOpacity
                 onPress={handleElevatorDetailPress}
                 activeOpacity={0.7}
-                style={styles.historyLink}
+                style={[
+                  styles.historyLinkBtn,
+                  {
+                    borderColor: colors.border,
+                    borderRadius: borderRadius.md,
+                    backgroundColor: colors.surfaceDim,
+                  },
+                ]}
               >
-                <AppText variant="button" color="secondary">
-                  مشاهده شناسنامه
-                </AppText>
                 <Ionicons
                   name="arrow-back-outline"
                   size={16}
                   color={colors.secondary}
-                  style={{ marginRight: 6 }}
+                  style={{ marginLeft: 8 }}
                 />
+                <AppText variant="button" color="secondary">
+                  مشاهده شناسنامه فنی آسانسور
+                </AppText>
               </TouchableOpacity>
             </View>
           </View>
         </View>
 
-        {/* کادر ۲ مینیمال: برج اداری آرش (دارای گزارش خرابی فعال) */}
+        {/* کادر ۲ مینیمال: برج اداری آرش */}
         <View
           style={[
             styles.elevatorCard,
@@ -210,16 +207,6 @@ export const MyElevatorsScreen = () => {
         >
           <View style={styles.cardPadding}>
             <View style={styles.cardHeaderRow}>
-              {/* تگ وضعیت خرابی با نقطه کوچک نارنجی درخشان */}
-              <View style={styles.statusBadge}>
-                <AppText variant="labelSm" style={{ color: "#D97706" }}>
-                  دارای خرابی فعال
-                </AppText>
-                <View
-                  style={[styles.statusDot, { backgroundColor: "#D97706" }]}
-                />
-              </View>
-
               <View style={styles.metaInfo}>
                 <AppText variant="h2" style={{ color: colors.textPrimary }}>
                   برج آرش - آسانسور بلوک B
@@ -231,6 +218,15 @@ export const MyElevatorsScreen = () => {
                 >
                   تهران، خیابان جردن، برج اداری تجاری آرش
                 </AppText>
+              </View>
+
+              <View style={styles.statusBadge}>
+                <AppText variant="labelSm" style={{ color: "#D97706" }}>
+                  دارای خرابی فعال
+                </AppText>
+                <View
+                  style={[styles.statusDot, { backgroundColor: "#D97706" }]}
+                />
               </View>
             </View>
 
@@ -269,7 +265,7 @@ export const MyElevatorsScreen = () => {
               style={[styles.cardDivider, { backgroundColor: colors.border }]}
             />
 
-            <View style={styles.actionRow}>
+            <View style={[styles.actionRow, { gap: spacing.sm }]}>
               <TouchableOpacity
                 onPress={handleRequestService}
                 activeOpacity={0.8}
@@ -283,32 +279,37 @@ export const MyElevatorsScreen = () => {
                 ]}
               >
                 <AppText variant="button" style={{ color: "#FFFFFF" }}>
-                  اعزام فوری تکنسین
+                  اعزام فوری تکنسین اضطراری
                 </AppText>
               </TouchableOpacity>
 
-              {/* اتصال دکمه پیگیری به شناسنامه فنی بومی */}
               <TouchableOpacity
                 onPress={handleElevatorDetailPress}
                 activeOpacity={0.7}
-                style={styles.historyLink}
+                style={[
+                  styles.historyLinkBtn,
+                  {
+                    borderColor: colors.border,
+                    borderRadius: borderRadius.md,
+                    backgroundColor: colors.surfaceDim,
+                  },
+                ]}
               >
-                <AppText variant="button" color="secondary">
-                  مشاهده شناسنامه
-                </AppText>
                 <Ionicons
                   name="receipt-outline"
                   size={16}
                   color={colors.secondary}
-                  style={{ marginRight: 6 }}
+                  style={{ marginLeft: 8 }}
                 />
+                <AppText variant="button" color="secondary">
+                  مشاهده شناسنامه فنی آسانسور
+                </AppText>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </ScrollView>
 
-      {/* دکمه ثابت و چسبناک ثبت آسانسور جدید با اتصال به روت جدید */}
       <View
         style={[
           styles.floatingButtonContainer,
@@ -316,7 +317,7 @@ export const MyElevatorsScreen = () => {
         ]}
       >
         <TouchableOpacity
-          onPress={handleRegisterElevator} // اتصال به متد ناوبری ثبت آسانسور جدید
+          onPress={handleRegisterElevator}
           activeOpacity={0.9}
           style={[
             styles.floatingSubmitBtn,
@@ -335,13 +336,12 @@ export const MyElevatorsScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* ناوبری پایینی سراسری با تب فعال پروفایل */}
-      <AppBottomNav activeTab="profile" />
+      {/* تصحیح شد: تغییر ورودی زبانه فعال به elevators */}
+      <AppBottomNav activeTab="elevators" />
     </ScreenWrapper>
   );
 };
 
-// صادرکننده پیش‌فرض بومی پروژه
 export default MyElevatorsScreen;
 
 const styles = StyleSheet.create({
@@ -375,14 +375,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     overflow: "hidden",
     marginBottom: 20,
-    elevation: 1, // سایه بسیار ملایم و شیک به جای بردرهای سنگین جانبی
+    elevation: 1,
     shadowColor: "#0F172A",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
     shadowRadius: 6,
   },
   cardPadding: {
-    padding: 20, // افزایش پدینگ داخلی برای ایجاد تنفس عالی در لایوت
+    padding: 20,
   },
   cardHeaderRow: {
     flexDirection: "row-reverse",
@@ -433,21 +433,24 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   actionRow: {
-    flexDirection: "row-reverse",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: "column",
     width: "100%",
   },
   actionBtn: {
-    height: 38,
-    paddingHorizontal: 16,
+    width: "100%",
+    height: 44,
     borderWidth: 1,
+    flexDirection: "row-reverse",
     alignItems: "center",
     justifyContent: "center",
   },
-  historyLink: {
+  historyLinkBtn: {
+    width: "100%",
+    height: 44,
+    borderWidth: 1,
     flexDirection: "row-reverse",
     alignItems: "center",
+    justifyContent: "center",
   },
   floatingButtonContainer: {
     position: "absolute",

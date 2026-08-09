@@ -9,7 +9,14 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context"; // ایمپورت دریافت حاشیه‌های امن سیستم‌عامل
 
 interface AppBottomNavProps {
-  activeTab: "home" | "shop" | "cart" | "categories" | "profile";
+  activeTab:
+    | "home"
+    | "shop"
+    | "cart"
+    | "categories"
+    | "profile"
+    | "elevators"
+    | "blog";
 }
 
 export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
@@ -17,6 +24,7 @@ export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
   const router = useRouter();
   const insets = useSafeAreaInsets(); // دریافت فاصله دکمه‌های لمسی کف گوشی از سیستم‌عامل
 
+  // چیدمان متقارن ۷ زبانه از چپ به راست با قرارگیری دکمه "خانه" در مرکز دقیق (ایندکس ۳)
   const tabs = [
     {
       id: "profile",
@@ -25,11 +33,23 @@ export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
       iconInactive: "person-outline",
     },
     {
-      id: "categories",
-      title: "دسته‌بندی",
-      iconActive: "apps",
-      iconInactive: "apps-outline",
+      id: "elevators",
+      title: "آسانسور من",
+      iconActive: "construct",
+      iconInactive: "construct-outline",
     },
+    {
+      id: "blog",
+      title: "بلاگ",
+      iconActive: "book",
+      iconInactive: "book-outline",
+    },
+    {
+      id: "home",
+      title: "خانه",
+      iconActive: "home",
+      iconInactive: "home-outline",
+    }, // مرکز ثقل دقیق ناوبری
     {
       id: "cart",
       title: "سبد خرید",
@@ -43,10 +63,10 @@ export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
       iconInactive: "cube-outline",
     },
     {
-      id: "home",
-      title: "خانه",
-      iconActive: "home",
-      iconInactive: "home-outline",
+      id: "categories",
+      title: "دسته‌بندی",
+      iconActive: "apps",
+      iconInactive: "apps-outline",
     },
   ] as const;
 
@@ -61,6 +81,10 @@ export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
       router.replace("/categories");
     } else if (tabId === "profile") {
       router.replace("/profile");
+    } else if (tabId === "elevators") {
+      router.replace("/my-elevators"); // هدایت پویا به لیست آسانسورها
+    } else if (tabId === "blog") {
+      router.replace("/learning-hub"); // هدایت پویا به بلاگ و هاب مقالات آموزشی
     }
   };
 
@@ -71,7 +95,7 @@ export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
         {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
-          // افزایش پویای ارتفاع دکمه‌های ناوبری جهت جلوگیری از تداخل فیزیکی با دکمه‌های مجازی خانه در موبایل
+          // افزایش پویای ارتفاع دکمه‌های ناوبری جهت جلوگیری از تداخل فیزیکی با دکمه‌های لمسی خانه در موبایل
           height: 64 + insets.bottom,
           paddingBottom: insets.bottom,
         },
@@ -90,7 +114,7 @@ export const AppBottomNav: React.FC<AppBottomNavProps> = ({ activeTab }) => {
           >
             <Ionicons
               name={isActive ? tab.iconActive : tab.iconInactive}
-              size={24}
+              size={22} // کاهش جزیی سایز آیکون‌ها برای جایگیری فوق‌العاده شیک ۷ زبانه در عرض موبایل
               color={tintColor}
             />
             <AppText
@@ -126,7 +150,7 @@ const styles = StyleSheet.create({
   },
   navText: {
     marginTop: 2,
-    fontSize: 10,
-    fontWeight: "600",
+    fontSize: 9, // بهینه‌سازی ملایم فونت تگ برای جایگیری متقارن ۷ زبانه بدون بیرون‌زدگی متن
+    // تصحیح شد: حذف کامل پارامتر تداخل‌برانگیز fontWeight برای حل رندرینگ اندروید
   },
 });

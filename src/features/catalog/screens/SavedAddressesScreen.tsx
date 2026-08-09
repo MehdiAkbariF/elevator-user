@@ -9,12 +9,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
-    Dimensions,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -109,7 +109,23 @@ export const SavedAddressesScreen = () => {
             <View style={styles.cardPadding}>
               {/* هدر کارت به صورت کاملاً RTL: تایتل و آیکون در راست، تگ پیش‌فرض در چپ */}
               <View style={styles.cardHeaderRow}>
-                {/* تگ پیش‌فرض در چپ کارت */}
+                {/* ۱. تایتل و آیکون خانه در راست‌ترین نقطه کارت (اولین فرزند در row-reverse) */}
+                <View style={styles.cardTitleContainer}>
+                  <AppText
+                    variant="h2"
+                    style={[styles.titleText, { color: colors.textPrimary }]}
+                  >
+                    منزل شخصی (آپارتمان)
+                  </AppText>
+                  <Ionicons
+                    name="home"
+                    size={18}
+                    color={colors.secondary}
+                    style={{ marginLeft: 8 }}
+                  />
+                </View>
+
+                {/* ۲. تگ پیش‌فرض در چپ‌ترین نقطه کارت (دومین فرزند در row-reverse) */}
                 <View
                   style={[
                     styles.defaultBadge,
@@ -125,22 +141,6 @@ export const SavedAddressesScreen = () => {
                   >
                     پیش‌فرض
                   </AppText>
-                </View>
-
-                {/* تایتل و آیکون خانه در راست کارت با رعایت فاصله متقارن */}
-                <View style={styles.cardTitleContainer}>
-                  <AppText
-                    variant="h2"
-                    style={[styles.titleText, { color: colors.textPrimary }]}
-                  >
-                    منزل شخصی (آپارتمان)
-                  </AppText>
-                  <Ionicons
-                    name="home"
-                    size={18}
-                    color={colors.secondary}
-                    style={{ marginLeft: 8 }}
-                  />
                 </View>
               </View>
 
@@ -228,9 +228,7 @@ export const SavedAddressesScreen = () => {
           >
             <View style={styles.cardPadding}>
               <View style={styles.cardHeaderRow}>
-                {/* در این کارت تگ پیش‌فرض نداریم، بنابراین چپ خالی می‌ماند */}
-                <View style={{ width: 10 }} />
-
+                {/* ۱. تایتل و آیکون دفتر در راست‌ترین نقطه کارت (اولین فرزند در row-reverse) */}
                 <View style={styles.cardTitleContainer}>
                   <AppText
                     variant="h2"
@@ -245,6 +243,9 @@ export const SavedAddressesScreen = () => {
                     style={{ marginLeft: 8 }}
                   />
                 </View>
+
+                {/* ۲. در این کارت تگ پیش‌فرض نداریم، بنابراین چپ خالی می‌ماند (دومین فرزند در row-reverse) */}
+                <View style={{ width: 10 }} />
               </View>
 
               <View style={styles.addressDetails}>
@@ -459,7 +460,7 @@ const styles = StyleSheet.create({
   cardDivider: {
     height: 1,
     width: "100%",
-    marginVertical: 12,
+    marginBottom: 16,
   },
   recipientRow: {
     flexDirection: "row-reverse",
