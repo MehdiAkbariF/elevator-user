@@ -14,7 +14,7 @@ import {
     ScrollView,
     StyleSheet,
     TouchableOpacity,
-    View
+    View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -283,7 +283,8 @@ export const ServiceHistoryScreen = () => {
               />
             </View>
 
-            <View style={[styles.actionRow, { gap: spacing.md }]}>
+            {/* بخش دکمه‌های اقدام با چیدمان ستونی و تمام عرض جدید */}
+            <View style={[styles.actionRow, { gap: spacing.sm }]}>
               <TouchableOpacity
                 onPress={handleViewReport}
                 activeOpacity={0.8}
@@ -418,7 +419,6 @@ export const ServiceHistoryScreen = () => {
                   {
                     borderColor: colors.border,
                     borderRadius: borderRadius.md,
-                    width: "100%",
                   },
                 ]}
               >
@@ -591,12 +591,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   actionRow: {
-    flexDirection: "row-reverse",
-    justifyContent: "space-between",
+    flexDirection: "column", // تغییر به ستونی برای اختصاص یک ردیف کامل به هر دکمه
     width: "100%",
   },
   actionBtn: {
-    flex: 1,
+    width: "100%", // اختصاص کامل عرض ردیف به دکمه
     height: 44,
     borderWidth: 1,
     flexDirection: "row-reverse",
