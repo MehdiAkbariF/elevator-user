@@ -9,11 +9,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    Dimensions,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -564,7 +564,7 @@ export const ProfileScreen = () => {
           <TouchableOpacity
             activeOpacity={0.8}
             style={[styles.settingRow, { borderBottomColor: colors.border }]}
-            onPress={() => router.push("/support/tickets")}
+            onPress={() => router.push("/support")}
           >
             <Ionicons
               name="chevron-back"
